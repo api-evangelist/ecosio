@@ -1,0 +1,14 @@
+generated: '2026-10-18'
+method: searched
+source: https://connect.ecosio.com/reference/getting-started-with-our-api.md
+name: ecosio rate limits
+limit_count: 1
+limits:
+- name: API connector rate limit
+  limit_text: Rate limits are enforced per API connector over a rolling five‑minute window
+  window: 5 minutes
+  scope: per API connector
+  response_headers:
+  - HTTP 429 Too Many Requests
+  note: Limit set by ecosio Integration Engineer; contact to change limit. If five requests return errors within same window, further requests blocked.
+note: Rate limits documented but specific numerical limits not published. Limits are customized per API connector based on enterprise agreement.

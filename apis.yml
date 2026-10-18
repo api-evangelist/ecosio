@@ -1,23 +1,561 @@
 aid: ecosio
+
 name: ecosio
-description: 'ecosio is a company surfaced via the API Evangelist harvest backlog (source: kin-score-markets)
-  and added to the network as a stub for full-pipeline profiling.'
+
+description: 'ecosio (ecosio GmbH) provides automated B2B and B2G data exchange: managed EDI as a service, global e-invoicing and VAT compliance
+  (Peppol and country clearance platforms), and supplier activation, delivered through its ecosio connect platform. Developers integrate via ecosio''s
+  Messaging APIs and Management API documented at connect.ecosio.com. ecosio announced on its own blog that ecosio GmbH has been acquired by Vertex,
+  the tax technology company.'
+
 url: https://raw.githubusercontent.com/api-evangelist/ecosio/refs/heads/main/apis.yml
+
 x-type: company
+
 x-source: harvest:kin-score-markets
-x-tier: stub
-x-tier-reason: harvest
+
+x-tier: profiled
+x-tier-reason: enrichment pass 2026-10-18 (modular-v1; was harvest)
+
 specificationVersion: '0.20'
+
 created: '2026-10-18'
+
 modified: '2026-10-18'
+
 tags:
 - Company
-apis: []
+- EDI
+- E-Invoicing
+- B2B Integration
+- VAT Compliance
+- PEPPOL
+- Supply Chain
+- Messaging
+tags_raw:
+- Company
+- EDI
+- E-Invoicing
+- B2B Integration
+- VAT Compliance
+- Peppol
+- Supply Chain
+- Messaging
+
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
+
+image: https://files.readme.io/bfa94a4c039edc706879ab499b2c7da9ce42e70cd258c8cc6c2c9c173317764f-0_Ecosio.svg
+
 common:
+- type: AgenticAccess
+  url: agentic-access/ecosio-agentic-access.yml
+- type: RateLimits
+  url: rate-limits/ecosio-rate-limits.yml
+- type: Spectral
+  url: rules/ecosio-rules.yml
+- type: JSONLD
+  url: json-ld/ecosio-context.jsonld
+- type: Vocabulary
+  url: vocabulary/ecosio-vocabulary.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: DataModel
+  url: data-model/ecosio-data-model.yml
+- type: ChangeLog
+  url: changelog/ecosio-changelog.yml
+- type: Conventions
+  url: conventions/ecosio-conventions.yml
+- type: Sandbox
+  url: sandbox/ecosio-sandbox.yml
+- type: Security
+  url: https://ecosio.com/en/data-protection/
+- type: Deprecation
+  url: lifecycle/ecosio-lifecycle.yml
+- type: Lifecycle
+  url: lifecycle/ecosio-lifecycle.yml
+- type: ErrorCatalog
+  url: errors/ecosio-problem-types.yml
+- type: Conformance
+  url: conformance/ecosio-conformance.yml
+- type: Overlay
+  url: overlays/ecosio-api-overlay.yaml
+- type: LLMsTxt
+  url: llms/ecosio-llms.txt
+- type: SecurityTxt
+  url: well-known/ecosio-security.txt
+- type: WellKnown
+  url: well-known/ecosio-well-known.yml
+- type: Hosts
+  url: hosts/ecosio-hosts.yml
+- type: Vendors
+  url: vendors/ecosio-vendors.yml
+- type: Authentication
+  url: authentication/ecosio-authentication.yml
 - type: Website
   url: https://ecosio.com
+- type: VulnerabilityDisclosure
+  url: security/ecosio-vulnerability-disclosure.yml
+- type: DomainSecurity
+  url: security/ecosio-domain-security.yml
+- type: Documentation
+  url: https://connect.ecosio.com/docs/welcome-to-ecosio-connect
+- type: APIReference
+  url: https://connect.ecosio.com/reference
+- type: GettingStarted
+  url: https://connect.ecosio.com/reference/getting-started-with-our-api
+- type: ChangeLog
+  url: https://connect.ecosio.com/changelog
+- type: StatusPage
+  url: https://ecosio-status.com/
+- type: Blog
+  url: https://ecosio.com/en/blog/
+- type: PrivacyPolicy
+  url: https://ecosio.com/en/data-protection/
+- type: TrustCenter
+  url: https://ecosio.com/en/security-trust-center/
+- type: Contact
+  url: https://ecosio.com/en/get-in-touch/
+- type: GitHubOrganization
+  url: https://github.com/ecosio
+- type: LinkedIn
+  url: https://www.linkedin.com/company/ecosiohq
+- type: YouTube
+  url: https://www.youtube.com/@ecosio
+
+apis:
+- aid: ecosio:ecosio-approval-request-status-api
+  name: ecosio Approval Request Status API
+  description: Methods for retrieving approval request statuses
+  humanURL: https://connect.ecosio.com/reference/messaging-api
+  baseURL: https://api.test.ecosio-hub.com
+  tags:
+  - Approval Request Status
+  properties:
+  - type: OpenAPI
+    url: openapi/ecosio-approval-request-status-api-openapi.yml
+  - type: Documentation
+    url: https://connect.ecosio.com/reference/messaging-api
+  - type: Documentation
+    url: https://connect.ecosio.com/reference/management-api-overview
+  - type: JSONSchema
+    url: json-schema/ecosio-scenario-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-connector-retrieval-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-company-retrieval-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-romania-einvoice-create-request-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-romania-einvoice-update-request-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-approval-status-response-schema.json
+  - type: Documentation
+    url: https://connect.ecosio.com/reference/vertex-messaging-api
+  - type: JSONSchema
+    url: json-schema/ecosio-message-details-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-status-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-confirm-request-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-message-list-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-message-raw-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-delivery-request-schema.json
+- aid: ecosio:ecosio-archive-messages-api
+  name: ecosio Archive messages API
+  description: The Archive messages API from ecosio — 3 operation(s) for archive messages.
+  humanURL: https://connect.ecosio.com/reference/messaging-api
+  baseURL: https://api.test.ecosio-hub.com
+  tags:
+  - Archive messages
+  properties:
+  - type: OpenAPI
+    url: openapi/ecosio-archive-messages-api-openapi.yml
+  - type: Documentation
+    url: https://connect.ecosio.com/reference/messaging-api
+  - type: Documentation
+    url: https://connect.ecosio.com/reference/management-api-overview
+  - type: JSONSchema
+    url: json-schema/ecosio-scenario-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-connector-retrieval-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-company-retrieval-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-romania-einvoice-create-request-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-romania-einvoice-update-request-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-approval-status-response-schema.json
+  - type: Documentation
+    url: https://connect.ecosio.com/reference/vertex-messaging-api
+  - type: JSONSchema
+    url: json-schema/ecosio-message-details-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-status-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-confirm-request-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-message-list-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-message-raw-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-delivery-request-schema.json
+- aid: ecosio:ecosio-check-user-credentials-api
+  name: ecosio Check user credentials API
+  description: The Check user credentials API from ecosio — 1 operation(s) for check user credentials.
+  humanURL: https://connect.ecosio.com/reference/messaging-api
+  baseURL: https://api.test.ecosio-hub.com
+  tags:
+  - Check user credentials
+  properties:
+  - type: OpenAPI
+    url: openapi/ecosio-check-user-credentials-api-openapi.yml
+  - type: Documentation
+    url: https://connect.ecosio.com/reference/messaging-api
+  - type: Documentation
+    url: https://connect.ecosio.com/reference/management-api-overview
+  - type: JSONSchema
+    url: json-schema/ecosio-scenario-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-connector-retrieval-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-company-retrieval-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-romania-einvoice-create-request-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-romania-einvoice-update-request-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-approval-status-response-schema.json
+  - type: Documentation
+    url: https://connect.ecosio.com/reference/vertex-messaging-api
+  - type: JSONSchema
+    url: json-schema/ecosio-message-details-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-status-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-confirm-request-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-message-list-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-message-raw-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-delivery-request-schema.json
+- aid: ecosio:ecosio-companies-api
+  name: ecosio Companies API
+  description: Methods for managing companies
+  humanURL: https://connect.ecosio.com/reference/messaging-api
+  baseURL: https://api.test.ecosio-hub.com
+  tags:
+  - Companies
+  properties:
+  - type: OpenAPI
+    url: openapi/ecosio-companies-api-openapi.yml
+  - type: Documentation
+    url: https://connect.ecosio.com/reference/messaging-api
+  - type: Documentation
+    url: https://connect.ecosio.com/reference/management-api-overview
+  - type: JSONSchema
+    url: json-schema/ecosio-scenario-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-connector-retrieval-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-company-retrieval-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-romania-einvoice-create-request-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-romania-einvoice-update-request-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-approval-status-response-schema.json
+  - type: Documentation
+    url: https://connect.ecosio.com/reference/vertex-messaging-api
+  - type: JSONSchema
+    url: json-schema/ecosio-message-details-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-status-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-confirm-request-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-message-list-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-message-raw-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-delivery-request-schema.json
+- aid: ecosio:ecosio-connectors-api
+  name: ecosio Connectors API
+  description: Methods for managing messaging connectors
+  humanURL: https://connect.ecosio.com/reference/messaging-api
+  baseURL: https://api.test.ecosio-hub.com
+  tags:
+  - Connectors
+  properties:
+  - type: OpenAPI
+    url: openapi/ecosio-connectors-api-openapi.yml
+  - type: Documentation
+    url: https://connect.ecosio.com/reference/messaging-api
+  - type: Documentation
+    url: https://connect.ecosio.com/reference/management-api-overview
+  - type: JSONSchema
+    url: json-schema/ecosio-scenario-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-connector-retrieval-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-company-retrieval-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-romania-einvoice-create-request-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-romania-einvoice-update-request-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-approval-status-response-schema.json
+  - type: Documentation
+    url: https://connect.ecosio.com/reference/vertex-messaging-api
+  - type: JSONSchema
+    url: json-schema/ecosio-message-details-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-status-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-confirm-request-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-message-list-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-message-raw-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-delivery-request-schema.json
+- aid: ecosio:ecosio-deliver-messages-to-the-hub-api
+  name: ecosio Deliver messages to the Hub API
+  description: >-
+    The Deliver messages to the Hub API from ecosio — 3 operation(s) for deliver messages to the hub.
+  humanURL: https://connect.ecosio.com/reference/messaging-api
+  baseURL: https://api.test.ecosio-hub.com
+  tags:
+  - Deliver messages to the Hub
+  properties:
+  - type: OpenAPI
+    url: openapi/ecosio-deliver-messages-to-the-hub-api-openapi.yml
+  - type: Documentation
+    url: https://connect.ecosio.com/reference/messaging-api
+  - type: Documentation
+    url: https://connect.ecosio.com/reference/management-api-overview
+  - type: JSONSchema
+    url: json-schema/ecosio-scenario-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-connector-retrieval-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-company-retrieval-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-romania-einvoice-create-request-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-romania-einvoice-update-request-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-approval-status-response-schema.json
+  - type: Documentation
+    url: https://connect.ecosio.com/reference/vertex-messaging-api
+  - type: JSONSchema
+    url: json-schema/ecosio-message-details-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-status-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-confirm-request-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-message-list-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-message-raw-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-delivery-request-schema.json
+- aid: ecosio:ecosio-fetch-messages-from-the-hub-api
+  name: ecosio Fetch messages from the Hub API
+  description: >-
+    The Fetch messages from the Hub API from ecosio — 3 operation(s) for fetch messages from the hub.
+  humanURL: https://connect.ecosio.com/reference/messaging-api
+  baseURL: https://api.test.ecosio-hub.com
+  tags:
+  - Fetch messages from the Hub
+  properties:
+  - type: OpenAPI
+    url: openapi/ecosio-fetch-messages-from-the-hub-api-openapi.yml
+  - type: Documentation
+    url: https://connect.ecosio.com/reference/messaging-api
+  - type: Documentation
+    url: https://connect.ecosio.com/reference/management-api-overview
+  - type: JSONSchema
+    url: json-schema/ecosio-scenario-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-connector-retrieval-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-company-retrieval-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-romania-einvoice-create-request-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-romania-einvoice-update-request-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-approval-status-response-schema.json
+  - type: Documentation
+    url: https://connect.ecosio.com/reference/vertex-messaging-api
+  - type: JSONSchema
+    url: json-schema/ecosio-message-details-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-status-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-confirm-request-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-message-list-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-message-raw-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-delivery-request-schema.json
+- aid: ecosio:ecosio-message-controller-api
+  name: ecosio Message Controller API
+  description: The message-controller API from ecosio — 4 operation(s) for message-controller.
+  humanURL: https://connect.ecosio.com/reference/messaging-api
+  baseURL: https://api.test.ecosio-hub.com
+  tags:
+  - message-controller
+  properties:
+  - type: OpenAPI
+    url: openapi/ecosio-message-controller-api-openapi.yml
+  - type: Documentation
+    url: https://connect.ecosio.com/reference/messaging-api
+  - type: Documentation
+    url: https://connect.ecosio.com/reference/management-api-overview
+  - type: JSONSchema
+    url: json-schema/ecosio-scenario-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-connector-retrieval-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-company-retrieval-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-romania-einvoice-create-request-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-romania-einvoice-update-request-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-approval-status-response-schema.json
+  - type: Documentation
+    url: https://connect.ecosio.com/reference/vertex-messaging-api
+  - type: JSONSchema
+    url: json-schema/ecosio-message-details-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-status-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-confirm-request-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-message-list-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-message-raw-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-delivery-request-schema.json
+- aid: ecosio:ecosio-request-the-documents-for-an-e-invoice-api
+  name: ecosio Request the documents for an e-invoice API
+  description: >-
+    The Request the documents for an e-invoice API from ecosio — 1 operation(s) for request the documents
+    for an e-invoice.
+  humanURL: https://connect.ecosio.com/reference/messaging-api
+  baseURL: https://api.test.ecosio-hub.com
+  tags:
+  - Request the documents for an e-invoice
+  properties:
+  - type: OpenAPI
+    url: openapi/ecosio-request-the-documents-for-an-e-invoice-api-openapi.yml
+  - type: Documentation
+    url: https://connect.ecosio.com/reference/messaging-api
+  - type: Documentation
+    url: https://connect.ecosio.com/reference/management-api-overview
+  - type: JSONSchema
+    url: json-schema/ecosio-scenario-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-connector-retrieval-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-company-retrieval-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-romania-einvoice-create-request-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-romania-einvoice-update-request-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-approval-status-response-schema.json
+  - type: Documentation
+    url: https://connect.ecosio.com/reference/vertex-messaging-api
+  - type: JSONSchema
+    url: json-schema/ecosio-message-details-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-status-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-confirm-request-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-message-list-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-message-raw-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-delivery-request-schema.json
+- aid: ecosio:ecosio-scenarios-api
+  name: ecosio Scenarios API
+  description: Methods for managing scenarios
+  humanURL: https://connect.ecosio.com/reference/messaging-api
+  baseURL: https://api.test.ecosio-hub.com
+  tags:
+  - Scenarios
+  properties:
+  - type: OpenAPI
+    url: openapi/ecosio-scenarios-api-openapi.yml
+  - type: Documentation
+    url: https://connect.ecosio.com/reference/messaging-api
+  - type: Documentation
+    url: https://connect.ecosio.com/reference/management-api-overview
+  - type: JSONSchema
+    url: json-schema/ecosio-scenario-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-connector-retrieval-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-company-retrieval-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-romania-einvoice-create-request-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-romania-einvoice-update-request-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-approval-status-response-schema.json
+  - type: Documentation
+    url: https://connect.ecosio.com/reference/vertex-messaging-api
+  - type: JSONSchema
+    url: json-schema/ecosio-message-details-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-status-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-confirm-request-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-message-list-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-message-raw-response-schema.json
+  - type: JSONSchema
+    url: json-schema/ecosio-delivery-request-schema.json
+x-coverage:
+  state: covered
+  reason: identity-verified
+  detail: ecosio.com answers HTTP 403 to plain crawler/browser-UA GETs (bot edge) but renders 200 in a headless browser (title "ecosio – Connections
+    That Work"); ecosio.com pointers were taken from the rendered homepage and from links on connect.ecosio.com. docs.ecosio.com redirects to
+    the erpel.ecosio.com partner-portal login.
+  evidence:
+  - url: https://ecosio.com
+    status: 403
+  - url: https://ecosio.com/en/
+    status: 200
+    note: headless render
+  - url: https://connect.ecosio.com/docs/welcome-to-ecosio-connect
+    status: 200
+  - url: https://connect.ecosio.com/reference
+    status: 200
+  - url: https://ecosio-status.com/
+    status: 200
+  - url: https://github.com/ecosio
+    status: 200
+  - url: https://ecosio.com/en/blog/exciting-news-ecosio-is-joining-vertex/
+    status: 200
+    note: headless render; acquisition by Vertex
+x-enrichment:
+  date: '2026-10-18'
+  status: enriched
+  artifacts_added: 62
+  pass: modular-v1
+  engine: identity=anthropic,contract=anthropic,surfaces=anthropic,docs=deepseek,regulatory=anthropic

@@ -1,0 +1,4 @@
+generated: '2026-10-18'
+method: none
+note: ecosio is not a payments/authorization provider; it handles EDI messaging and e-invoicing compliance. No decline codes reference found.
+decline_codes: []

@@ -1,0 +1,4 @@
+generated: '2026-10-18'
+method: none
+note: No first-party SDKs or client libraries found in documentation or package registries (npm, PyPI, Maven, NuGet, RubyGems, crates.io). The documentation only shows curl examples.
+packages: []

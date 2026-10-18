@@ -1,0 +1,56 @@
+generated: '2026-10-18'
+method: searched
+source: https://connect.ecosio.com/reference/getting-started-with-our-api.md
+standards:
+- id: OpenAPI
+  conforms: true
+  evidence: API documented with OpenAPI 3.0.0 specification
+  note: Found in openapi/ecosio-api-openapi.yml
+- id: oauth2
+  conforms: true
+  evidence: Management API supports OAuth 2.0 client credentials grant
+  note: Documented at https://connect.ecosio.com/reference/management-api-authentication.md
+- id: basic-auth
+  conforms: true
+  evidence: Basic authentication supported (though deprecated)
+  note: Documented at https://connect.ecosio.com/reference/getting-started-with-our-api.md
+- id: EDI
+  conforms: true
+  evidence: API handles EDI (Electronic Data Interchange) messages
+  note: API documentation references EDI message exchange
+- id: Peppol
+  conforms: true
+  evidence: Supports Peppol e-invoicing network
+  note: Documentation mentions Peppol compliance and connectivity
+- id: e-invoicing
+  conforms: true
+  evidence: Supports electronic invoicing compliance across multiple countries
+  note: API handles e-invoice delivery and acknowledgements
+- id: openapi-3.0
+  conforms: true
+  evidence: the document declares 3.0.0
+- id: openapi-3.1
+  conforms: true
+  evidence: the document declares 3.1.0
+- id: rfc9457
+  conforms: false
+  evidence: no response declares application/problem+json
+- id: idempotency
+  conforms: false
+  evidence: no idempotency key parameter on mutating operations
+- id: pagination
+  conforms: true
+  evidence: list operations take limit, offset, page
+domain_standard_conformance:
+- standard: EDI
+  conforms: true
+  evidence: API exchanges structured electronic documents (EDI messages)
+  note: Core functionality is EDI message exchange
+- standard: Peppol
+  conforms: true
+  evidence: Supports Peppol network for e-invoicing
+  note: Enables cross-border e-invoicing compliance
+- standard: Country-specific e-invoicing
+  conforms: true
+  evidence: Supports country-specific e-invoicing platforms (France, Italy, UK, etc.)
+  note: Documentation lists compliance for multiple countries

@@ -1,0 +1,229 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/ecosio/main/json-schema/ecosio-message-details-response-schema.json",
+  "title": "MessageDetailsResponse",
+  "description": "Details of a message.",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/ecosio-vertex-messaging-api-openapi.yml#/components/schemas/MessageDetailsResponse",
+  "properties": {
+    "acknowledgment": {
+      "description": "Confirmation of the message, specified in Base64 format.",
+      "format": "byte",
+      "type": "string"
+    },
+    "error": {
+      "$ref": "#/$defs/Error",
+      "description": "Details of an error if one occurred."
+    },
+    "externalReferences": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "description": "Reference of an external party, such as a government.",
+      "type": "object"
+    },
+    "history": {
+      "description": "Status history of the message.",
+      "items": {
+        "$ref": "#/$defs/HistoryEntry"
+      },
+      "type": "array"
+    },
+    "messageInfo": {
+      "$ref": "#/$defs/MessageInfo"
+    }
+  },
+  "required": [
+    "acknowledgment",
+    "externalReferences",
+    "history",
+    "messageInfo"
+  ],
+  "type": "object",
+  "$defs": {
+    "Error": {
+      "description": "Details of errors.",
+      "properties": {
+        "code": {
+          "description": "Error code returned.",
+          "type": "string"
+        },
+        "details": {
+          "description": "Array of specific errors that occurred.",
+          "items": {
+            "$ref": "#/$defs/ErrorDetail"
+          },
+          "type": "array"
+        },
+        "message": {
+          "description": "Details about the error.",
+          "type": "string"
+        },
+        "target": {
+          "description": "Source where the error occurred.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "message"
+      ],
+      "type": "object"
+    },
+    "ErrorDetail": {
+      "properties": {
+        "code": {
+          "description": "Error code returned.",
+          "type": "string"
+        },
+        "message": {
+          "description": "Details about the error.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "message"
+      ],
+      "type": "object"
+    },
+    "HistoryEntry": {
+      "description": "Historical record of the message.",
+      "properties": {
+        "message": {
+          "description": "Message body at the time the historical record was created.",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/StatusEnum",
+          "description": "Status at the time the historical record was created.",
+          "enum": [
+            "HANDLED",
+            "TRANSMITTED",
+            "ERROR",
+            "TRANSIENT_ERROR",
+            "RETAINED",
+            "PROCESSING"
+          ]
+        },
+        "timestamp": {
+          "description": "Timestamp of the historical record, specified in ISO 8601 format.",
+          "format": "date-time",
+          "type": "string"
+        }
+      },
+      "required": [
+        "message",
+        "status",
+        "timestamp"
+      ],
+      "type": "object"
+    },
+    "MessageInfo": {
+      "description": "Metadata for a message.",
+      "properties": {
+        "charset": {
+          "description": "Encoding of the message.",
+          "type": "string"
+        },
+        "documentTypeId": {
+          "description": "Internal ID of the identified document type of the message.",
+          "type": "string"
+        },
+        "fileName": {
+          "description": "Filename of the message.",
+          "type": "string"
+        },
+        "lastChanged": {
+          "description": "Timestamp of the message's last update, specified in ISO 8601 format.",
+          "format": "date-time",
+          "type": "string"
+        },
+        "messageId": {
+          "description": "ID of the message.",
+          "format": "uuid",
+          "type": "string"
+        },
+        "messageSize": {
+          "description": "Size of the message, specified in bytes.",
+          "format": "int32",
+          "type": "integer"
+        },
+        "mimeType": {
+          "description": "Identified document type of the message.",
+          "type": "string"
+        },
+        "receivedAt": {
+          "description": "Timestamp of the message's receipt, specified in ISO 8601 format.",
+          "format": "date-time",
+          "type": "string"
+        },
+        "receiverName": {
+          "description": "Name of the recipient.",
+          "type": "string"
+        },
+        "receiverUuid": {
+          "description": "ID of the recipient.",
+          "format": "uuid",
+          "type": "string"
+        },
+        "reference": {
+          "description": "Reference ID found within the message body.",
+          "type": "string"
+        },
+        "senderName": {
+          "description": "Name of the sender.",
+          "type": "string"
+        },
+        "senderUuid": {
+          "description": "ID of the sender.",
+          "format": "uuid",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/StatusEnum",
+          "description": "Status of the message.",
+          "enum": [
+            "HANDLED",
+            "TRANSMITTED",
+            "ERROR",
+            "TRANSIENT_ERROR",
+            "RETAINED",
+            "PROCESSING"
+          ]
+        }
+      },
+      "required": [
+        "charset",
+        "documentTypeId",
+        "fileName",
+        "lastChanged",
+        "messageId",
+        "messageSize",
+        "mimeType",
+        "receivedAt",
+        "receiverName",
+        "receiverUuid",
+        "reference",
+        "senderName",
+        "senderUuid",
+        "status"
+      ],
+      "type": "object"
+    },
+    "StatusEnum": {
+      "description": "Status of a message.",
+      "enum": [
+        "HANDLED",
+        "TRANSMITTED",
+        "ERROR",
+        "TRANSIENT_ERROR",
+        "RETAINED",
+        "PROCESSING"
+      ],
+      "type": "string"
+    }
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "provider": "ecosio",
+  "sources": [
+    "_original/ecosio-api-openapi.json",
+    "_original/ecosio-management-api-openapi.json",
+    "ecosio-vertex-messaging-api-openapi.yml"
+  ],
+  "outputs": [
+    "ecosio-archive-messages-api-openapi.yml",
+    "ecosio-check-user-credentials-api-openapi.yml",
+    "ecosio-deliver-messages-to-the-hub-api-openapi.yml",
+    "ecosio-fetch-messages-from-the-hub-api-openapi.yml",
+    "ecosio-request-the-documents-for-an-e-invoice-api-openapi.yml",
+    "ecosio-approval-request-status-api-openapi.yml",
+    "ecosio-companies-api-openapi.yml",
+    "ecosio-connectors-api-openapi.yml",
+    "ecosio-scenarios-api-openapi.yml",
+    "ecosio-message-controller-api-openapi.yml"
+  ],
+  "archived": [
+    "deleted 3 superseded output(s) from the previous generation"
+  ],
+  "errors": [],
+  "warnings": [
+    "ecosio-vertex-messaging-api-openapi.yml: previously refined output kept for 5 operation(s) no archived document covers (e.g. /api/v1/messages get, /api/v1/messages post, /api/v1/messages/{messageId} get); its other 0 operation(s) came from the archive and were dropped from it. The archive is incomplete for this provider \u2014 re-harvest to restore _original/ as the full source of truth."
+  ],
+  "notes": [
+    "sourced from openapi/_original/ (2 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "ecosio-api-openapi.json: upgraded openapi 3.0.0 -> OpenAPI 3.2.0",
+    "ecosio-api-openapi.json: declared missing tag: Archive messages",
+    "ecosio-api-openapi.json: declared missing tag: Check user credentials",
+    "ecosio-api-openapi.json: declared missing tag: Deliver messages to the Hub",
+    "ecosio-api-openapi.json: declared missing tag: Fetch messages from the Hub",
+    "ecosio-api-openapi.json: declared missing tag: Request the documents for an e-invoice",
+    "ecosio-management-api-openapi.json: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "ecosio-vertex-messaging-api-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "ecosio-vertex-messaging-api-openapi.yml: declared missing tag: message-controller",
+    "superseded outputs removed: ecosio-api-openapi.yml, ecosio-management-api-openapi.yml, ecosio-vertex-messaging-api-openapi.yml",
+    "apis.yml register: written (+10 apis, 10 total)"
+  ],
+  "skipped": [
+    "ecosio-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "ecosio-management-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
+}

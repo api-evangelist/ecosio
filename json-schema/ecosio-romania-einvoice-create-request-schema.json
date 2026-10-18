@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/ecosio/main/json-schema/ecosio-romania-einvoice-create-request-schema.json",
+  "title": "RomaniaEInvoiceCreateRequest",
+  "description": "Romania EInvoice Scenario CreateRequest.",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/ecosio-management-api-openapi.yml#/components/schemas/RomaniaEInvoiceCreateRequest",
+  "allOf": [
+    {
+      "$ref": "#/$defs/ScenarioCreateRequest"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "taxNumber": {
+          "type": "string",
+          "description": "The company's unique Romanian fiscal registration code (Codul Fiscal or CUI)."
+        },
+        "clientId": {
+          "type": "string",
+          "description": "The client ID issued to your application by ANAF."
+        },
+        "clientSecret": {
+          "type": "string",
+          "format": "password",
+          "description": "The client secret issued to your application by ANAF."
+        },
+        "accessToken": {
+          "type": "string",
+          "format": "password",
+          "description": "The OAuth 2.0 access token used to authorise all API calls to ANAF."
+        },
+        "accessTokenExpiry": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The expiration date and time of the access token, specified ISO 8601 format with a timezone offset. For example, 2025-01-09T10:00:00+02:00, where +02:00 is the time zone offset."
+        },
+        "refreshToken": {
+          "type": "string",
+          "format": "password",
+          "description": "The OAuth 2.0 refresh token used to automatically obtain a new access token from ANAF before the current one expires."
+        },
+        "refreshTokenExpiry": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The expiration date and time of the refresh token, specified ISO 8601 format with a timezone offset. For example, 2025-01-09T10:00:00+02:00, where +02:00 is the time zone offset."
+        }
+      }
+    }
+  ],
+  "required": [
+    "accessToken",
+    "accessTokenExpiry",
+    "clientId",
+    "clientSecret",
+    "name",
+    "refreshToken",
+    "refreshTokenExpiry",
+    "taxNumber"
+  ],
+  "$defs": {
+    "ScenarioCreateRequest": {
+      "type": "object",
+      "description": "Base ScenarioCreateRequest.",
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/ScenarioName",
+          "description": "The unique name of the scenario type."
+        }
+      },
+      "required": [
+        "name"
+      ]
+    },
+    "ScenarioName": {
+      "type": "string",
+      "enum": [
+        "BELGIUM_EINVOICE",
+        "DENMARK_EINVOICE",
+        "ESTONIA_EINVOICE",
+        "FINLAND_EINVOICE",
+        "FRANCE_EINVOICE",
+        "GERMANY_EINVOICE",
+        "HUNGARY_EINVOICE",
+        "ITALY_EINVOICE",
+        "NETHERLANDS_EINVOICE",
+        "NORWAY_EINVOICE",
+        "POLAND_EINVOICE",
+        "ROMANIA_EINVOICE",
+        "SWEDEN_EINVOICE",
+        "UNITED_KINGDOM_EINVOICE"
+      ]
+    }
+  }
+}

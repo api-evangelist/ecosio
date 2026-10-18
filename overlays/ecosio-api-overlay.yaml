@@ -1,0 +1,58 @@
+overlay: 1.0.0
+info:
+  title: ecosio api overlay
+  version: 1.0.0
+extends: ../openapi/_original/ecosio-api-openapi.json
+x-generated: '2026-10-18'
+x-method: generated
+actions:
+- target: $.info
+  description: Agent-facing summary and provenance
+  update:
+    x-apievangelist-summary: 'ecosio Messaging API (ecosio.api). Auth: HTTP Basic (user id + user key) plus X-APP-KEY header. Typical flows: deliverMessage
+      -> getStatusOfDeliveredMessage -> getAcknowledgement; getMessageList -> getReceivedMessage -> callback.'
+    x-apievangelist-docs: https://connect.ecosio.com/reference/llms.txt
+- target: $.paths['/api/v1/archives/{archiveId}'].get
+  description: Add a stable operationId (the provider spec publishes none for this operation)
+  update:
+    operationId: getArchiveStatus
+- target: $.paths['/api/v1/documents/{messageId}'].get
+  description: Add a stable operationId (the provider spec publishes none for this operation)
+  update:
+    operationId: getEInvoiceDocuments
+- target: $.paths['/api/v1/downloads/{archiveId}'].get
+  description: Add a stable operationId (the provider spec publishes none for this operation)
+  update:
+    operationId: downloadArchive
+- target: $.paths['/api/v1/ack/{messageId}'].get
+  description: Mark read-only for agents
+  update:
+    x-agent-readonly: true
+- target: $.paths['/api/v1/archives/{archiveId}'].get
+  description: Mark read-only for agents
+  update:
+    x-agent-readonly: true
+- target: $.paths['/api/v1/delivery/{messageId}'].get
+  description: Mark read-only for agents
+  update:
+    x-agent-readonly: true
+- target: $.paths['/api/v1/documents/{messageId}'].get
+  description: Mark read-only for agents
+  update:
+    x-agent-readonly: true
+- target: $.paths['/api/v1/downloads/{archiveId}'].get
+  description: Mark read-only for agents
+  update:
+    x-agent-readonly: true
+- target: $.paths['/api/v1/fetch'].get
+  description: Mark read-only for agents
+  update:
+    x-agent-readonly: true
+- target: $.paths['/api/v1/msg/{messageId}'].get
+  description: Mark read-only for agents
+  update:
+    x-agent-readonly: true
+- target: $.paths['/api/v1/securityCredentials'].get
+  description: Mark read-only for agents
+  update:
+    x-agent-readonly: true

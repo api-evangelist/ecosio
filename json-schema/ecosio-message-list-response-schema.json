@@ -1,0 +1,135 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/ecosio/main/json-schema/ecosio-message-list-response-schema.json",
+  "title": "MessageListResponse",
+  "description": "List of metadata for all received messages that are available for retrieval.",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/ecosio-vertex-messaging-api-openapi.yml#/components/schemas/MessageListResponse",
+  "properties": {
+    "availableMessages": {
+      "description": "Count of available messages that match the specified query parameters.",
+      "format": "int32",
+      "type": "integer"
+    },
+    "messages": {
+      "description": "List of metadata for each message.",
+      "items": {
+        "$ref": "#/$defs/MessageInfo"
+      },
+      "type": "array"
+    }
+  },
+  "required": [
+    "availableMessages",
+    "messages"
+  ],
+  "type": "object",
+  "$defs": {
+    "MessageInfo": {
+      "description": "Metadata for a message.",
+      "properties": {
+        "charset": {
+          "description": "Encoding of the message.",
+          "type": "string"
+        },
+        "documentTypeId": {
+          "description": "Internal ID of the identified document type of the message.",
+          "type": "string"
+        },
+        "fileName": {
+          "description": "Filename of the message.",
+          "type": "string"
+        },
+        "lastChanged": {
+          "description": "Timestamp of the message's last update, specified in ISO 8601 format.",
+          "format": "date-time",
+          "type": "string"
+        },
+        "messageId": {
+          "description": "ID of the message.",
+          "format": "uuid",
+          "type": "string"
+        },
+        "messageSize": {
+          "description": "Size of the message, specified in bytes.",
+          "format": "int32",
+          "type": "integer"
+        },
+        "mimeType": {
+          "description": "Identified document type of the message.",
+          "type": "string"
+        },
+        "receivedAt": {
+          "description": "Timestamp of the message's receipt, specified in ISO 8601 format.",
+          "format": "date-time",
+          "type": "string"
+        },
+        "receiverName": {
+          "description": "Name of the recipient.",
+          "type": "string"
+        },
+        "receiverUuid": {
+          "description": "ID of the recipient.",
+          "format": "uuid",
+          "type": "string"
+        },
+        "reference": {
+          "description": "Reference ID found within the message body.",
+          "type": "string"
+        },
+        "senderName": {
+          "description": "Name of the sender.",
+          "type": "string"
+        },
+        "senderUuid": {
+          "description": "ID of the sender.",
+          "format": "uuid",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/StatusEnum",
+          "description": "Status of the message.",
+          "enum": [
+            "HANDLED",
+            "TRANSMITTED",
+            "ERROR",
+            "TRANSIENT_ERROR",
+            "RETAINED",
+            "PROCESSING"
+          ]
+        }
+      },
+      "required": [
+        "charset",
+        "documentTypeId",
+        "fileName",
+        "lastChanged",
+        "messageId",
+        "messageSize",
+        "mimeType",
+        "receivedAt",
+        "receiverName",
+        "receiverUuid",
+        "reference",
+        "senderName",
+        "senderUuid",
+        "status"
+      ],
+      "type": "object"
+    },
+    "StatusEnum": {
+      "description": "Status of a message.",
+      "enum": [
+        "HANDLED",
+        "TRANSMITTED",
+        "ERROR",
+        "TRANSIENT_ERROR",
+        "RETAINED",
+        "PROCESSING"
+      ],
+      "type": "string"
+    }
+  }
+}

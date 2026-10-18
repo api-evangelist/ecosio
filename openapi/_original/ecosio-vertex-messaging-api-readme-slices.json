@@ -1,0 +1,1568 @@
+[
+ {
+  "page": "https://connect.ecosio.com/reference/confirm.md",
+  "definition": {
+   "components": {
+    "schemas": {
+     "ConfirmRequest": {
+      "description": "Status of message processing.",
+      "properties": {
+       "index": {
+        "additionalProperties": {},
+        "description": "Index of the message as a key/value pair, such as invoice numbers. Supports multiple pairs and array values per key. The keys and values are included in the full-text search in monitor, allowing messages to be located by any of these terms.",
+        "example": "{'IDOC in ERP System':'0000000962707731', 'ECB GUID':'369781112B0A1FE09DF22983AE7292D9'}",
+        "type": "object"
+       },
+       "result": {
+        "description": "If true, indicates the message processing was successful.",
+        "example": true,
+        "type": "boolean"
+       },
+       "text": {
+        "description": "Additional information about message processing.",
+        "example": "Sales order created",
+        "type": "string"
+       }
+      },
+      "required": [
+       "result"
+      ],
+      "type": "object"
+     },
+     "Error": {
+      "description": "Details of errors.",
+      "properties": {
+       "code": {
+        "description": "Error code returned.",
+        "example": "ValidationError",
+        "type": "string"
+       },
+       "details": {
+        "description": "Array of specific errors that occurred.",
+        "items": {
+         "$ref": "#/components/schemas/ErrorDetail"
+        },
+        "type": "array"
+       },
+       "message": {
+        "description": "Details about the error.",
+        "example": "/:Invoice[1]/cac:AccountingCustomerParty[1]/cac:Party[1]/cbc:EndpointID[1], [BR-CL-25]-Endpoint identifier scheme identifier MUST belong to the CEF EAS code list",
+        "type": "string"
+       },
+       "target": {
+        "description": "Source where the error occurred.",
+        "example": "Validation",
+        "type": "string"
+       }
+      },
+      "required": [
+       "code",
+       "message"
+      ],
+      "type": "object"
+     },
+     "ErrorDetail": {
+      "properties": {
+       "code": {
+        "description": "Error code returned.",
+        "example": "ValidationError",
+        "type": "string"
+       },
+       "message": {
+        "description": "Details about the error.",
+        "example": "/:Invoice[1]/cac:AccountingCustomerParty[1]/cac:Party[1]/cbc:EndpointID[1], [BR-CL-25]-Endpoint identifier scheme identifier MUST belong to the CEF EAS code list",
+        "type": "string"
+       }
+      },
+      "required": [
+       "code",
+       "message"
+      ],
+      "type": "object"
+     },
+     "ErrorResponse": {
+      "description": "Details of an error.",
+      "properties": {
+       "error": {
+        "$ref": "#/components/schemas/Error",
+        "description": "Details of the error."
+       }
+      },
+      "required": [
+       "error"
+      ],
+      "type": "object"
+     }
+    },
+    "securitySchemes": {
+     "oauth2_client_credentials_flow": {
+      "flows": {
+       "clientCredentials": {
+        "scopes": {},
+        "tokenUrl": "https://dev-auth.vtxdev.net/oauth/token"
+       }
+      },
+      "type": "oauth2"
+     }
+    }
+   },
+   "info": {
+    "description": "API for managing and exchanging messages on the Vertex e-invoicing platform.",
+    "title": "Vertex messaging API",
+    "version": "1.0.0"
+   },
+   "openapi": "3.1.0",
+   "paths": {
+    "/api/v1/messages/{messageId}/confirm": {
+     "post": {
+      "description": "Confirms successful or unsuccessful processing of a message by updating the status. A successful response indicates the status was successfully updated.",
+      "operationId": "confirm",
+      "parameters": [
+       {
+        "description": "ID of the message to confirm.",
+        "in": "path",
+        "name": "messageId",
+        "required": true,
+        "schema": {
+         "format": "uuid",
+         "type": "string"
+        }
+       }
+      ],
+      "requestBody": {
+       "content": {
+        "application/json": {
+         "schema": {
+          "$ref": "#/components/schemas/ConfirmRequest"
+         }
+        }
+       },
+       "required": true
+      },
+      "responses": {
+       "204": {
+        "description": "No Content"
+       },
+       "400": {
+        "content": {
+         "application/json": {
+          "schema": {
+           "$ref": "#/components/schemas/ErrorResponse"
+          }
+         }
+        },
+        "description": "Bad Request"
+       },
+       "401": {
+        "content": {
+         "application/json": {
+          "schema": {
+           "$ref": "#/components/schemas/ErrorResponse"
+          }
+         }
+        },
+        "description": "Unauthorized"
+       },
+       "403": {
+        "content": {
+         "application/json": {
+          "schema": {
+           "$ref": "#/components/schemas/ErrorResponse"
+          }
+         }
+        },
+        "description": "Forbidden"
+       },
+       "404": {
+        "content": {
+         "application/json": {
+          "schema": {
+           "$ref": "#/components/schemas/ErrorResponse"
+          }
+         }
+        },
+        "description": "Not Found"
+       },
+       "409": {
+        "content": {
+         "application/json": {
+          "schema": {
+           "$ref": "#/components/schemas/ErrorResponse"
+          }
+         }
+        },
+        "description": "Conflict"
+       },
+       "413": {
+        "content": {
+         "application/json": {
+          "schema": {
+           "$ref": "#/components/schemas/ErrorResponse"
+          }
+         }
+        },
+        "description": "Content Too Large"
+       },
+       "429": {
+        "content": {
+         "application/json": {
+          "schema": {
+           "$ref": "#/components/schemas/ErrorResponse"
+          }
+         }
+        },
+        "description": "Too Many Requests. This endpoint is limited to 50 confirmations per message."
+       },
+       "500": {
+        "content": {
+         "application/json": {
+          "schema": {
+           "$ref": "#/components/schemas/ErrorResponse"
+          }
+         }
+        },
+        "description": "Internal Server Error"
+       },
+       "503": {
+        "content": {
+         "*/*": {
+          "schema": {
+           "$ref": "#/components/schemas/ErrorResponse"
+          }
+         }
+        },
+        "description": "Service Unavailable"
+       }
+      },
+      "security": [
+       {
+        "oauth2_client_credentials_flow": []
+       }
+      ],
+      "summary": "Confirm processing of a message",
+      "tags": [
+       "message-controller"
+      ]
+     }
+    }
+   },
+   "servers": [
+    {
+     "description": "QA instance of the Vertex Messaging API",
+     "url": "https://e-invoicing-message-qa.platdev.vtxdev.net"
+    }
+   ]
+  }
+ },
+ {
+  "page": "https://connect.ecosio.com/reference/getdocuments.md",
+  "definition": {
+   "components": {
+    "schemas": {
+     "Error": {
+      "description": "Details of errors.",
+      "properties": {
+       "code": {
+        "description": "Error code returned.",
+        "example": "ValidationError",
+        "type": "string"
+       },
+       "details": {
+        "description": "Array of specific errors that occurred.",
+        "items": {
+         "$ref": "#/components/schemas/ErrorDetail"
+        },
+        "type": "array"
+       },
+       "message": {
+        "description": "Details about the error.",
+        "example": "/:Invoice[1]/cac:AccountingCustomerParty[1]/cac:Party[1]/cbc:EndpointID[1], [BR-CL-25]-Endpoint identifier scheme identifier MUST belong to the CEF EAS code list",
+        "type": "string"
+       },
+       "target": {
+        "description": "Source where the error occurred.",
+        "example": "Validation",
+        "type": "string"
+       }
+      },
+      "required": [
+       "code",
+       "message"
+      ],
+      "type": "object"
+     },
+     "ErrorDetail": {
+      "properties": {
+       "code": {
+        "description": "Error code returned.",
+        "example": "ValidationError",
+        "type": "string"
+       },
+       "message": {
+        "description": "Details about the error.",
+        "example": "/:Invoice[1]/cac:AccountingCustomerParty[1]/cac:Party[1]/cbc:EndpointID[1], [BR-CL-25]-Endpoint identifier scheme identifier MUST belong to the CEF EAS code list",
+        "type": "string"
+       }
+      },
+      "required": [
+       "code",
+       "message"
+      ],
+      "type": "object"
+     },
+     "ErrorResponse": {
+      "description": "Details of an error.",
+      "properties": {
+       "error": {
+        "$ref": "#/components/schemas/Error",
+        "description": "Details of the error."
+       }
+      },
+      "required": [
+       "error"
+      ],
+      "type": "object"
+     }
+    },
+    "securitySchemes": {
+     "oauth2_client_credentials_flow": {
+      "flows": {
+       "clientCredentials": {
+        "scopes": {},
+        "tokenUrl": "https://dev-auth.vtxdev.net/oauth/token"
+       }
+      },
+      "type": "oauth2"
+     }
+    }
+   },
+   "info": {
+    "description": "API for managing and exchanging messages on the Vertex e-invoicing platform.",
+    "title": "Vertex messaging API",
+    "version": "1.0.0"
+   },
+   "openapi": "3.1.0",
+   "paths": {
+    "/api/v1/messages/{messageId}/documents": {
+     "get": {
+      "description": "Retrieves a ZIP file containing the message's original invoice and confirmation of receipt. Contents may vary by country. The response returns the ZIP file only after all necessary processing is complete, which means internal processing for inbound messages and official tax authority acknowledgement for outbound messages.",
+      "operationId": "getDocuments",
+      "parameters": [
+       {
+        "description": "ID of the message.",
+        "in": "path",
+        "name": "messageId",
+        "required": true,
+        "schema": {
+         "format": "uuid",
+         "type": "string"
+        }
+       }
+      ],
+      "responses": {
+       "200": {
+        "content": {
+         "application/zip": {
+          "schema": {
+           "format": "binary",
+           "type": "string"
+          }
+         }
+        },
+        "description": "OK"
+       },
+       "202": {
+        "description": "Accepted"
+       },
+       "400": {
+        "content": {
+         "application/json": {
+          "schema": {
+           "$ref": "#/components/schemas/ErrorResponse"
+          }
+         }
+        },
+        "description": "Bad Request"
+       },
+       "401": {
+        "content": {
+         "application/json": {
+          "schema": {
+           "$ref": "#/components/schemas/ErrorResponse"
+          }
+         }
+        },
+        "description": "Unauthorized"
+       },
+       "403": {
+        "content": {
+         "application/json": {
+          "schema": {
+           "$ref": "#/components/schemas/ErrorResponse"
+          }
+         }
+        },
+        "description": "Forbidden"
+       },
+       "404": {
+        "content": {
+         "application/json": {
+          "schema": {
+           "$ref": "#/components/schemas/ErrorResponse"
+          }
+         }
+        },
+        "description": "Not Found"
+       },
+       "409": {
+        "content": {
+         "application/json": {
+          "schema": {
+           "$ref": "#/components/schemas/ErrorResponse"
+          }
+         }
+        },
+        "description": "Conflict"
+       },
+       "429": {
+        "content": {
+         "application/json": {
+          "schema": {
+           "$ref": "#/components/schemas/ErrorResponse"
+          }
+         }
+        },
+        "description": "Too Many Requests"
+       },
+       "500": {
+        "content": {
+         "application/json": {
+          "schema": {
+           "$ref": "#/components/schemas/ErrorResponse"
+          }
+         }
+        },
+        "description": "Internal Server Error"
+       },
+       "503": {
+        "content": {
+         "*/*": {
+          "schema": {
+           "$ref": "#/components/schemas/ErrorResponse"
+          }
+         }
+        },
+        "description": "Service Unavailable"
+       }
+      },
+      "security": [
+       {
+        "oauth2_client_credentials_flow": []
+       }
+      ],
+      "summary": "Retrieve message documents",
+      "tags": [
+       "message-controller"
+      ]
+     }
+    }
+   },
+   "servers": [
+    {
+     "description": "QA instance of the Vertex Messaging API",
+     "url": "https://e-invoicing-message-qa.platdev.vtxdev.net"
+    }
+   ]
+  }
+ },
+ {
+  "page": "https://connect.ecosio.com/reference/getmessage.md",
+  "definition": {
+   "components": {
+    "schemas": {
+     "Error": {
+      "description": "Details of errors.",
+      "properties": {
+       "code": {
+        "description": "Error code returned.",
+        "example": "ValidationError",
+        "type": "string"
+       },
+       "details": {
+        "description": "Array of specific errors that occurred.",
+        "items": {
+         "$ref": "#/components/schemas/ErrorDetail"
+        },
+        "type": "array"
+       },
+       "message": {
+        "description": "Details about the error.",
+        "example": "/:Invoice[1]/cac:AccountingCustomerParty[1]/cac:Party[1]/cbc:EndpointID[1], [BR-CL-25]-Endpoint identifier scheme identifier MUST belong to the CEF EAS code list",
+        "type": "string"
+       },
+       "target": {
+        "description": "Source where the error occurred.",
+        "example": "Validation",
+        "type": "string"
+       }
+      },
+      "required": [
+       "code",
+       "message"
+      ],
+      "type": "object"
+     },
+     "ErrorDetail": {
+      "properties": {
+       "code": {
+        "description": "Error code returned.",
+        "example": "ValidationError",
+        "type": "string"
+       },
+       "message": {
+        "description": "Details about the error.",
+        "example": "/:Invoice[1]/cac:AccountingCustomerParty[1]/cac:Party[1]/cbc:EndpointID[1], [BR-CL-25]-Endpoint identifier scheme identifier MUST belong to the CEF EAS code list",
+        "type": "string"
+       }
+      },
+      "required": [
+       "code",
+       "message"
+      ],
+      "type": "object"
+     },
+     "ErrorResponse": {
+      "description": "Details of an error.",
+      "properties": {
+       "error": {
+        "$ref": "#/components/schemas/Error",
+        "description": "Details of the error."
+       }
+      },
+      "required": [
+       "error"
+      ],
+      "type": "object"
+     },
+     "HistoryEntry": {
+      "description": "Historical record of the message.",
+      "properties": {
+       "message": {
+        "description": "Message body at the time the historical record was created.",
+        "example": "Successful processing confirmed by https://api.anaf.ro/prod/FCTEL.",
+        "type": "string"
+       },
+       "status": {
+        "$ref": "#/components/schemas/StatusEnum",
+        "description": "Status at the time the historical record was created.",
+        "enum": [
+         "HANDLED",
+         "TRANSMITTED",
+         "ERROR",
+         "TRANSIENT_ERROR",
+         "RETAINED",
+         "PROCESSING"
+        ],
+        "example": "PROCESSING"
+       },
+       "timestamp": {
+        "description": "Timestamp of the historical record, specified in ISO 8601 format.",
+        "example": "2025-06-26T18:41:46Z",
+        "format": "date-time",
+        "type": "string"
+       }
+      },
+      "required": [
+       "message",
+       "status",
+       "timestamp"
+      ],
+      "type": "object"
+     },
+     "MessageDetailsResponse": {
+      "description": "Details of a message.",
+      "properties": {
+       "acknowledgment": {
+        "description": "Confirmation of the message, specified in Base64 format.",
+        "example": "VGhpcyBpcyBhIHRlc3QNDVDMDI0RkQzLUNDMzZFNzNGQkMtQjIiLCJwcm9jZXNzaW5nQ29kZSI6MjAwLCJwcm9jZXNzaW5nRGVzY3JpcHRpb24iOiJaYWtvxYRjemVuaWUgZXRhcHUgYXJjaGl3aXphY2ppIGRhbnljaCBmYWt0dXJ5IiwiZWxlbWVudFJlZmVyZW5jZU51bWJlciI6IjIwMjMwODA4LUVFLURDQkQyNjZFMjQtRjA4NjFDNjFFNy02OSIsImludm9pY2VTdGF0dXMiOnsiaW52b2ljZU51bWJlciI6IkVGMTEwNzQ5Iiwia3NlZlJlZmVyZW5jZU51bWJlciI6Ijc3NzMwNjAzMjEtMjAyMzA4MDgtM0Q4QjRFN0RDRDJELTc5IiwiYWNxdWlzaXRpb25UaW1lc3RhbXAiOiIyMDIzLTA4LTA4VDA3OjEwOjE2LjIwM=",
+        "format": "byte",
+        "type": "string"
+       },
+       "error": {
+        "$ref": "#/components/schemas/Error",
+        "description": "Details of an error if one occurred."
+       },
+       "externalReferences": {
+        "additionalProperties": {
+         "type": "string"
+        },
+        "description": "Reference of an external party, such as a government.",
+        "example": {
+         "RO_ID_INCARCARE": "4371452761"
+        },
+        "type": "object"
+       },
+       "history": {
+        "description": "Status history of the message.",
+        "items": {
+         "$ref": "#/components/schemas/HistoryEntry"
+        },
+        "type": "array"
+       },
+       "messageInfo": {
+        "$ref": "#/components/schemas/MessageInfo"
+       }
+      },
+      "required": [
+       "acknowledgment",
+       "externalReferences",
+       "history",
+       "messageInfo"
+      ],
+      "type": "object"
+     },
+     "MessageInfo": {
+      "description": "Metadata for a message.",
+      "properties": {
+       "charset": {
+        "description": "Encoding of the message.",
+        "example": "UTF-8",
+        "type": "string"
+       },
+       "documentTypeId": {
+        "description": "Internal ID of the identified document type of the message.",
+        "example": "XML_4p1_ebInterface",
+        "type": "string"
+       },
+       "fileName": {
+        "description": "Filename of the message.",
+        "example": "70d4ec9d-33f9-46c1-94fc-93548dad7612.xml",
+        "type": "string"
+       },
+       "lastChanged": {
+        "description": "Timestamp of the message's last update, specified in ISO 8601 format.",
+        "example": "2025-09-22T14:26Z",
+        "format": "date-time",
+        "type": "string"
+       },
+       "messageId": {
+        "description": "ID of the message.",
+        "example": "70d4ec9d-33f9-46c1-94fc-93548dad7612",
+        "format": "uuid",
+        "type": "string"
+       },
+       "messageSize": {
+        "description": "Size of the message, specified in bytes.",
+        "example": 1212341,
+        "format": "int32",
+        "type": "integer"
+       },
+       "mimeType": {
+        "description": "Identified document type of the message.",
+        "example": "XML",
+        "type": "string"
+       },
+       "receivedAt": {
+        "description": "Timestamp of the message's receipt, specified in ISO 8601 format.",
+        "example": "2025-09-22T14:25:03Z",
+        "format": "date-time",
+        "type": "string"
+       },
+       "receiverName": {
+        "description": "Name of the recipient.",
+        "example": "Test Receiver",
+        "type": "string"
+       },
+       "receiverUuid": {
+        "description": "ID of the recipient.",
+        "example": "4ac1e432-f900-424f-92ab-edd501812342",
+        "format": "uuid",
+        "type": "string"
+       },
+       "reference": {
+        "description": "Reference ID found within the message body.",
+        "example": 4711,
+        "type": "string"
+       },
+       "senderName": {
+        "description": "Name of the sender.",
+        "example": "Test Sender",
+        "type": "string"
+       },
+       "senderUuid": {
+        "description": "ID of the sender.",
+        "example": "45c2dae5-4235-45b0-98c2-c2342b10919f",
+        "format": "uuid",
+        "type": "string"
+       },
+       "status": {
+        "$ref": "#/components/schemas/StatusEnum",
+        "description": "Status of the message.",
+        "enum": [
+         "HANDLED",
+         "TRANSMITTED",
+         "ERROR",
+         "TRANSIENT_ERROR",
+         "RETAINED",
+         "PROCESSING"
+        ],
+        "example": "PROCESSING"
+       }
+      },
+      "required": [
+       "charset",
+       "documentTypeId",
+       "fileName",
+       "lastChanged",
+       "messageId",
+       "messageSize",
+       "mimeType",
+       "receivedAt",
+       "receiverName",
+       "receiverUuid",
+       "reference",
+       "senderName",
+       "senderUuid",
+       "status"
+      ],
+      "type": "object"
+     },
+     "MessageRawResponse": {
+      "description": "Message content and details",
+      "properties": {
+       "message": {
+        "description": "Message content, specified in Base64 format.",
+        "example": "VGhpcyBpcyBhIHRlc3Q=",
+        "format": "byte",
+        "type": "string"
+       },
+       "messageInfo": {
+        "$ref": "#/components/schemas/MessageInfo"
+       }
+      },
+      "required": [
+       "message",
+       "messageInfo"
+      ],
+      "type": "object"
+     },
+     "MessageView": {
+      "description": "Details or status of a message.",
+      "enum": [
+       "details",
+       "status"
+      ],
+      "example": "status",
+      "type": "string"
+     },
+     "StatusEnum": {
+      "description": "Status of a message.",
+      "enum": [
+       "HANDLED",
+       "TRANSMITTED",
+       "ERROR",
+       "TRANSIENT_ERROR",
+       "RETAINED",
+       "PROCESSING"
+      ],
+      "type": "string"
+     },
+     "StatusResponse": {
+      "description": "Status of a message.",
+      "properties": {
+       "error": {
+        "$ref": "#/components/schemas/Error",
+        "description": "Details of an error if one occurred."
+       },
+       "lastChanged": {
+        "description": "Timestamp of the message's last update, specified in ISO 8601 format.",
+        "example": "2025-05-22T14:26Z",
+        "format": "date-time",
+        "type": "string"
+       },
+       "messageId": {
+        "description": "ID of the message.",
+        "example": "70d4ec9d-33f9-46c1-94fc-93548dad7612",
+        "format": "uuid",
+        "type": "string"
+       },
+       "receivedAt": {
+        "description": "Timestamp of the message's receipt, specified in ISO 8601 format.",
+        "example": "2025-05-22T14:26Z",
+        "format": "date-time",
+        "type": "string"
+       },
+       "status": {
+        "$ref": "#/components/schemas/StatusEnum",
+        "description": "Status of the message.",
+        "enum": [
+         "HANDLED",
+         "TRANSMITTED",
+         "ERROR",
+         "TRANSIENT_ERROR",
+         "RETAINED",
+         "PROCESSING"
+        ],
+        "example": "PROCESSING"
+       }
+      },
+      "required": [
+       "lastChanged",
+       "messageId",
+       "receivedAt",
+       "status"
+      ],
+      "type": "object"
+     }
+    },
+    "securitySchemes": {
+     "oauth2_client_credentials_flow": {
+      "flows": {
+       "clientCredentials": {
+        "scopes": {},
+        "tokenUrl": "https://dev-auth.vtxdev.net/oauth/token"
+       }
+      },
+      "type": "oauth2"
+     }
+    }
+   },
+   "info": {
+    "description": "API for managing and exchanging messages on the Vertex e-invoicing platform.",
+    "title": "Vertex messaging API",
+    "version": "1.0.0"
+   },
+   "openapi": "3.1.0",
+   "paths": {
+    "/api/v1/messages/{messageId}": {
+     "get": {
+      "description": "Retrieves a message's body, status, or detailed metadata.",
+      "operationId": "getMessage",
+      "parameters": [
+       {
+        "description": "ID of the message",
+        "in": "path",
+        "name": "messageId",
+        "required": true,
+        "schema": {
+         "format": "uuid",
+         "type": "string"
+        }
+       },
+       {
+        "description": "Details of the message to be returned. `status` returns the message's status. `details` returns all available metadata, external references, and acknowledgements for the message. If omitted, the message body is returned in Base64 format.",
+        "example": "details",
+        "in": "query",
+        "name": "view",
+        "required": false,
+        "schema": {
+         "$ref": "#/components/schemas/MessageView"
+        }
+       }
+      ],
+      "responses": {
+       "200": {
+        "content": {
+         "application/json": {
+          "schema": {
+           "oneOf": [
+            {
+             "$ref": "#/components/schemas/MessageRawResponse"
+            },
+            {
+             "$ref": "#/components/schemas/StatusResponse"
+            },
+            {
+             "$ref": "#/components/schemas/MessageDetailsResponse"
+            }
+           ]
+          }
+         }
+        },
+        "description": "OK"
+       },
+       "400": {
+        "content": {
+         "application/json": {
+          "schema": {
+           "$ref": "#/components/schemas/ErrorResponse"
+          }
+         }
+        },
+        "description": "Bad Request"
+       },
+       "401": {
+        "content": {
+         "application/json": {
+          "schema": {
+           "$ref": "#/components/schemas/ErrorResponse"
+          }
+         }
+        },
+        "description": "Unauthorized"
+       },
+       "403": {
+        "content": {
+         "application/json": {
+          "schema": {
+           "$ref": "#/components/schemas/ErrorResponse"
+          }
+         }
+        },
+        "description": "Forbidden"
+       },
+       "404": {
+        "content": {
+         "application/json": {
+          "schema": {
+           "$ref": "#/components/schemas/ErrorResponse"
+          }
+         }
+        },
+        "description": "Not Found"
+       },
+       "429": {
+        "content": {
+         "application/json": {
+          "schema": {
+           "$ref": "#/components/schemas/ErrorResponse"
+          }
+         }
+        },
+        "description": "Too Many Requests. This endpoint is limited to 50 retrievals per message."
+       },
+       "500": {
+        "content": {
+         "application/json": {
+          "schema": {
+           "$ref": "#/components/schemas/ErrorResponse"
+          }
+         }
+        },
+        "description": "Internal Server Error"
+       },
+       "503": {
+        "content": {
+         "*/*": {
+          "schema": {
+           "$ref": "#/components/schemas/ErrorResponse"
+          }
+         }
+        },
+        "description": "Service Unavailable"
+       }
+      },
+      "security": [
+       {
+        "oauth2_client_credentials_flow": []
+       }
+      ],
+      "summary": "Retrieve a message",
+      "tags": [
+       "message-controller"
+      ]
+     }
+    }
+   },
+   "servers": [
+    {
+     "description": "QA instance of the Vertex Messaging API",
+     "url": "https://e-invoicing-message-qa.platdev.vtxdev.net"
+    }
+   ]
+  }
+ },
+ {
+  "page": "https://connect.ecosio.com/reference/listmessages.md",
+  "definition": {
+   "components": {
+    "schemas": {
+     "Error": {
+      "description": "Details of errors.",
+      "properties": {
+       "code": {
+        "description": "Error code returned.",
+        "example": "ValidationError",
+        "type": "string"
+       },
+       "details": {
+        "description": "Array of specific errors that occurred.",
+        "items": {
+         "$ref": "#/components/schemas/ErrorDetail"
+        },
+        "type": "array"
+       },
+       "message": {
+        "description": "Details about the error.",
+        "example": "/:Invoice[1]/cac:AccountingCustomerParty[1]/cac:Party[1]/cbc:EndpointID[1], [BR-CL-25]-Endpoint identifier scheme identifier MUST belong to the CEF EAS code list",
+        "type": "string"
+       },
+       "target": {
+        "description": "Source where the error occurred.",
+        "example": "Validation",
+        "type": "string"
+       }
+      },
+      "required": [
+       "code",
+       "message"
+      ],
+      "type": "object"
+     },
+     "ErrorDetail": {
+      "properties": {
+       "code": {
+        "description": "Error code returned.",
+        "example": "ValidationError",
+        "type": "string"
+       },
+       "message": {
+        "description": "Details about the error.",
+        "example": "/:Invoice[1]/cac:AccountingCustomerParty[1]/cac:Party[1]/cbc:EndpointID[1], [BR-CL-25]-Endpoint identifier scheme identifier MUST belong to the CEF EAS code list",
+        "type": "string"
+       }
+      },
+      "required": [
+       "code",
+       "message"
+      ],
+      "type": "object"
+     },
+     "ErrorResponse": {
+      "description": "Details of an error.",
+      "properties": {
+       "error": {
+        "$ref": "#/components/schemas/Error",
+        "description": "Details of the error."
+       }
+      },
+      "required": [
+       "error"
+      ],
+      "type": "object"
+     },
+     "MessageInfo": {
+      "description": "Metadata for a message.",
+      "properties": {
+       "charset": {
+        "description": "Encoding of the message.",
+        "example": "UTF-8",
+        "type": "string"
+       },
+       "documentTypeId": {
+        "description": "Internal ID of the identified document type of the message.",
+        "example": "XML_4p1_ebInterface",
+        "type": "string"
+       },
+       "fileName": {
+        "description": "Filename of the message.",
+        "example": "70d4ec9d-33f9-46c1-94fc-93548dad7612.xml",
+        "type": "string"
+       },
+       "lastChanged": {
+        "description": "Timestamp of the message's last update, specified in ISO 8601 format.",
+        "example": "2025-09-22T14:26Z",
+        "format": "date-time",
+        "type": "string"
+       },
+       "messageId": {
+        "description": "ID of the message.",
+        "example": "70d4ec9d-33f9-46c1-94fc-93548dad7612",
+        "format": "uuid",
+        "type": "string"
+       },
+       "messageSize": {
+        "description": "Size of the message, specified in bytes.",
+        "example": 1212341,
+        "format": "int32",
+        "type": "integer"
+       },
+       "mimeType": {
+        "description": "Identified document type of the message.",
+        "example": "XML",
+        "type": "string"
+       },
+       "receivedAt": {
+        "description": "Timestamp of the message's receipt, specified in ISO 8601 format.",
+        "example": "2025-09-22T14:25:03Z",
+        "format": "date-time",
+        "type": "string"
+       },
+       "receiverName": {
+        "description": "Name of the recipient.",
+        "example": "Test Receiver",
+        "type": "string"
+       },
+       "receiverUuid": {
+        "description": "ID of the recipient.",
+        "example": "4ac1e432-f900-424f-92ab-edd501812342",
+        "format": "uuid",
+        "type": "string"
+       },
+       "reference": {
+        "description": "Reference ID found within the message body.",
+        "example": 4711,
+        "type": "string"
+       },
+       "senderName": {
+        "description": "Name of the sender.",
+        "example": "Test Sender",
+        "type": "string"
+       },
+       "senderUuid": {
+        "description": "ID of the sender.",
+        "example": "45c2dae5-4235-45b0-98c2-c2342b10919f",
+        "format": "uuid",
+        "type": "string"
+       },
+       "status": {
+        "$ref": "#/components/schemas/StatusEnum",
+        "description": "Status of the message.",
+        "enum": [
+         "HANDLED",
+         "TRANSMITTED",
+         "ERROR",
+         "TRANSIENT_ERROR",
+         "RETAINED",
+         "PROCESSING"
+        ],
+        "example": "PROCESSING"
+       }
+      },
+      "required": [
+       "charset",
+       "documentTypeId",
+       "fileName",
+       "lastChanged",
+       "messageId",
+       "messageSize",
+       "mimeType",
+       "receivedAt",
+       "receiverName",
+       "receiverUuid",
+       "reference",
+       "senderName",
+       "senderUuid",
+       "status"
+      ],
+      "type": "object"
+     },
+     "MessageListResponse": {
+      "description": "List of metadata for all received messages that are available for retrieval.",
+      "properties": {
+       "availableMessages": {
+        "description": "Count of available messages that match the specified query parameters.",
+        "example": 12,
+        "format": "int32",
+        "type": "integer"
+       },
+       "messages": {
+        "description": "List of metadata for each message.",
+        "items": {
+         "$ref": "#/components/schemas/MessageInfo"
+        },
+        "type": "array"
+       }
+      },
+      "required": [
+       "availableMessages",
+       "messages"
+      ],
+      "type": "object"
+     },
+     "MessageListView": {
+      "description": "List of all messages from the Vertex e-invoicing platform that are ready for retrieval in FIFO (first-in, first-out) order.",
+      "enum": [
+       "inbox",
+       "outbox",
+       "all"
+      ],
+      "type": "string"
+     },
+     "StatusEnum": {
+      "description": "Status of a message.",
+      "enum": [
+       "HANDLED",
+       "TRANSMITTED",
+       "ERROR",
+       "TRANSIENT_ERROR",
+       "RETAINED",
+       "PROCESSING"
+      ],
+      "type": "string"
+     }
+    },
+    "securitySchemes": {
+     "oauth2_client_credentials_flow": {
+      "flows": {
+       "clientCredentials": {
+        "scopes": {},
+        "tokenUrl": "https://dev-auth.vtxdev.net/oauth/token"
+       }
+      },
+      "type": "oauth2"
+     }
+    }
+   },
+   "info": {
+    "description": "API for managing and exchanging messages on the Vertex e-invoicing platform.",
+    "title": "Vertex messaging API",
+    "version": "1.0.0"
+   },
+   "openapi": "3.1.0",
+   "paths": {
+    "/api/v1/messages": {
+     "get": {
+      "description": "Retrieves a list of all messages from the Vertex e-invoicing platform that are ready for retrieval. The response returns message identifiers in FIFO (first-in, first-out) order and can be used to download the metadata of all the messages.",
+      "operationId": "getMessageList",
+      "parameters": [
+       {
+        "description": "Zero-based index of the page to retrieve. The first page is 0, the second is 1, and so on.",
+        "example": 0,
+        "in": "query",
+        "name": "page",
+        "required": false,
+        "schema": {
+         "minimum": 0,
+         "type": "string"
+        }
+       },
+       {
+        "description": "Source of the messages that are returned. `inbox` messages are those available in your inbox and haven't yet been downloaded. `outbox` messages are those sent to and downloaded by the recipient. `all` includes both `inbox` and `outbox` messages.",
+        "example": "inbox",
+        "in": "query",
+        "name": "view",
+        "required": false,
+        "schema": {
+         "$ref": "#/components/schemas/MessageListView"
+        }
+       }
+      ],
+      "responses": {
+       "200": {
+        "content": {
+         "application/json": {
+          "schema": {
+           "$ref": "#/components/schemas/MessageListResponse"
+          }
+         }
+        },
+        "description": "OK"
+       },
+       "400": {
+        "content": {
+         "application/json": {
+          "schema": {
+           "$ref": "#/components/schemas/ErrorResponse"
+          }
+         }
+        },
+        "description": "Bad Request"
+       },
+       "401": {
+        "content": {
+         "application/json": {
+          "schema": {
+           "$ref": "#/components/schemas/ErrorResponse"
+          }
+         }
+        },
+        "description": "Unauthorized"
+       },
+       "403": {
+        "content": {
+         "application/json": {
+          "schema": {
+           "$ref": "#/components/schemas/ErrorResponse"
+          }
+         }
+        },
+        "description": "Forbidden"
+       },
+       "429": {
+        "content": {
+         "application/json": {
+          "schema": {
+           "$ref": "#/components/schemas/ErrorResponse"
+          }
+         }
+        },
+        "description": "Too Many Requests"
+       },
+       "500": {
+        "content": {
+         "application/json": {
+          "schema": {
+           "$ref": "#/components/schemas/ErrorResponse"
+          }
+         }
+        },
+        "description": "Internal Server Error"
+       },
+       "503": {
+        "content": {
+         "*/*": {
+          "schema": {
+           "$ref": "#/components/schemas/ErrorResponse"
+          }
+         }
+        },
+        "description": "Service Unavailable"
+       }
+      },
+      "security": [
+       {
+        "oauth2_client_credentials_flow": []
+       }
+      ],
+      "summary": "List all messages",
+      "tags": [
+       "message-controller"
+      ]
+     }
+    }
+   },
+   "servers": [
+    {
+     "description": "QA instance of the Vertex Messaging API",
+     "url": "https://e-invoicing-message-qa.platdev.vtxdev.net"
+    }
+   ]
+  }
+ },
+ {
+  "page": "https://connect.ecosio.com/reference/sendmessage.md",
+  "definition": {
+   "components": {
+    "schemas": {
+     "DeliveryRequest": {
+      "description": "Content of the message to be sent.",
+      "properties": {
+       "message": {
+        "description": "Message content, specified in Base64 format.",
+        "example": "dGhpcyBpcyBhIGJhc2UgNjQgY29kZWQgbWVzc2FnZSAtIENVIERvcmlzIEJ1cmRh",
+        "format": "byte",
+        "type": "string"
+       }
+      },
+      "required": [
+       "message"
+      ],
+      "type": "object"
+     },
+     "DeliveryResponse": {
+      "description": "Delivery response after sending a message.",
+      "properties": {
+       "messageId": {
+        "description": "ID of the message that was sent.",
+        "example": "70d4ec9d-33f9-47c1-94fc-91938dad7612",
+        "format": "uuid",
+        "type": "string"
+       }
+      },
+      "required": [
+       "messageId"
+      ],
+      "type": "object"
+     },
+     "Error": {
+      "description": "Details of errors.",
+      "properties": {
+       "code": {
+        "description": "Error code returned.",
+        "example": "ValidationError",
+        "type": "string"
+       },
+       "details": {
+        "description": "Array of specific errors that occurred.",
+        "items": {
+         "$ref": "#/components/schemas/ErrorDetail"
+        },
+        "type": "array"
+       },
+       "message": {
+        "description": "Details about the error.",
+        "example": "/:Invoice[1]/cac:AccountingCustomerParty[1]/cac:Party[1]/cbc:EndpointID[1], [BR-CL-25]-Endpoint identifier scheme identifier MUST belong to the CEF EAS code list",
+        "type": "string"
+       },
+       "target": {
+        "description": "Source where the error occurred.",
+        "example": "Validation",
+        "type": "string"
+       }
+      },
+      "required": [
+       "code",
+       "message"
+      ],
+      "type": "object"
+     },
+     "ErrorDetail": {
+      "properties": {
+       "code": {
+        "description": "Error code returned.",
+        "example": "ValidationError",
+        "type": "string"
+       },
+       "message": {
+        "description": "Details about the error.",
+        "example": "/:Invoice[1]/cac:AccountingCustomerParty[1]/cac:Party[1]/cbc:EndpointID[1], [BR-CL-25]-Endpoint identifier scheme identifier MUST belong to the CEF EAS code list",
+        "type": "string"
+       }
+      },
+      "required": [
+       "code",
+       "message"
+      ],
+      "type": "object"
+     },
+     "ErrorResponse": {
+      "description": "Details of an error.",
+      "properties": {
+       "error": {
+        "$ref": "#/components/schemas/Error",
+        "description": "Details of the error."
+       }
+      },
+      "required": [
+       "error"
+      ],
+      "type": "object"
+     }
+    },
+    "securitySchemes": {
+     "oauth2_client_credentials_flow": {
+      "flows": {
+       "clientCredentials": {
+        "scopes": {},
+        "tokenUrl": "https://dev-auth.vtxdev.net/oauth/token"
+       }
+      },
+      "type": "oauth2"
+     }
+    }
+   },
+   "info": {
+    "description": "API for managing and exchanging messages on the Vertex e-invoicing platform.",
+    "title": "Vertex messaging API",
+    "version": "1.0.0"
+   },
+   "openapi": "3.1.0",
+   "paths": {
+    "/api/v1/messages": {
+     "post": {
+      "description": "Sends a message to the system, confirming receipt in the message queue but does not guarantee subsequent processing. The response returns a unique message ID and the Location header for the sent message.",
+      "operationId": "sendMessage",
+      "requestBody": {
+       "content": {
+        "application/json": {
+         "schema": {
+          "$ref": "#/components/schemas/DeliveryRequest"
+         }
+        }
+       },
+       "required": true
+      },
+      "responses": {
+       "200": {
+        "content": {
+         "application/json": {
+          "schema": {
+           "$ref": "#/components/schemas/DeliveryResponse"
+          }
+         }
+        },
+        "description": "OK"
+       },
+       "400": {
+        "content": {
+         "application/json": {
+          "schema": {
+           "$ref": "#/components/schemas/ErrorResponse"
+          }
+         }
+        },
+        "description": "Bad Request"
+       },
+       "401": {
+        "content": {
+         "application/json": {
+          "schema": {
+           "$ref": "#/components/schemas/ErrorResponse"
+          }
+         }
+        },
+        "description": "Unauthorized"
+       },
+       "403": {
+        "content": {
+         "application/json": {
+          "schema": {
+           "$ref": "#/components/schemas/ErrorResponse"
+          }
+         }
+        },
+        "description": "Forbidden"
+       },
+       "413": {
+        "content": {
+         "application/json": {
+          "schema": {
+           "$ref": "#/components/schemas/ErrorResponse"
+          }
+         }
+        },
+        "description": "Content Too Large"
+       },
+       "429": {
+        "content": {
+         "application/json": {
+          "schema": {
+           "$ref": "#/components/schemas/ErrorResponse"
+          }
+         }
+        },
+        "description": "Too Many Requests"
+       },
+       "500": {
+        "content": {
+         "application/json": {
+          "schema": {
+           "$ref": "#/components/schemas/ErrorResponse"
+          }
+         }
+        },
+        "description": "Internal Server Error"
+       },
+       "503": {
+        "content": {
+         "*/*": {
+          "schema": {
+           "$ref": "#/components/schemas/ErrorResponse"
+          }
+         }
+        },
+        "description": "Service Unavailable"
+       }
+      },
+      "security": [
+       {
+        "oauth2_client_credentials_flow": []
+       }
+      ],
+      "summary": "Send a message",
+      "tags": [
+       "message-controller"
+      ]
+     }
+    }
+   },
+   "servers": [
+    {
+     "description": "QA instance of the Vertex Messaging API",
+     "url": "https://e-invoicing-message-qa.platdev.vtxdev.net"
+    }
+   ]
+  }
+ }
+]

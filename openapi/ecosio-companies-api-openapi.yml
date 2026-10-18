@@ -1,0 +1,529 @@
+openapi: 3.2.0
+info:
+  title: Management Companies API
+  description: API for managing companies and executing compliance and connectivity workflows on the ecosio platform.
+  contact:
+    name: ecosio GmbH
+    url: https://ecosio.com/en
+    email: support@ecosio.com
+  version: 1.4.0
+servers:
+- url: https://api.test.ecosio-hub.com
+  description: TEST instance of ecosio management.api
+tags:
+- name: Companies
+  description: Methods for managing companies
+paths:
+  /api/v1/management/companies/{companyUuid}:
+    get:
+      tags:
+      - Companies
+      summary: Get a company
+      operationId: getCompany
+      parameters:
+      - name: companyUuid
+        in: path
+        description: ID of the company to be retrieved. This can be the external or internal identifier.
+        required: true
+        schema:
+          type: string
+          minLength: 1
+          pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompanyRetrievalResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '405':
+          description: Method Not Allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Too Many Requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - bearerAuth: []
+      - basicAuth: []
+      - X-APP-KEY: []
+    put:
+      tags:
+      - Companies
+      summary: Update a company
+      operationId: updateCompany
+      parameters:
+      - name: companyUuid
+        in: path
+        description: External ID of the company to be updated.
+        required: true
+        schema:
+          type: string
+          minLength: 1
+          pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompanyOperationRequest'
+        required: true
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompanyOperationResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '405':
+          description: Method Not Allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Too Many Requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - bearerAuth: []
+      - basicAuth: []
+      - X-APP-KEY: []
+  /api/v1/management/companies:
+    get:
+      tags:
+      - Companies
+      summary: Find companies
+      operationId: findCompanies
+      parameters:
+      - name: page
+        in: query
+        description: Page number to be retrieved (0-indexed). The size of the page is 50
+        required: false
+        schema:
+          type: string
+          default: '0'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompanyRetrievalPageResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '405':
+          description: Method Not Allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Too Many Requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - bearerAuth: []
+      - basicAuth: []
+      - X-APP-KEY: []
+    post:
+      tags:
+      - Companies
+      summary: Create a company
+      operationId: createCompany
+      parameters:
+      - name: usedForTestOnly
+        in: query
+        description: Marks the entity to be used only for testing purposes.
+        required: false
+        schema:
+          type: boolean
+          default: false
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompanyOperationRequest'
+        required: true
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompanyOperationResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '405':
+          description: Method Not Allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Too Many Requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - bearerAuth: []
+      - basicAuth: []
+      - X-APP-KEY: []
+components:
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          $ref: '#/components/schemas/Error'
+          description: Detailed Error description
+      required:
+      - error
+    ApprovalStatus:
+      type: string
+      enum:
+      - PENDING
+      - APPROVED
+      - ERROR
+      - REJECTED
+      - FAILED
+      - APPLIED
+    CompanyAlias:
+      type: object
+      properties:
+        name:
+          type: string
+          description: An alternate name or alias the company is known by. This value must be unique across all aliases.
+          maxLength: 255
+          minLength: 9
+        description:
+          type: string
+          description: Description of the company alias.
+          maxLength: 255
+          minLength: 0
+        type:
+          type: string
+          description: Type of the alias
+          enum:
+          - GLN
+          - EMAIL_INBOUND_PARTICIPANT_ID
+          - PEPPOL_SENDER_PARTICIPANT_ID
+          - PRIMARY
+    CompanyRetrievalResponse:
+      type: object
+      properties:
+        managedCompanyUuid:
+          type: string
+          format: uuid
+          description: The external unique identifier of the retrieved company
+          example: cd13fea0-2108-11f0-836c-d3d769f7e115
+        companyUuid:
+          type: string
+          format: uuid
+          description: The internal unique identifier of the retrieved company. Can be used in the ecosio monitor or in the ecosio API.
+          example: cd13fea0-2108-11f0-836c-d3d769f7e115
+        companyName:
+          type: string
+          description: The name of the company
+          example: My Company Inc.
+        email:
+          type: string
+          format: email
+          description: The email address of the company's main person of contact
+          example: johndoe@example.com
+        language:
+          type: string
+          description: The language of the company's main person of contact, in ISO 639-1 format
+          example: en
+        aliases:
+          type: array
+          description: Unique aliases to identify the company
+          items:
+            $ref: '#/components/schemas/CompanyAlias'
+          uniqueItems: true
+        parentCompanyUuid:
+          type: string
+          format: uuid
+          description: The unique identifier of the parent company. If parent company is not yet approved, it can be the external identifier (Managed-Company-UUID), otherwise the internal identifier (Company-UUID)
+          example: cd13fea0-2108-11f0-836c-d3d769f7e115
+        approvalUuid:
+          type: string
+          format: uuid
+          description: ID of this company request.
+          example: cd13fea0-2108-11f0-836c-d3d769f7e115
+        approvalStatus:
+          $ref: '#/components/schemas/ApprovalStatus'
+          description: The current status of the latest approval request.
+          examples:
+          - PENDING
+          - APPROVED
+          - REJECTED
+    Error:
+      type: object
+      description: Describes an error item
+      properties:
+        code:
+          type: string
+          description: 'One of a server-defined set of error codes. '
+          example: VALID_240
+        message:
+          type: string
+          description: A human-readable representation of the error.
+          example: Alias is not valid
+        target:
+          type: string
+          description: The target of the error.
+          example: Validation
+        details:
+          type: array
+          description: Represent an array of related errors that occurred during the request.
+          items:
+            $ref: '#/components/schemas/ErrorDetail'
+      required:
+      - code
+      - message
+    ErrorDetail:
+      type: object
+      description: Represent a related error that occurred during the request
+      properties:
+        code:
+          type: string
+          description: 'One of a server-defined set of error codes. '
+          example: VALID_110
+        message:
+          type: string
+          description: A human-readable representation of the error.
+          example: JSON is not valid
+      required:
+      - code
+      - message
+    CompanyOperationResponse:
+      type: object
+      properties:
+        managedCompanyUuid:
+          type: string
+          format: uuid
+          description: The external unique identifier for this company
+          example: cd13fea0-2108-11f0-836c-d3d769f7e115
+        approvalUuid:
+          type: string
+          format: uuid
+          description: The unique identifier for this operation that needs to be approved
+          example: cd13fea0-2108-11f0-836c-d3d769f7e115
+      required:
+      - approvalUuid
+      - managedCompanyUuid
+    CompanyRetrievalPageResponse:
+      type: object
+      properties:
+        content:
+          type: array
+          description: List of items for the current page.
+          items:
+            $ref: '#/components/schemas/CompanyRetrievalResponse'
+        totalPages:
+          type: integer
+          format: int32
+          description: Total number of pages.
+          example: 2
+        totalElements:
+          type: integer
+          format: int64
+          description: Total number of items in the entire collection.
+          example: 62
+        numberOfElements:
+          type: integer
+          format: int32
+          description: Number of items for the current page.
+          example: 12
+        pageSize:
+          type: integer
+          format: int32
+          description: Number of items requested per page.
+          example: 50
+        pageNumber:
+          type: integer
+          format: int32
+          description: Current page number (0-indexed). The first page is 0.
+          example: 1
+      required:
+      - content
+      - numberOfElements
+      - pageNumber
+      - pageSize
+      - totalElements
+      - totalPages
+    CompanyOperationRequest:
+      type: object
+      properties:
+        companyName:
+          type: string
+          description: Name of the company.
+          example: My Company Inc.
+          maxLength: 255
+          minLength: 3
+        email:
+          type: string
+          format: email
+          description: The email address of the company's main person of contact
+          example: johndoe@example.com
+          maxLength: 320
+          minLength: 6
+        language:
+          type: string
+          description: The language of the company's main person of contact, in ISO 639-1 format.
+          example: en
+        aliases:
+          type: array
+          description: Unique aliases to identify the company.
+          items:
+            $ref: '#/components/schemas/CompanyAlias'
+          minItems: 1
+          uniqueItems: true
+        parentCompanyUuid:
+          type: string
+          format: uuid
+          description: ID of the parent company. This can be the external or internal identifier.
+          example: cd13fea0-2108-11f0-836c-d3d769f7e115
+          pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$
+      required:
+      - aliases
+      - companyName
+      - email
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    X-APP-KEY:
+      type: apiKey
+      name: X-APP-KEY
+      in: header

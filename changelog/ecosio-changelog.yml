@@ -1,0 +1,26 @@
+generated: '2026-10-18'
+method: searched
+source: https://ecosio.featurebase.app/en/changelog?hideMenu=true&c=General+Public+Documentation&c=Connect+Public+Documentation&c=E-invoicing+Public+Documentation&theme=light&embed=true
+scheme: semantic
+current_version: 1.4.0
+entries:
+- version: 1.4.0
+  date: '2026-09-18'
+  breaking: false
+  highlights:
+  - Added e-invoicing scenarios for France and United Kingdom
+  - Introduced OAuth2 authentication as recommended authentication method
+  - Basic authentication marked for deprecation (migration period)
+- version: 1.3.0
+  date: Not specified
+  breaking: false
+  highlights:
+  - Previous Management API release
+  note: Version inferred from changelog structure
+- version: 1.2.0
+  date: Not specified
+  breaking: false
+  highlights:
+  - Previous Management API release
+  note: Version inferred from changelog structure
+note: Changelog maintained on FeatureBase platform with categories for General Public Documentation, Connect Public Documentation, and E-invoicing Public Documentation. Recent updates focus on country scenario expansions and authentication improvements.

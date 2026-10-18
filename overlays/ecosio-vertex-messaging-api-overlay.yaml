@@ -1,0 +1,31 @@
+overlay: 1.0.0
+info:
+  title: ecosio vertex-messaging-api overlay
+  version: 1.0.0
+extends: openapi/ecosio-vertex-messaging-api-openapi.yml
+x-generated: '2026-10-18'
+x-method: generated
+actions:
+- target: $.info
+  description: Agent-facing summary and provenance
+  update:
+    x-apievangelist-summary: Vertex e-invoicing Messaging API documented in the ecosio portal. OAuth2 client-credentials. Poll getMessageList,
+      read getMessage/getDocuments, then confirm.
+    x-apievangelist-docs: https://connect.ecosio.com/reference/llms.txt
+- target: $.paths['/api/v1/messages'].get
+  description: Mark read-only for agents
+  update:
+    x-agent-readonly: true
+- target: $.paths['/api/v1/messages/{messageId}'].get
+  description: Mark read-only for agents
+  update:
+    x-agent-readonly: true
+- target: $.paths['/api/v1/messages/{messageId}/documents'].get
+  description: Mark read-only for agents
+  update:
+    x-agent-readonly: true
+- target: $.servers
+  description: Add production server named in apis.yml baseURL
+  update:
+  - url: https://e-invoicing-message.vertexcloud.com
+    description: Production (per apis.yml baseURL)

@@ -1,0 +1,183 @@
+openapi: 3.2.0
+info:
+  title: Management Approval Request Status API
+  description: API for managing companies and executing compliance and connectivity workflows on the ecosio platform.
+  contact:
+    name: ecosio GmbH
+    url: https://ecosio.com/en
+    email: support@ecosio.com
+  version: 1.4.0
+servers:
+- url: https://api.test.ecosio-hub.com
+  description: TEST instance of ecosio management.api
+tags:
+- name: Approval Request Status
+  description: Methods for retrieving approval request statuses
+paths:
+  /api/v1/management/approvals/{approvalUuid}:
+    get:
+      tags:
+      - Approval Request Status
+      summary: Retrieve approval status
+      operationId: getStatus
+      parameters:
+      - name: approvalUuid
+        in: path
+        description: ID of the approval request.
+        required: true
+        schema:
+          type: string
+          minLength: 1
+          pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApprovalStatusResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '405':
+          description: Method Not Allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Too Many Requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - bearerAuth: []
+      - basicAuth: []
+      - X-APP-KEY: []
+components:
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          $ref: '#/components/schemas/Error'
+          description: Detailed Error description
+      required:
+      - error
+    ErrorDetail:
+      type: object
+      description: Represent a related error that occurred during the request
+      properties:
+        code:
+          type: string
+          description: 'One of a server-defined set of error codes. '
+          example: VALID_110
+        message:
+          type: string
+          description: A human-readable representation of the error.
+          example: JSON is not valid
+      required:
+      - code
+      - message
+    Error:
+      type: object
+      description: Describes an error item
+      properties:
+        code:
+          type: string
+          description: 'One of a server-defined set of error codes. '
+          example: VALID_240
+        message:
+          type: string
+          description: A human-readable representation of the error.
+          example: Alias is not valid
+        target:
+          type: string
+          description: The target of the error.
+          example: Validation
+        details:
+          type: array
+          description: Represent an array of related errors that occurred during the request.
+          items:
+            $ref: '#/components/schemas/ErrorDetail'
+      required:
+      - code
+      - message
+    ApprovalStatusResponse:
+      type: object
+      properties:
+        approvalUuid:
+          type: string
+          format: uuid
+          description: ID of the connector request.
+          example: cd13fea0-2108-11f0-836c-d3d769f7e115
+        status:
+          type: string
+          description: "Status of the connector request.\n\n<table>\n  <tr>\n    <th>Status</th>\n    <th>Final</th>\n    <th>Description</th>\n  </tr>\n  <tr>\n    <td>APPLIED</td>\n    <td>Yes</td>\n    <td>The changes have been successfully applied to the connector.</td>\n  </tr>\n  <tr>\n    <td>FAILED</td>\n    <td>Yes</td>\n    <td>The changes failed to process or apply to the connector./td>\n  </tr>\n  <tr>\n    <td>PENDING</td>\n    <td>No</td>\n    <td>The connector's changes are awaiting approval and processing.</td>\n  </tr>\n  <tr>\n    <td>REJECTED</td>\n    <td>Yes</td>\n    <td>The connector's changes were rejected. Check the reason for details.</td>\n  </tr>\n</table>\n"
+          enum:
+          - APPLIED
+          - FAILED
+          - PENDING
+          - REJECTED
+          example: PENDING
+        reason:
+          type:
+          - string
+          - 'null'
+          description: The reason for the unapproved status
+          example: Information provided is incomplete
+        submittedAt:
+          type: string
+          format: date-time
+          description: Date and time the connector changes were submitted, specified in ISO 8601 format.
+          example: '2010-10-12T13:54:23.505Z'
+        lastUpdatedAt:
+          type: string
+          format: date-time
+          description: Date and time the connector was last updated, specified in ISO 8601 format.
+          example: '2010-10-12T13:54:23.505Z'
+      required:
+      - approvalUuid
+      - lastUpdatedAt
+      - status
+      - submittedAt
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    X-APP-KEY:
+      type: apiKey
+      name: X-APP-KEY
+      in: header

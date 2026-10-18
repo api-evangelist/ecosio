@@ -1,0 +1,16 @@
+generated: '2026-10-18'
+method: searched
+source: https://connect.ecosio.com/reference/getting-started-with-our-api.md
+description: Test environment for ecosio APIs with test instance host
+test_vs_live:
+  test_host: https://api.test.ecosio-hub.com
+  test_ports:
+  - '443'
+  - '8443'
+  note: TEST instance documented with port 443 for CA SSL; 8443 for self signed SSL
+  production_host: Not documented in public documentation
+authentication:
+  test_credentials: Obtained from API connector in the Monitor
+  note: Test environment uses same authentication as production (user ID, user key, app key)
+docs: https://connect.ecosio.com/reference/getting-started-with-our-api.md
+note: Only test environment host is documented in public API documentation; production host not stated.

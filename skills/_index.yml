@@ -1,0 +1,65 @@
+name: ecosio agent skills
+type: AgentSkill
+generated: '2026-10-18'
+method: generated
+source:
+- openapi/ecosio-api-openapi.yml
+- openapi/ecosio-management-api-openapi.yml
+- openapi/ecosio-vertex-messaging-api-openapi.yml
+note: No provider-published skills or AGENTS.md found; skills generated from the repo OpenAPI contracts.
+skills:
+- name: ecosio-deliver-message
+  description: Send an EDI message or e-invoice to the ecosio Integration Hub and track its status and acknowledgement.
+  file: skills/ecosio-deliver-message.md
+  api: ecosio-api
+  operations:
+  - securityCredentials
+  - deliverMessage
+  - getStatusOfDeliveredMessage
+  - getAcknowledgement
+- name: ecosio-fetch-messages
+  description: Fetch newly received messages from the ecosio Integration Hub and acknowledge processing.
+  file: skills/ecosio-fetch-messages.md
+  api: ecosio-api
+  operations:
+  - getMessageList
+  - getReceivedMessage
+  - callback
+- name: ecosio-archive-messages
+  description: Request an archive of exchanged messages from ecosio.
+  file: skills/ecosio-archive-messages.md
+  api: ecosio-api
+  operations:
+  - create-archive
+- name: ecosio-onboard-company
+  description: Create a company on ecosio, apply a compliance/connectivity scenario and track the approval.
+  file: skills/ecosio-onboard-company.md
+  api: ecosio-management-api
+  operations:
+  - findCompanies
+  - createCompany
+  - listAvailableScenarios
+  - createScenario
+  - listAppliedScenarios
+  - getStatus
+- name: ecosio-manage-connectors
+  description: Create and maintain ecosio connectors, the companies they serve and their credentials.
+  file: skills/ecosio-manage-connectors.md
+  api: ecosio-management-api
+  operations:
+  - findConnectors
+  - createConnector
+  - getConnector
+  - updateConnector
+  - replaceCompanies
+  - regenerateCredentials
+- name: ecosio-vertex-receive-messages
+  description: Poll, read and confirm messages on the Vertex e-invoicing Messaging API.
+  file: skills/ecosio-vertex-receive-messages.md
+  api: ecosio-vertex-messaging-api
+  operations:
+  - getMessageList
+  - getMessage
+  - getDocuments
+  - confirm
+  - sendMessage

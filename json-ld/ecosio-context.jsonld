@@ -1,0 +1,441 @@
+{
+  "@context": {
+    "@vocab": "https://ecosio.com/schema#",
+    "schema": "https://schema.org/",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "dcterms": "http://purl.org/dc/terms/",
+    "ecosio": "https://ecosio.com/schema#",
+    "archiveCreation": "ecosio:archiveCreation",
+    "companyUuid": {
+      "@id": "ecosio:companyUuid",
+      "@type": "xsd:string"
+    },
+    "companyName": {
+      "@id": "ecosio:companyName",
+      "@type": "xsd:string"
+    },
+    "state": {
+      "@id": "ecosio:state",
+      "@type": "xsd:string"
+    },
+    "direction": {
+      "@id": "ecosio:direction",
+      "@type": "xsd:string"
+    },
+    "entryPattern": {
+      "@id": "ecosio:entryPattern",
+      "@type": "xsd:string"
+    },
+    "from": {
+      "@id": "ecosio:from",
+      "@type": "xsd:dateTime"
+    },
+    "till": {
+      "@id": "ecosio:till",
+      "@type": "xsd:dateTime"
+    },
+    "messageIds": {
+      "@id": "ecosio:messageIds",
+      "@container": "@list"
+    },
+    "includeAcknowledgment": {
+      "@id": "ecosio:includeAcknowledgment",
+      "@type": "xsd:boolean"
+    },
+    "includePdf": {
+      "@id": "ecosio:includePdf",
+      "@type": "xsd:boolean"
+    },
+    "location": {
+      "@id": "ecosio:location",
+      "@type": "xsd:string"
+    },
+    "archiveRequest": "ecosio:archiveRequest",
+    "includeManifest": {
+      "@id": "ecosio:includeManifest",
+      "@type": "xsd:boolean"
+    },
+    "failure-object-without-reference": "ecosio:failure-object-without-reference",
+    "failure": {
+      "@id": "ecosio:failure",
+      "@type": "@id"
+    },
+    "failure-object": "ecosio:failure-object",
+    "propertyFailureWithoutReference": "ecosio:propertyFailureWithoutReference",
+    "errorCode": {
+      "@id": "ecosio:errorCode",
+      "@type": "xsd:string"
+    },
+    "reason": {
+      "@id": "ecosio:reason",
+      "@type": "xsd:string"
+    },
+    "details": {
+      "@id": "ecosio:details",
+      "@type": "xsd:string"
+    },
+    "archiveFailed": "ecosio:archiveFailed",
+    "error": {
+      "@id": "ecosio:error",
+      "@type": "xsd:string"
+    },
+    "archiveOk": "ecosio:archiveOk",
+    "downloadUrl": {
+      "@id": "ecosio:downloadUrl",
+      "@type": "xsd:string"
+    },
+    "md5Hash": {
+      "@id": "ecosio:md5Hash",
+      "@type": "xsd:string"
+    },
+    "numMessagesArchived": {
+      "@id": "ecosio:numMessagesArchived",
+      "@type": "xsd:string"
+    },
+    "numFilesArchived": {
+      "@id": "ecosio:numFilesArchived",
+      "@type": "xsd:string"
+    },
+    "archiveSize": {
+      "@id": "ecosio:archiveSize",
+      "@type": "xsd:integer"
+    },
+    "attachmentsRequest": "ecosio:attachmentsRequest",
+    "name": {
+      "@id": "ecosio:name",
+      "@type": "xsd:string"
+    },
+    "contentType": {
+      "@id": "ecosio:contentType",
+      "@type": "xsd:string"
+    },
+    "base64Content": {
+      "@id": "ecosio:base64Content",
+      "@type": "xsd:string"
+    },
+    "acknowledgment": "ecosio:acknowledgment",
+    "acknowledgement": {
+      "@id": "ecosio:acknowledgement",
+      "@type": "xsd:string"
+    },
+    "receivedAt": {
+      "@id": "ecosio:receivedAt",
+      "@type": "xsd:dateTime"
+    },
+    "charset": {
+      "@id": "ecosio:charset",
+      "@type": "xsd:string"
+    },
+    "mimeType": {
+      "@id": "ecosio:mimeType",
+      "@type": "xsd:string"
+    },
+    "log": "ecosio:log",
+    "timestamp": {
+      "@id": "ecosio:timestamp",
+      "@type": "xsd:dateTime"
+    },
+    "message": {
+      "@id": "ecosio:message",
+      "@type": "xsd:string"
+    },
+    "200-getmessageID": "ecosio:200-getmessageID",
+    "messageId": {
+      "@id": "ecosio:messageId",
+      "@type": "xsd:string"
+    },
+    "senderUuid": {
+      "@id": "ecosio:senderUuid",
+      "@type": "xsd:string"
+    },
+    "senderName": {
+      "@id": "ecosio:senderName",
+      "@type": "xsd:string"
+    },
+    "receiverUuid": {
+      "@id": "ecosio:receiverUuid",
+      "@type": "xsd:string"
+    },
+    "receiverName": {
+      "@id": "ecosio:receiverName",
+      "@type": "xsd:string"
+    },
+    "messageSize": {
+      "@id": "ecosio:messageSize",
+      "@type": "xsd:integer"
+    },
+    "documentTypeId": {
+      "@id": "ecosio:documentTypeId",
+      "@type": "xsd:string"
+    },
+    "fileName": {
+      "@id": "ecosio:fileName",
+      "@type": "xsd:string"
+    },
+    "lastChanged": {
+      "@id": "ecosio:lastChanged",
+      "@type": "xsd:dateTime"
+    },
+    "reference": {
+      "@id": "ecosio:reference",
+      "@type": "xsd:string"
+    },
+    "externalReferences": {
+      "@id": "ecosio:externalReferences"
+    },
+    "callback-positive": "ecosio:callback-positive",
+    "result": {
+      "@id": "ecosio:result",
+      "@type": "xsd:boolean"
+    },
+    "text": {
+      "@id": "ecosio:text",
+      "@type": "xsd:string"
+    },
+    "index": {
+      "@id": "ecosio:index",
+      "@type": "@id"
+    },
+    "Error": "ecosio:Error",
+    "code": {
+      "@id": "ecosio:code",
+      "@type": "xsd:string"
+    },
+    "target": {
+      "@id": "ecosio:target",
+      "@type": "xsd:string"
+    },
+    "ErrorDetail": "ecosio:ErrorDetail",
+    "ErrorResponse": "ecosio:ErrorResponse",
+    "ApprovalStatusResponse": "ecosio:ApprovalStatusResponse",
+    "approvalUuid": {
+      "@id": "ecosio:approvalUuid",
+      "@type": "xsd:string"
+    },
+    "status": {
+      "@id": "ecosio:status",
+      "@type": "xsd:string"
+    },
+    "submittedAt": {
+      "@id": "ecosio:submittedAt",
+      "@type": "xsd:dateTime"
+    },
+    "lastUpdatedAt": {
+      "@id": "ecosio:lastUpdatedAt",
+      "@type": "xsd:dateTime"
+    },
+    "CompanyAlias": "ecosio:CompanyAlias",
+    "description": {
+      "@id": "ecosio:description",
+      "@type": "xsd:string"
+    },
+    "type": {
+      "@id": "ecosio:type",
+      "@type": "xsd:string"
+    },
+    "CompanyOperationRequest": "ecosio:CompanyOperationRequest",
+    "email": {
+      "@id": "ecosio:email",
+      "@type": "xsd:string"
+    },
+    "language": {
+      "@id": "ecosio:language",
+      "@type": "xsd:string"
+    },
+    "aliases": {
+      "@id": "ecosio:aliases",
+      "@container": "@list"
+    },
+    "parentCompanyUuid": {
+      "@id": "ecosio:parentCompanyUuid",
+      "@type": "xsd:string"
+    },
+    "CompanyOperationResponse": "ecosio:CompanyOperationResponse",
+    "managedCompanyUuid": {
+      "@id": "ecosio:managedCompanyUuid",
+      "@type": "xsd:string"
+    },
+    "ApprovalStatus": "ecosio:ApprovalStatus",
+    "CompanyRetrievalPageResponse": "ecosio:CompanyRetrievalPageResponse",
+    "content": {
+      "@id": "ecosio:content",
+      "@container": "@list"
+    },
+    "totalPages": {
+      "@id": "ecosio:totalPages",
+      "@type": "xsd:integer"
+    },
+    "totalElements": {
+      "@id": "ecosio:totalElements",
+      "@type": "xsd:integer"
+    },
+    "numberOfElements": {
+      "@id": "ecosio:numberOfElements",
+      "@type": "xsd:integer"
+    },
+    "pageSize": {
+      "@id": "ecosio:pageSize",
+      "@type": "xsd:integer"
+    },
+    "pageNumber": {
+      "@id": "ecosio:pageNumber",
+      "@type": "xsd:integer"
+    },
+    "CompanyRetrievalResponse": "ecosio:CompanyRetrievalResponse",
+    "approvalStatus": {
+      "@id": "ecosio:approvalStatus",
+      "@type": "@id"
+    },
+    "BasicAuthRequest": "ecosio:BasicAuthRequest",
+    "username": {
+      "@id": "ecosio:username",
+      "@type": "xsd:string"
+    },
+    "password": {
+      "@id": "ecosio:password",
+      "@type": "xsd:string"
+    },
+    "ConnectorType": "ecosio:ConnectorType",
+    "Oauth2Request": "ecosio:Oauth2Request",
+    "authorizationUrl": {
+      "@id": "ecosio:authorizationUrl",
+      "@type": "xsd:string"
+    },
+    "clientId": {
+      "@id": "ecosio:clientId",
+      "@type": "xsd:string"
+    },
+    "clientSecret": {
+      "@id": "ecosio:clientSecret",
+      "@type": "xsd:string"
+    },
+    "additionalParameters": {
+      "@id": "ecosio:additionalParameters",
+      "@type": "xsd:string"
+    },
+    "ConnectorCreateRequest": "ecosio:ConnectorCreateRequest",
+    "companyUuids": {
+      "@id": "ecosio:companyUuids",
+      "@container": "@list"
+    },
+    "multiTenant": {
+      "@id": "ecosio:multiTenant",
+      "@type": "xsd:boolean"
+    },
+    "ConnectorDirection": "ecosio:ConnectorDirection",
+    "BasicAuthOperationResponse": "ecosio:BasicAuthOperationResponse",
+    "ConnectorOperationResponse": "ecosio:ConnectorOperationResponse",
+    "managedConnectorUuid": {
+      "@id": "ecosio:managedConnectorUuid",
+      "@type": "xsd:string"
+    },
+    "connectorUuid": {
+      "@id": "ecosio:connectorUuid",
+      "@type": "xsd:string"
+    },
+    "createdAt": {
+      "@id": "ecosio:createdAt",
+      "@type": "xsd:dateTime"
+    },
+    "updatedAt": {
+      "@id": "ecosio:updatedAt",
+      "@type": "xsd:dateTime"
+    },
+    "Oauth2Response": "ecosio:Oauth2Response",
+    "BasicAuthResponse": "ecosio:BasicAuthResponse",
+    "ConnectorRetrievalPageResponse": "ecosio:ConnectorRetrievalPageResponse",
+    "ConnectorRetrievalResponse": "ecosio:ConnectorRetrievalResponse",
+    "ConnectorUpdateResponse": "ecosio:ConnectorUpdateResponse",
+    "ConnectorCompaniesRequest": "ecosio:ConnectorCompaniesRequest",
+    "ConnectorUpdateRequest": "ecosio:ConnectorUpdateRequest",
+    "DeprecatedPeppolDirection": "ecosio:DeprecatedPeppolDirection",
+    "KeyStore": "ecosio:KeyStore",
+    "certificate": {
+      "@id": "ecosio:certificate",
+      "@type": "xsd:string"
+    },
+    "privateKey": {
+      "@id": "ecosio:privateKey",
+      "@type": "@id"
+    },
+    "PeppolDirection": "ecosio:PeppolDirection",
+    "PeppolSenderParticipantInfoRequest": "ecosio:PeppolSenderParticipantInfoRequest",
+    "peppolParticipantId": {
+      "@id": "ecosio:peppolParticipantId",
+      "@type": "xsd:string"
+    },
+    "selfBilling": {
+      "@id": "ecosio:selfBilling",
+      "@type": "xsd:boolean"
+    },
+    "PrivateKey": "ecosio:PrivateKey",
+    "key": {
+      "@id": "ecosio:key",
+      "@type": "xsd:string"
+    },
+    "passphrase": {
+      "@id": "ecosio:passphrase",
+      "@type": "xsd:string"
+    },
+    "ScenarioName": "ecosio:ScenarioName",
+    "ScenarioOperationResponse": "ecosio:ScenarioOperationResponse",
+    "uuid": {
+      "@id": "ecosio:uuid",
+      "@type": "xsd:string"
+    },
+    "rejectionReason": {
+      "@id": "ecosio:rejectionReason",
+      "@type": "xsd:string"
+    },
+    "ScenarioCreateRequest": "ecosio:ScenarioCreateRequest",
+    "CertificateResponse": "ecosio:CertificateResponse",
+    "expiry": {
+      "@id": "ecosio:expiry",
+      "@type": "xsd:dateTime"
+    },
+    "serialNumber": {
+      "@id": "ecosio:serialNumber",
+      "@type": "xsd:string"
+    },
+    "PeppolSenderParticipantInfoResponse": "ecosio:PeppolSenderParticipantInfoResponse",
+    "ScenarioResponse": "ecosio:ScenarioResponse",
+    "ScenarioUpdateRequest": "ecosio:ScenarioUpdateRequest",
+    "ConfirmRequest": "ecosio:ConfirmRequest",
+    "HistoryEntry": "ecosio:HistoryEntry",
+    "MessageDetailsResponse": "ecosio:MessageDetailsResponse",
+    "history": {
+      "@id": "ecosio:history",
+      "@container": "@list"
+    },
+    "messageInfo": {
+      "@id": "ecosio:messageInfo",
+      "@type": "@id"
+    },
+    "MessageInfo": "ecosio:MessageInfo",
+    "MessageRawResponse": "ecosio:MessageRawResponse",
+    "MessageView": "ecosio:MessageView",
+    "StatusEnum": "ecosio:StatusEnum",
+    "StatusResponse": "ecosio:StatusResponse",
+    "MessageListResponse": "ecosio:MessageListResponse",
+    "availableMessages": {
+      "@id": "ecosio:availableMessages",
+      "@type": "xsd:integer"
+    },
+    "messages": {
+      "@id": "ecosio:messages",
+      "@container": "@list"
+    },
+    "MessageListView": "ecosio:MessageListView",
+    "DeliveryRequest": "ecosio:DeliveryRequest",
+    "DeliveryResponse": "ecosio:DeliveryResponse"
+  },
+  "@type": "schema:Dataset",
+  "schema:name": "ecosio API JSON-LD context",
+  "schema:description": "A JSON-LD @context for the objects ecosio's own API contract declares: one class per component schema, one property per declared field, typed from the contract. Derived by script (derive-json-ld.py, 2026-10-18) from openapi/ecosio-api-openapi.yml, openapi/ecosio-management-api-openapi.yml, openapi/ecosio-vertex-messaging-api-openapi.yml.",
+  "dcterms:created": "2026-10-18",
+  "dcterms:source": [
+    "openapi/ecosio-api-openapi.yml",
+    "openapi/ecosio-management-api-openapi.yml",
+    "openapi/ecosio-vertex-messaging-api-openapi.yml"
+  ]
+}

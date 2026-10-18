@@ -1,0 +1,46 @@
+overlay: 1.0.0
+info:
+  title: ecosio management-api overlay
+  version: 1.0.0
+extends: ../openapi/_original/ecosio-management-api-openapi.json
+x-generated: '2026-10-18'
+x-method: generated
+actions:
+- target: $.info
+  description: Agent-facing summary and provenance
+  update:
+    x-apievangelist-summary: ecosio Management API. Onboard companies (createCompany), apply compliance/connectivity scenarios (createScenario)
+      and poll approvals (getStatus); manage connectors and their credentials.
+    x-apievangelist-docs: https://connect.ecosio.com/reference/llms.txt
+- target: $.paths['/api/v1/management/approvals/{approvalUuid}'].get
+  description: Mark read-only for agents
+  update:
+    x-agent-readonly: true
+- target: $.paths['/api/v1/management/companies'].get
+  description: Mark read-only for agents
+  update:
+    x-agent-readonly: true
+- target: $.paths['/api/v1/management/companies/{companyUuid}'].get
+  description: Mark read-only for agents
+  update:
+    x-agent-readonly: true
+- target: $.paths['/api/v1/management/companies/{companyUuid}/scenarios'].get
+  description: Mark read-only for agents
+  update:
+    x-agent-readonly: true
+- target: $.paths['/api/v1/management/connectors'].get
+  description: Mark read-only for agents
+  update:
+    x-agent-readonly: true
+- target: $.paths['/api/v1/management/connectors/{connectorUuid}'].get
+  description: Mark read-only for agents
+  update:
+    x-agent-readonly: true
+- target: $.paths['/api/v1/management/scenarios'].get
+  description: Mark read-only for agents
+  update:
+    x-agent-readonly: true
+- target: $.paths['/api/v1/management/scenarios/{scenarioUuid}'].get
+  description: Mark read-only for agents
+  update:
+    x-agent-readonly: true

@@ -1,0 +1,27 @@
+# ecosio Documentation Documentation
+
+> Documentation for ecosio Documentation
+
+Each section below links to its own llms.txt, which indexes every page in that section. Category links narrow to a single category.
+
+## Guides
+
+- [Guides index](https://connect.ecosio.com/docs/llms.txt): full section index
+- [Getting started](https://connect.ecosio.com/docs/getting-started/llms.txt)
+- [Global e-invoicing](https://connect.ecosio.com/docs/global-e-invoicing/llms.txt)
+- [Monitor](https://connect.ecosio.com/docs/monitor/llms.txt)
+
+## API
+
+- [API index](https://connect.ecosio.com/reference/llms.txt): full section index
+- [Getting started](https://connect.ecosio.com/reference/getting-started/llms.txt)
+- [Messaging APIs](https://connect.ecosio.com/reference/messaging-apis/llms.txt)
+- [Management API](https://connect.ecosio.com/reference/management-api/llms.txt)
+
+## Recipes
+
+- [Recipes index](https://connect.ecosio.com/recipes/llms.txt): full section index
+
+## Changelog
+
+- [Changelog index](https://connect.ecosio.com/changelog/llms.txt): full section index

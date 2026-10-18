@@ -1,0 +1,31 @@
+generated: '2026-10-18'
+method: searched
+generator: extract-docs-artifacts.py (deepseek)
+source: https://connect.ecosio.com/docs/getting-started/llms.txt
+sources:
+- https://connect.ecosio.com/docs/getting-started/llms.txt
+- https://connect.ecosio.com/reference/getting-started/llms.txt
+- https://connect.ecosio.com/reference/getting-started-with-our-api
+- https://connect.ecosio.com/reference/getting-started-with-erpel
+idempotency:
+  coverage: none
+pagination:
+  style: page/limit-offset
+  response_fields:
+  - total number of results
+  params:
+  - page
+  - limit
+  - offset
+  evidence: The response always includes the total number of results. You can determine the returned results using either the page parameter or
+    limit and offset parameters.
+rate_limit_signaling: '"HTTP 429 Too Many Requests response"'
+authentication: '"Basic authentication in the header. Use your user ID as the username and your user key as the password. Provide your app key
+  either in the X-APP-KEY header or as a query parameter."'
+reversibility:
+  coverage: none
+  note: No reversal operations (cancel, refund, void, reverse, undo, rollback) found in OpenAPI spec or documentation. API primarily handles message delivery and retrieval.
+note: 'Based on the documentation: No idempotency mechanism is mentioned. Pagination supports both page-based (page parameter) and limit-offset
+  style (limit up to 30, offset in multiples of 30). Rate limiting uses HTTP 429 with rolling five-minute windows. Authentication uses Basic auth
+  with X-APP-KEY header/query parameter.'
+docs: https://connect.ecosio.com/docs/getting-started/llms.txt

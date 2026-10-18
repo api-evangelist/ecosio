@@ -1,0 +1,276 @@
+name: ecosio MCP server (candidate)
+type: MCPServer
+generated: '2026-10-18'
+method: derived
+source:
+- openapi/ecosio-api-openapi.yml
+- openapi/ecosio-management-api-openapi.yml
+- openapi/ecosio-vertex-messaging-api-openapi.yml
+status: candidate
+description: No official ecosio MCP server was found (web search for "ecosio MCP server" returned nothing about ecosio; the connect.ecosio.com llms.txt indexes and pre-flight MCP probes found no MCP docs
+  or endpoint). This is a candidate tool list derived 1:1 from the OpenAPI operations already in the repo. Operations without a published operationId are named from method+path.
+deployment:
+  mode: none
+  auth: unknown
+  verified: derived
+evidence:
+  search: 'WebSearch "ecosio MCP server Model Context Protocol" 2026-10-18: no ecosio results'
+  preflight_mcp_tool_table: no MCP docs found
+  preflight_contract_discovery_mcp: absent
+tools:
+- name: api_getAcknowledgement
+  description: Get the acknowledgement of a delivered e-invoice
+  api: api
+  operationId: getAcknowledgement
+  method: GET
+  path: /api/v1/ack/{messageId}
+  readOnly: true
+  status: candidate
+- name: api_create_archive
+  description: Create an archive request
+  api: api
+  operationId: create-archive
+  method: POST
+  path: /api/v1/archives
+  readOnly: false
+  status: candidate
+- name: api_get_api_v1_archives_archiveId
+  description: Retrieve the current status of the archive process
+  api: api
+  operationId: null
+  method: GET
+  path: /api/v1/archives/{archiveId}
+  readOnly: true
+  status: candidate
+- name: api_callback
+  description: Acknowledge the successful or unsuccessful processing of a fetched message
+  api: api
+  operationId: callback
+  method: POST
+  path: /api/v1/callback/{messageId}
+  readOnly: false
+  status: candidate
+- name: api_deliverMessage
+  description: Deliver a message to the ecosio Integration Hub
+  api: api
+  operationId: deliverMessage
+  method: POST
+  path: /api/v1/delivery
+  readOnly: false
+  status: candidate
+- name: api_getStatusOfDeliveredMessage
+  description: Get the status of a delivered message from the ecosio Integration Hub
+  api: api
+  operationId: getStatusOfDeliveredMessage
+  method: GET
+  path: /api/v1/delivery/{messageId}
+  readOnly: true
+  status: candidate
+- name: api_get_api_v1_documents_messageId
+  description: Download a ZIP file containing all necessary documents for an e-invoice or message sent to or received from a tax authority
+  api: api
+  operationId: null
+  method: GET
+  path: /api/v1/documents/{messageId}
+  readOnly: true
+  status: candidate
+- name: api_get_api_v1_downloads_archiveId
+  description: Download the archive
+  api: api
+  operationId: null
+  method: GET
+  path: /api/v1/downloads/{archiveId}
+  readOnly: true
+  status: candidate
+- name: api_getMessageList
+  description: Fetch a list of newly received messages from the ecosio Integration Hub
+  api: api
+  operationId: getMessageList
+  method: GET
+  path: /api/v1/fetch
+  readOnly: true
+  status: candidate
+- name: api_getReceivedMessage
+  description: Get a received message from the ecosio Integration Hub
+  api: api
+  operationId: getReceivedMessage
+  method: GET
+  path: /api/v1/msg/{messageId}
+  readOnly: true
+  status: candidate
+- name: api_securityCredentials
+  description: Check if the provided user credentials (user id, user key and app key) are valid
+  api: api
+  operationId: securityCredentials
+  method: GET
+  path: /api/v1/securityCredentials
+  readOnly: true
+  status: candidate
+- name: management_api_getStatus
+  description: Retrieve approval status
+  api: management-api
+  operationId: getStatus
+  method: GET
+  path: /api/v1/management/approvals/{approvalUuid}
+  readOnly: true
+  status: candidate
+- name: management_api_createCompany
+  description: Create a company
+  api: management-api
+  operationId: createCompany
+  method: POST
+  path: /api/v1/management/companies
+  readOnly: false
+  status: candidate
+- name: management_api_findCompanies
+  description: Find companies
+  api: management-api
+  operationId: findCompanies
+  method: GET
+  path: /api/v1/management/companies
+  readOnly: true
+  status: candidate
+- name: management_api_getCompany
+  description: Get a company
+  api: management-api
+  operationId: getCompany
+  method: GET
+  path: /api/v1/management/companies/{companyUuid}
+  readOnly: true
+  status: candidate
+- name: management_api_updateCompany
+  description: Update a company
+  api: management-api
+  operationId: updateCompany
+  method: PUT
+  path: /api/v1/management/companies/{companyUuid}
+  readOnly: false
+  status: candidate
+- name: management_api_createScenario
+  description: Apply a scenario
+  api: management-api
+  operationId: createScenario
+  method: POST
+  path: /api/v1/management/companies/{companyUuid}/scenarios
+  readOnly: false
+  status: candidate
+- name: management_api_listAppliedScenarios
+  description: List company scenarios
+  api: management-api
+  operationId: listAppliedScenarios
+  method: GET
+  path: /api/v1/management/companies/{companyUuid}/scenarios
+  readOnly: true
+  status: candidate
+- name: management_api_createConnector
+  description: Create a connector
+  api: management-api
+  operationId: createConnector
+  method: POST
+  path: /api/v1/management/connectors
+  readOnly: false
+  status: candidate
+- name: management_api_findConnectors
+  description: List all connectors
+  api: management-api
+  operationId: findConnectors
+  method: GET
+  path: /api/v1/management/connectors
+  readOnly: true
+  status: candidate
+- name: management_api_getConnector
+  description: Retrieve a connector
+  api: management-api
+  operationId: getConnector
+  method: GET
+  path: /api/v1/management/connectors/{connectorUuid}
+  readOnly: true
+  status: candidate
+- name: management_api_updateConnector
+  description: Update a connector
+  api: management-api
+  operationId: updateConnector
+  method: PUT
+  path: /api/v1/management/connectors/{connectorUuid}
+  readOnly: false
+  status: candidate
+- name: management_api_replaceCompanies
+  description: Update a connector's companies
+  api: management-api
+  operationId: replaceCompanies
+  method: PUT
+  path: /api/v1/management/connectors/{connectorUuid}/companies
+  readOnly: false
+  status: candidate
+- name: management_api_regenerateCredentials
+  description: Regenerate a connector's credentials
+  api: management-api
+  operationId: regenerateCredentials
+  method: POST
+  path: /api/v1/management/connectors/{connectorUuid}/regenerateCredentials
+  readOnly: false
+  status: candidate
+- name: management_api_listAvailableScenarios
+  description: List all scenarios
+  api: management-api
+  operationId: listAvailableScenarios
+  method: GET
+  path: /api/v1/management/scenarios
+  readOnly: true
+  status: candidate
+- name: management_api_getScenarioById
+  description: Retrieve a scenario
+  api: management-api
+  operationId: getScenarioById
+  method: GET
+  path: /api/v1/management/scenarios/{scenarioUuid}
+  readOnly: true
+  status: candidate
+- name: management_api_updateScenario
+  description: Update a scenario
+  api: management-api
+  operationId: updateScenario
+  method: PUT
+  path: /api/v1/management/scenarios/{scenarioUuid}
+  readOnly: false
+  status: candidate
+- name: vertex_messaging_api_getMessageList
+  description: List all messages
+  api: vertex-messaging-api
+  operationId: getMessageList
+  method: GET
+  path: /api/v1/messages
+  readOnly: true
+  status: candidate
+- name: vertex_messaging_api_sendMessage
+  description: Send a message
+  api: vertex-messaging-api
+  operationId: sendMessage
+  method: POST
+  path: /api/v1/messages
+  readOnly: false
+  status: candidate
+- name: vertex_messaging_api_getMessage
+  description: Retrieve a message
+  api: vertex-messaging-api
+  operationId: getMessage
+  method: GET
+  path: /api/v1/messages/{messageId}
+  readOnly: true
+  status: candidate
+- name: vertex_messaging_api_confirm
+  description: Confirm processing of a message
+  api: vertex-messaging-api
+  operationId: confirm
+  method: POST
+  path: /api/v1/messages/{messageId}/confirm
+  readOnly: false
+  status: candidate
+- name: vertex_messaging_api_getDocuments
+  description: Retrieve message documents
+  api: vertex-messaging-api
+  operationId: getDocuments
+  method: GET
+  path: /api/v1/messages/{messageId}/documents
+  readOnly: true
+  status: candidate

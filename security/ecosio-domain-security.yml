@@ -1,0 +1,39 @@
+generated: '2026-10-18'
+method: probed
+source: live DNS/TLS/HTTP probes of apis.yml + OpenAPI hosts
+hosts:
+- host: ecosio.com
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Jan  1 14:41:42 2027 GMT
+  hsts: null
+- host: api.test.ecosio-hub.com
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Apr  1 23:59:59 2027 GMT
+  hsts: null
+- host: e-invoicing-message-qa.platdev.vtxdev.net
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Dec 29 03:34:37 2026 GMT
+  hsts: null
+domains:
+- domain: ecosio.com
+  dnssec: false
+  caa:
+  - 0 issue "digicert.com"
+  - 0 issue "letsencrypt.org"
+  - 0 issue "pki.goog"
+  - 0 issue "sectigo.com"
+  - 0 issue "amazon.com"
+  spf: true
+  dmarc: true
+  dmarc_policy: reject
+- domain: ecosio-hub.com
+  dnssec: false
+  caa:
+  - 0 issue "letsencrypt.org"
+  - 0 issue "comodoca.com"
+  spf: true
+  dmarc: true
+  dmarc_policy: reject

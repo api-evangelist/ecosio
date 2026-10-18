@@ -1,0 +1,424 @@
+generated: '2026-10-18'
+method: derived
+generator: derive-vocabulary.py
+source:
+- openapi/ecosio-api-openapi.yml
+- openapi/ecosio-management-api-openapi.yml
+- openapi/ecosio-vertex-messaging-api-openapi.yml
+vocabulary:
+  name: ecosio Domain Vocabulary
+  description: 'Terms declared by ecosio''s own API contract: its resource groups, objects and enumerations, with the contract''s definitions.
+    Derived, not authored.'
+  version: '2026-10-18'
+  terms:
+  - term: Approval Request Status
+    definition: Methods for retrieving approval request statuses
+    tags:
+    - Resource Group
+    source: openapi/ecosio-management-api-openapi.yml
+  - term: Companies
+    definition: Methods for managing companies
+    tags:
+    - Resource Group
+    source: openapi/ecosio-management-api-openapi.yml
+  - term: Connectors
+    definition: Methods for managing messaging connectors
+    tags:
+    - Resource Group
+    source: openapi/ecosio-management-api-openapi.yml
+  - term: Scenarios
+    definition: Methods for managing scenarios
+    tags:
+    - Resource Group
+    source: openapi/ecosio-management-api-openapi.yml
+  - term: archiveCreation
+    definition: Information about created archive request
+    tags:
+    - Object
+    source: openapi/ecosio-api-openapi.yml#/components/schemas/archiveCreation
+  - term: archiveRequest
+    definition: Archive details
+    tags:
+    - Object
+    source: openapi/ecosio-api-openapi.yml#/components/schemas/archiveRequest
+  - term: failure-object-without-reference
+    definition: 'Object declared by the contract with fields: failure.'
+    tags:
+    - Object
+    source: openapi/ecosio-api-openapi.yml#/components/schemas/failure-object-without-reference
+  - term: failure-object
+    definition: 'Object declared by the contract with fields: failure.'
+    tags:
+    - Object
+    source: openapi/ecosio-api-openapi.yml#/components/schemas/failure-object
+  - term: propertyFailure
+    definition: In case the message has reached an error state, the error details are denoted in this element. Whether the failure element is
+      shown or not, depends on the configured state mode. For an overview of the different states and the state modes please refer to https://connect.ecosio.com/docs/state-mode#/
+    tags:
+    - Object
+    source: openapi/ecosio-api-openapi.yml#/components/schemas/propertyFailure
+  - term: propertyFailureWithoutReference
+    definition: In case the message has reached an error state, the error details are denoted in this element. Whether the failure element is
+      shown or not, depends on the configured state mode. For an overview of the different states and the state modes please refer to https://connect.ecosio.com/docs/state-mode#/
+    tags:
+    - Object
+    source: openapi/ecosio-api-openapi.yml#/components/schemas/propertyFailureWithoutReference
+  - term: archiveFailed
+    definition: Information for failed archive creation
+    tags:
+    - Object
+    source: openapi/ecosio-api-openapi.yml#/components/schemas/archiveFailed
+  - term: archiveOk
+    definition: Information about current state of archive
+    tags:
+    - Object
+    source: openapi/ecosio-api-openapi.yml#/components/schemas/archiveOk
+  - term: attachmentsRequest
+    definition: An attachment consists of the attachment's name, the MIME type and the base64-encoded attachment
+    tags:
+    - Object
+    source: openapi/ecosio-api-openapi.yml#/components/schemas/attachmentsRequest
+  - term: acknowledgment
+    definition: 'Object declared by the contract with fields: acknowledgement, receivedAt, charset, mimeType.'
+    tags:
+    - Object
+    source: openapi/ecosio-api-openapi.yml#/components/schemas/acknowledgment
+  - term: log
+    definition: 'Object declared by the contract with fields: timestamp, state, message.'
+    tags:
+    - Object
+    source: openapi/ecosio-api-openapi.yml#/components/schemas/log
+  - term: 200-getmessageID
+    definition: 'Object declared by the contract with fields: messageId, senderUuid, senderName, receiverUuid, receiverName, receivedAt, state,
+      messageSize, documentTypeId, mimeType, charset, fileName. (6 more)'
+    tags:
+    - Object
+    source: openapi/ecosio-api-openapi.yml#/components/schemas/200-getmessageID
+  - term: index
+    definition: Used to pass key/value pairs. Usually, these pairs contain information about the objects, which have been created in the IT system,
+      e.g., purchase order numbers, invoice numbers or internal numbers such as SAP IDoc numbers. Value can either be strings or arrays.
+    tags:
+    - Object
+    source: openapi/ecosio-api-openapi.yml#/components/schemas/index
+  - term: callback-positive
+    definition: Returned, in case the processing of the message in the IT system was OK.
+    tags:
+    - Object
+    source: openapi/ecosio-api-openapi.yml#/components/schemas/callback-positive
+  - term: message
+    definition: 'Object declared by the contract with fields: messageId, senderUuid, senderName, receiverUuid, receiverName, receivedAt, state,
+      messageSize, documentTypeId, mimeType, charset, fileName. (2 more)'
+    tags:
+    - Object
+    source: openapi/ecosio-api-openapi.yml#/components/schemas/message
+  - term: Error
+    definition: Describes an error item
+    tags:
+    - Object
+    source: openapi/ecosio-management-api-openapi.yml#/components/schemas/Error
+  - term: ErrorDetail
+    definition: Represent a related error that occurred during the request
+    tags:
+    - Object
+    source: openapi/ecosio-management-api-openapi.yml#/components/schemas/ErrorDetail
+  - term: ErrorResponse
+    definition: 'Object declared by the contract with fields: error.'
+    tags:
+    - Object
+    source: openapi/ecosio-management-api-openapi.yml#/components/schemas/ErrorResponse
+  - term: ApprovalStatusResponse
+    definition: 'Object declared by the contract with fields: approvalUuid, status, reason, submittedAt, lastUpdatedAt.'
+    tags:
+    - Object
+    source: openapi/ecosio-management-api-openapi.yml#/components/schemas/ApprovalStatusResponse
+  - term: CompanyAlias
+    definition: 'Object declared by the contract with fields: name, description, type.'
+    tags:
+    - Object
+    source: openapi/ecosio-management-api-openapi.yml#/components/schemas/CompanyAlias
+  - term: CompanyOperationRequest
+    definition: 'Object declared by the contract with fields: companyName, email, language, aliases, parentCompanyUuid.'
+    tags:
+    - Object
+    source: openapi/ecosio-management-api-openapi.yml#/components/schemas/CompanyOperationRequest
+  - term: CompanyOperationResponse
+    definition: 'Object declared by the contract with fields: managedCompanyUuid, approvalUuid.'
+    tags:
+    - Object
+    source: openapi/ecosio-management-api-openapi.yml#/components/schemas/CompanyOperationResponse
+  - term: ApprovalStatus
+    definition: 'Enumeration declared by the contract with values: PENDING, APPROVED, ERROR, REJECTED, FAILED, APPLIED.'
+    tags:
+    - Enumeration
+    source: openapi/ecosio-management-api-openapi.yml#/components/schemas/ApprovalStatus
+  - term: CompanyRetrievalPageResponse
+    definition: 'Object declared by the contract with fields: content, totalPages, totalElements, numberOfElements, pageSize, pageNumber.'
+    tags:
+    - Object
+    source: openapi/ecosio-management-api-openapi.yml#/components/schemas/CompanyRetrievalPageResponse
+  - term: CompanyRetrievalResponse
+    definition: 'Object declared by the contract with fields: managedCompanyUuid, companyUuid, companyName, email, language, aliases, parentCompanyUuid,
+      approvalUuid, approvalStatus.'
+    tags:
+    - Object
+    source: openapi/ecosio-management-api-openapi.yml#/components/schemas/CompanyRetrievalResponse
+  - term: BasicAuthRequest
+    definition: 'Object declared by the contract with fields: username, password.'
+    tags:
+    - Object
+    source: openapi/ecosio-management-api-openapi.yml#/components/schemas/BasicAuthRequest
+  - term: ConnectorType
+    definition: 'Enumeration declared by the contract with values: MESSAGING_API, HTTPS.'
+    tags:
+    - Enumeration
+    source: openapi/ecosio-management-api-openapi.yml#/components/schemas/ConnectorType
+  - term: Oauth2Request
+    definition: 'Object declared by the contract with fields: authorizationUrl, clientId, clientSecret, additionalParameters.'
+    tags:
+    - Object
+    source: openapi/ecosio-management-api-openapi.yml#/components/schemas/Oauth2Request
+  - term: APIConnectorCreateRequest
+    definition: HTTPS Connector CreateRequest.
+    tags:
+    - Object
+    source: openapi/ecosio-management-api-openapi.yml#/components/schemas/APIConnectorCreateRequest
+  - term: ConnectorCreateRequest
+    definition: 'Object declared by the contract with fields: type, direction, companyUuids, multiTenant.'
+    tags:
+    - Object
+    source: openapi/ecosio-management-api-openapi.yml#/components/schemas/ConnectorCreateRequest
+  - term: ConnectorDirection
+    definition: 'Enumeration declared by the contract with values: BOTH, DELIVERY, FETCH, FORWARDER.'
+    tags:
+    - Enumeration
+    source: openapi/ecosio-management-api-openapi.yml#/components/schemas/ConnectorDirection
+  - term: HTTPSConnectorCreateRequest
+    definition: HTTPS Connector CreateRequest.
+    tags:
+    - Object
+    source: openapi/ecosio-management-api-openapi.yml#/components/schemas/HTTPSConnectorCreateRequest
+  - term: BasicAuthOperationResponse
+    definition: 'Object declared by the contract with fields: username, password.'
+    tags:
+    - Object
+    source: openapi/ecosio-management-api-openapi.yml#/components/schemas/BasicAuthOperationResponse
+  - term: ConnectorOperationResponse
+    definition: Base representation of a connector.
+    tags:
+    - Object
+    source: openapi/ecosio-management-api-openapi.yml#/components/schemas/ConnectorOperationResponse
+  - term: Oauth2Response
+    definition: 'Object declared by the contract with fields: authorizationUrl, clientId, additionalParameters.'
+    tags:
+    - Object
+    source: openapi/ecosio-management-api-openapi.yml#/components/schemas/Oauth2Response
+  - term: BasicAuthResponse
+    definition: 'Object declared by the contract with fields: username.'
+    tags:
+    - Object
+    source: openapi/ecosio-management-api-openapi.yml#/components/schemas/BasicAuthResponse
+  - term: ConnectorRetrievalPageResponse
+    definition: 'Object declared by the contract with fields: content, totalPages, totalElements, numberOfElements, pageSize, pageNumber.'
+    tags:
+    - Object
+    source: openapi/ecosio-management-api-openapi.yml#/components/schemas/ConnectorRetrievalPageResponse
+  - term: ConnectorRetrievalResponse
+    definition: Base representation of a connector.
+    tags:
+    - Object
+    source: openapi/ecosio-management-api-openapi.yml#/components/schemas/ConnectorRetrievalResponse
+  - term: ConnectorUpdateResponse
+    definition: 'Object declared by the contract with fields: managedConnectorUuid, connectorUuid, type, approvalUuid, approvalStatus, createdAt,
+      updatedAt.'
+    tags:
+    - Object
+    source: openapi/ecosio-management-api-openapi.yml#/components/schemas/ConnectorUpdateResponse
+  - term: ConnectorCompaniesRequest
+    definition: 'Object declared by the contract with fields: companyUuids.'
+    tags:
+    - Object
+    source: openapi/ecosio-management-api-openapi.yml#/components/schemas/ConnectorCompaniesRequest
+  - term: APIConnectorUpdateRequest
+    definition: HTTPS Connector UpdateRequest.
+    tags:
+    - Object
+    source: openapi/ecosio-management-api-openapi.yml#/components/schemas/APIConnectorUpdateRequest
+  - term: ConnectorUpdateRequest
+    definition: 'Object declared by the contract with fields: type.'
+    tags:
+    - Object
+    source: openapi/ecosio-management-api-openapi.yml#/components/schemas/ConnectorUpdateRequest
+  - term: HTTPSConnectorUpdateRequest
+    definition: HTTPS Connector UpdateRequest.
+    tags:
+    - Object
+    source: openapi/ecosio-management-api-openapi.yml#/components/schemas/HTTPSConnectorUpdateRequest
+  - term: DeprecatedPeppolDirection
+    definition: 'Enumeration declared by the contract with values: BOTH, IN, OUT, SELF.'
+    tags:
+    - Enumeration
+    source: openapi/ecosio-management-api-openapi.yml#/components/schemas/DeprecatedPeppolDirection
+  - term: KeyStore
+    definition: 'Object declared by the contract with fields: certificate, privateKey.'
+    tags:
+    - Object
+    source: openapi/ecosio-management-api-openapi.yml#/components/schemas/KeyStore
+  - term: PeppolDirection
+    definition: 'Enumeration declared by the contract with values: BOTH, IN, OUT.'
+    tags:
+    - Enumeration
+    source: openapi/ecosio-management-api-openapi.yml#/components/schemas/PeppolDirection
+  - term: PeppolSenderParticipantInfoRequest
+    definition: Peppol sender participant info, describing a single Peppol Participant ID together with its direction and whether it is used for
+      self-billing.
+    tags:
+    - Object
+    source: openapi/ecosio-management-api-openapi.yml#/components/schemas/PeppolSenderParticipantInfoRequest
+  - term: PrivateKey
+    definition: 'Object declared by the contract with fields: key, passphrase.'
+    tags:
+    - Object
+    source: openapi/ecosio-management-api-openapi.yml#/components/schemas/PrivateKey
+  - term: ScenarioName
+    definition: 'Enumeration declared by the contract with values: BELGIUM_EINVOICE, DENMARK_EINVOICE, ESTONIA_EINVOICE, FINLAND_EINVOICE, FRANCE_EINVOICE,
+      GERMANY_EINVOICE, HUNGARY_EINVOICE, ITALY_EINVOICE, NETHERLANDS_EINVOICE, NORWAY_EINVOICE, POLAND_EINVOICE, ROMANIA_EINVOICE. (2 more)'
+    tags:
+    - Enumeration
+    source: openapi/ecosio-management-api-openapi.yml#/components/schemas/ScenarioName
+  - term: ScenarioOperationResponse
+    definition: 'Object declared by the contract with fields: uuid, name, companyUuid, approvalUuid, approvalStatus, rejectionReason, createdAt,
+      updatedAt.'
+    tags:
+    - Object
+    source: openapi/ecosio-management-api-openapi.yml#/components/schemas/ScenarioOperationResponse
+  - term: BelgiumEInvoiceCreateRequest
+    definition: Belgium E-Invoice Create Request
+    tags:
+    - Object
+    source: openapi/ecosio-management-api-openapi.yml#/components/schemas/BelgiumEInvoiceCreateRequest
+  - term: DenmarkEInvoiceCreateRequest
+    definition: Denmark E-Invoice Create Request
+    tags:
+    - Object
+    source: openapi/ecosio-management-api-openapi.yml#/components/schemas/DenmarkEInvoiceCreateRequest
+  - term: EstoniaEInvoiceCreateRequest
+    definition: Estonia E-Invoice Create Request
+    tags:
+    - Object
+    source: openapi/ecosio-management-api-openapi.yml#/components/schemas/EstoniaEInvoiceCreateRequest
+  - term: FinlandEInvoiceCreateRequest
+    definition: Finland E-Invoice Create Request
+    tags:
+    - Object
+    source: openapi/ecosio-management-api-openapi.yml#/components/schemas/FinlandEInvoiceCreateRequest
+  - term: FranceEInvoiceCreateRequest
+    definition: France E-Invoice Create Request
+    tags:
+    - Object
+    source: openapi/ecosio-management-api-openapi.yml#/components/schemas/FranceEInvoiceCreateRequest
+  - term: GermanyEInvoiceCreateRequest
+    definition: Germany E-Invoice Create Request
+    tags:
+    - Object
+    source: openapi/ecosio-management-api-openapi.yml#/components/schemas/GermanyEInvoiceCreateRequest
+  - term: HungaryEInvoiceCreateRequest
+    definition: Hungary EInvoice Scenario CreateRequest.
+    tags:
+    - Object
+    source: openapi/ecosio-management-api-openapi.yml#/components/schemas/HungaryEInvoiceCreateRequest
+  - term: ItalyEInvoiceCreateRequest
+    definition: Italy EInvoice Scenario CreateRequest.
+    tags:
+    - Object
+    source: openapi/ecosio-management-api-openapi.yml#/components/schemas/ItalyEInvoiceCreateRequest
+  - term: NetherlandsEInvoiceCreateRequest
+    definition: Netherlands E-Invoice Create Request
+    tags:
+    - Object
+    source: openapi/ecosio-management-api-openapi.yml#/components/schemas/NetherlandsEInvoiceCreateRequest
+  - term: NorwayEInvoiceCreateRequest
+    definition: Norway E-Invoice Create Request
+    tags:
+    - Object
+    source: openapi/ecosio-management-api-openapi.yml#/components/schemas/NorwayEInvoiceCreateRequest
+  - term: PolandEInvoiceCreateRequest
+    definition: Poland EInvoice Scenario CreateRequest.
+    tags:
+    - Object
+    source: openapi/ecosio-management-api-openapi.yml#/components/schemas/PolandEInvoiceCreateRequest
+  - term: RomaniaEInvoiceCreateRequest
+    definition: Romania EInvoice Scenario CreateRequest.
+    tags:
+    - Object
+    source: openapi/ecosio-management-api-openapi.yml#/components/schemas/RomaniaEInvoiceCreateRequest
+  - term: ScenarioCreateRequest
+    definition: Base ScenarioCreateRequest.
+    tags:
+    - Object
+    source: openapi/ecosio-management-api-openapi.yml#/components/schemas/ScenarioCreateRequest
+  - term: SwedenEInvoiceCreateRequest
+    definition: Sweden E-Invoice Create Request
+    tags:
+    - Object
+    source: openapi/ecosio-management-api-openapi.yml#/components/schemas/SwedenEInvoiceCreateRequest
+  - term: UnitedKingdomEInvoiceCreateRequest
+    definition: Uk E-Invoice Create Request
+    tags:
+    - Object
+    source: openapi/ecosio-management-api-openapi.yml#/components/schemas/UnitedKingdomEInvoiceCreateRequest
+  - term: CertificateResponse
+    definition: 'Object declared by the contract with fields: expiry, serialNumber.'
+    tags:
+    - Object
+    source: openapi/ecosio-management-api-openapi.yml#/components/schemas/CertificateResponse
+  - term: FranceEInvoiceRetrievalResponse
+    definition: France E-Invoice Retrieval Response
+    tags:
+    - Object
+    source: openapi/ecosio-management-api-openapi.yml#/components/schemas/FranceEInvoiceRetrievalResponse
+  - term: PeppolSenderParticipantInfoResponse
+    definition: Peppol sender participant info, describing a single Peppol Participant ID together with its direction and whether it is used for
+      self-billing.
+    tags:
+    - Object
+    source: openapi/ecosio-management-api-openapi.yml#/components/schemas/PeppolSenderParticipantInfoResponse
+  - term: ScenarioResponse
+    definition: Base ScenarioResponse.
+    tags:
+    - Object
+    source: openapi/ecosio-management-api-openapi.yml#/components/schemas/ScenarioResponse
+  - term: BelgiumEInvoiceUpdateRequest
+    definition: Belgium E-Invoice Update Request
+    tags:
+    - Object
+    source: openapi/ecosio-management-api-openapi.yml#/components/schemas/BelgiumEInvoiceUpdateRequest
+  - term: DenmarkEInvoiceUpdateRequest
+    definition: Denmark E-Invoice Update Request
+    tags:
+    - Object
+    source: openapi/ecosio-management-api-openapi.yml#/components/schemas/DenmarkEInvoiceUpdateRequest
+  - term: EstoniaEInvoiceUpdateRequest
+    definition: Estonia E-Invoice Update Request
+    tags:
+    - Object
+    source: openapi/ecosio-management-api-openapi.yml#/components/schemas/EstoniaEInvoiceUpdateRequest
+  - term: FinlandEInvoiceUpdateRequest
+    definition: Finland E-Invoice Update Request
+    tags:
+    - Object
+    source: openapi/ecosio-management-api-openapi.yml#/components/schemas/FinlandEInvoiceUpdateRequest
+  - term: FranceEInvoiceUpdateRequest
+    definition: France E-Invoice Update Request
+    tags:
+    - Object
+    source: openapi/ecosio-management-api-openapi.yml#/components/schemas/FranceEInvoiceUpdateRequest
+  - term: GermanyEInvoiceUpdateRequest
+    definition: Germany E-Invoice Update Request
+    tags:
+    - Object
+    source: openapi/ecosio-management-api-openapi.yml#/components/schemas/GermanyEInvoiceUpdateRequest
+  - term: HungaryEInvoiceUpdateRequest
+    definition: Hungary EInvoice Scenario UpdateRequest.
+    tags:
+    - Object
+    source: openapi/ecosio-management-api-openapi.yml#/components/schemas/HungaryEInvoiceUpdateRequest

@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/ecosio/main/json-schema/ecosio-status-response-schema.json",
+  "title": "StatusResponse",
+  "description": "Status of a message.",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/ecosio-vertex-messaging-api-openapi.yml#/components/schemas/StatusResponse",
+  "properties": {
+    "error": {
+      "$ref": "#/$defs/Error",
+      "description": "Details of an error if one occurred."
+    },
+    "lastChanged": {
+      "description": "Timestamp of the message's last update, specified in ISO 8601 format.",
+      "format": "date-time",
+      "type": "string"
+    },
+    "messageId": {
+      "description": "ID of the message.",
+      "format": "uuid",
+      "type": "string"
+    },
+    "receivedAt": {
+      "description": "Timestamp of the message's receipt, specified in ISO 8601 format.",
+      "format": "date-time",
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/StatusEnum",
+      "description": "Status of the message.",
+      "enum": [
+        "HANDLED",
+        "TRANSMITTED",
+        "ERROR",
+        "TRANSIENT_ERROR",
+        "RETAINED",
+        "PROCESSING"
+      ]
+    }
+  },
+  "required": [
+    "lastChanged",
+    "messageId",
+    "receivedAt",
+    "status"
+  ],
+  "type": "object",
+  "$defs": {
+    "Error": {
+      "description": "Details of errors.",
+      "properties": {
+        "code": {
+          "description": "Error code returned.",
+          "type": "string"
+        },
+        "details": {
+          "description": "Array of specific errors that occurred.",
+          "items": {
+            "$ref": "#/$defs/ErrorDetail"
+          },
+          "type": "array"
+        },
+        "message": {
+          "description": "Details about the error.",
+          "type": "string"
+        },
+        "target": {
+          "description": "Source where the error occurred.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "message"
+      ],
+      "type": "object"
+    },
+    "ErrorDetail": {
+      "properties": {
+        "code": {
+          "description": "Error code returned.",
+          "type": "string"
+        },
+        "message": {
+          "description": "Details about the error.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "message"
+      ],
+      "type": "object"
+    },
+    "StatusEnum": {
+      "description": "Status of a message.",
+      "enum": [
+        "HANDLED",
+        "TRANSMITTED",
+        "ERROR",
+        "TRANSIENT_ERROR",
+        "RETAINED",
+        "PROCESSING"
+      ],
+      "type": "string"
+    }
+  }
+}

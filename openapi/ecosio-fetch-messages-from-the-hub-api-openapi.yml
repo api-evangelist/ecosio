@@ -1,0 +1,435 @@
+openapi: 3.2.0
+info:
+  title: ecosio.api Fetch messages from the Hub API
+  description: This documentation describes the features of the ecosio messaging API (aka ecosio.api). ecosio.api is used to send structured electronic documents from an ERP system or any other IT system to ecosio and to fetch electronic messages from ecosio.
+  contact:
+    name: ecosio GmbH
+    url: https://ecosio.com/en
+    email: support@ecosio.com
+  version: 1.1.1
+servers:
+- url: https://api.test.ecosio-hub.com:{port}
+  description: TEST instance of ecosio.api (port 443 for CA SSL; 8443 for self signed SSL)
+  variables:
+    port:
+      enum:
+      - '443'
+      - '8443'
+      default: '443'
+      description: 443 for CA SSL; 8443 for self signed SSL
+security:
+- basicAuth: []
+  X-APP-KEY: []
+tags:
+- name: Fetch messages from the Hub
+paths:
+  /api/v1/fetch:
+    get:
+      tags:
+      - Fetch messages from the Hub
+      summary: Fetch a list of newly received messages from the ecosio Integration Hub
+      operationId: getMessageList
+      parameters:
+      - in: query
+        name: limit
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 30
+        required: false
+        description: The number of messages which shall be contained in the response. By default 30 messages will be returned. Setting this value above 30 will have no effect.
+        example: 30
+      - in: query
+        name: offset
+        schema:
+          type: integer
+          multipleOf: 30
+        required: false
+        description: Specifies the starting position to return messages from. By default The last message sent will be returned first (Last-In First-Out)
+        example: 0
+      - in: query
+        name: state
+        schema:
+          type: string
+        required: false
+        description: Specifies that only messages in a certain state should be listed. Current options are DELIVERED and FETCHED. DELIVERED is used to list only messages that are available in the inbox but were not yet downloaded while FETCHED lists only those messages that were at least downloaded once by the receiving company. If this parameter is not provided in the URL, it will by default return both delivered and fetched documents in the returned list.
+        example: FETCHED
+      responses:
+        '200':
+          $ref: '#/components/responses/getMessageListResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '429':
+          $ref: '#/components/responses/429'
+  /api/v1/msg/{messageId}:
+    get:
+      tags:
+      - Fetch messages from the Hub
+      summary: Get a received message from the ecosio Integration Hub
+      operationId: getReceivedMessage
+      parameters:
+      - in: path
+        name: messageId
+        schema:
+          type: string
+        required: true
+        description: The UUID of the message, which shall be retrieved
+        example: 70d4ec9d-33f9-47c1-94fc-91938dad7612
+      responses:
+        '200':
+          $ref: '#/components/responses/getMessageResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+  /api/v1/callback/{messageId}:
+    post:
+      tags:
+      - Fetch messages from the Hub
+      summary: Acknowledge the successful or unsuccessful processing of a fetched message
+      operationId: callback
+      parameters:
+      - in: path
+        name: messageId
+        schema:
+          type: string
+        required: true
+        description: The UUID of the message, which shall be acknowledged
+        example: 70d4ec9d-33f9-47c1-94fc-91938dad7612
+      requestBody:
+        $ref: '#/components/requestBodies/callbackRequest'
+      responses:
+        '204':
+          description: Callback was successfully processed
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+components:
+  schemas:
+    callback-negative:
+      allOf:
+      - description: Returned in case there was a problem while processing the message in the IT system
+        type: object
+        properties:
+          result:
+            type: boolean
+            description: Indicates, if the callback was successful (true) or not (false). Always false in case of a negative callback.
+            example: false
+          text:
+            type: string
+            description: And optional field for free text, where additional information about the processing of the message can be transmitted
+            example: Message could not be processed
+      - $ref: '#/components/schemas/failure-object'
+      - type: object
+        properties:
+          index:
+            $ref: '#/components/schemas/index'
+      - type: object
+        properties:
+          failure:
+            properties:
+              errorCode:
+                example: '300'
+              reason:
+                example: INTERNAL_SERVER_ERROR
+              details:
+                example: An unexpected error occurred while processing the request.
+              reference:
+                example: 0441e9b0-993f-11eb-943c-91d1a9b71250c
+    failure-403:
+      allOf:
+      - $ref: '#/components/schemas/failure-object'
+      - type: object
+        properties:
+          failure:
+            properties:
+              errorCode:
+                example: '104'
+              reason:
+                example: USER_NOT_PERMITTED
+              details:
+                example: Invalid user credentials found
+              reference:
+                example: 70d4ec9d-33f9-47c1-94fc-91938dad7612
+    failure-429:
+      allOf:
+      - $ref: '#/components/schemas/failure-object-without-reference'
+      - type: object
+        properties:
+          failure:
+            properties:
+              errorCode:
+                example: '130'
+              reason:
+                example: TOO_MANY_REQUESTS_RECEIVED
+              details:
+                example: Too many requests have been received in a short amount of time. Please respect the terms of services and increase the interval of polling requests.
+    failure-404:
+      allOf:
+      - $ref: '#/components/schemas/failure-object'
+      - type: object
+        properties:
+          failure:
+            properties:
+              errorCode:
+                example: '160'
+              reason:
+                example: MESSAGE_RETRIEVAL_FAILED_MESSAGE_ID_UNKNOWN
+              details:
+                example: Unknown messageId
+              reference:
+                example: 0441e9b0-993f-11eb-943c-91d1a9b71250c
+    failure-object:
+      type: object
+      properties:
+        failure:
+          $ref: '#/components/schemas/propertyFailure'
+    failure-object-without-reference:
+      type: object
+      properties:
+        failure:
+          $ref: '#/components/schemas/propertyFailureWithoutReference'
+    propertyFailure:
+      description: In case the message has reached an error state, the error details are denoted in this element. Whether the failure element is shown or not, depends on the configured state mode. For an overview of the different states and the state modes please refer to https://connect.ecosio.com/docs/state-mode#/
+      type:
+      - object
+      - 'null'
+      allOf:
+      - $ref: '#/components/schemas/propertyFailureWithoutReference'
+      - properties:
+          reference:
+            type: string
+            description: The message ID, for which the error occurred.
+            example: 92fd6790-ad7d-11eb-9825-19ebc28755dd
+    message:
+      description: ''
+      type: object
+      properties:
+        messageId:
+          type: string
+          description: The UUID of the message on the ecosio Integration Hub
+          example: 70d4ec9d-33f9-46c1-94fc-93548dad7612
+        senderUuid:
+          type: string
+          description: The UUID of the sender of the message
+          example: 45c2dae5-4235-45b0-98c2-c2342b10919f
+        senderName:
+          type: string
+          description: The name of the sender of the message
+          example: ecosio API Test Sender
+        receiverUuid:
+          type: string
+          description: The UUID of the receiver of the message
+          example: 4ac1e432-f900-424f-92ab-edd501812342
+        receiverName:
+          type: string
+          description: The name of the receiver of the message
+          example: ecosio API Test Receiver
+        receivedAt:
+          type: string
+          format: date-time
+          description: The timestamp, when the message has been received on the ecosio Integration Hub
+          example: '2023-09-22T14:25:03Z'
+        state:
+          type: string
+          description: The state of the message. For a complete list of states please see https://connect.ecosio.com/docs/state-mode#/
+          example: PROCESSED
+        messageSize:
+          type: integer
+          description: The size of the message in Bytes
+          example: 1212341
+        documentTypeId:
+          type: string
+          description: The ecosio document type id, which has been identified for the message
+          example: XML_4p1_ebInterface
+        mimeType:
+          type: string
+          description: The type of the message, which has been identified.
+          example: XML
+        charset:
+          type: string
+          description: The charset of the message
+          example: UTF-8
+        fileName:
+          type: string
+          description: The filename of the message
+          example: 70d4ec9d-33f9-46c1-94fc-93548dad7612.xml
+        lastChanged:
+          type: string
+          format: date-time
+          description: The timestamp, when the message was last changed on the ecosio Integration Hub
+          example: '2023-09-22T14:26:00Z'
+        reference:
+          type:
+          - string
+          - 'null'
+          format: string
+          description: A reference id, which has been fetched from the message on the ecosio Integration Hub. In case of EDIFACT the reference id is for instance the UNB message interchange id. For other message types such as XML messages, the reference id can be custom set.
+          example: '4711'
+    callback-positive:
+      description: Returned, in case the processing of the message in the IT system was OK.
+      type: object
+      properties:
+        result:
+          type: boolean
+          description: Indicates, if the callback was successful (true) or not (false). Always true in case of a positive callback.
+          example: true
+        text:
+          type: string
+          description: And optional field for free text, where additional information about the processing of the message can be transmitted
+          example: Sales order created
+        index:
+          $ref: '#/components/schemas/index'
+    failure-400-get:
+      allOf:
+      - $ref: '#/components/schemas/failure-object-without-reference'
+      - type: object
+        properties:
+          failure:
+            properties:
+              errorCode:
+                example: '200'
+              reason:
+                example: ARGUMENT_NULL
+              details:
+                example: No id found
+    failure-401:
+      allOf:
+      - $ref: '#/components/schemas/failure-object-without-reference'
+      - type: object
+        properties:
+          failure:
+            properties:
+              errorCode:
+                example: '102'
+              reason:
+                example: CREDENTIALS_INVALID
+              details:
+                example: The provided credentials are invalid!
+    index:
+      description: Used to pass key/value pairs. Usually, these pairs contain information about the objects, which have been created in the IT system, e.g., purchase order numbers, invoice numbers or internal numbers such as SAP IDoc numbers. Value can either be strings or arrays.
+      type: object
+      additionalProperties: true
+      example: '{''key1'': ''value1'', ''key2'': ''value2'', ''key3'': [''value3a'', ''value3b'']}'
+    propertyFailureWithoutReference:
+      description: In case the message has reached an error state, the error details are denoted in this element. Whether the failure element is shown or not, depends on the configured state mode. For an overview of the different states and the state modes please refer to https://connect.ecosio.com/docs/state-mode#/
+      type:
+      - object
+      - 'null'
+      properties:
+        errorCode:
+          type: string
+          description: A code, identifying the error.
+          example: '261'
+        reason:
+          type: string
+          description: The reason for the error
+          example: RECEIVER_INVALID
+        details:
+          type: string
+          description: Further details about the error
+          example: 'No receiver could be identified using either on message level (identifier: xyz) or on protocol level (xyz)'
+  responses:
+    '401':
+      description: "**UNAUTHORIZED**\n\nIn case the authentication credentials are not valid\n\n  | Code| Name | Description |\n  |-----|-----|-------------|\n  | 102 | CREDENTIALS_INVALID | The provided credentials are invalid |\n"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/failure-401'
+    '403':
+      description: "**FORBIDDEN.**\n\nIn case the user could not be authenticated\n\n  | Code| Name| Description |\n  |-----|-----|-------------|\n  |101| USER_KEY_INVALID| The user provided a wrong user key (deprecated) |\n  |104| USER_NOT_PERMITTED| The user authenticated successfully but has no rights to fulfill the requested task |\n"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/failure-403'
+    getMessageResponse:
+      description: '**OK.** The details of a received message. Among the details is also the message itself.'
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: '#/components/schemas/message'
+            - type: object
+              properties:
+                message:
+                  type: string
+                  description: The base64-encoded message
+                  example: VGhpcyBpcyBhIHRlc3Q=
+    getMessageListResponse:
+      description: '**OK.** A list of messages, which have been received for the given user on the ecosio Integration Hub and which have not been fetched yet. Only the meta information of the messages is provided.'
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              messages:
+                type: array
+                items:
+                  oneOf:
+                  - $ref: '#/components/schemas/message'
+              availableMessages:
+                type: string
+                description: The number of remaining messages on the hub. Together with the limit and offset query parameters, this value can be used to implement a fetching logic on the API client's side
+                example: '12'
+    '429':
+      description: '**TOO MANY REQUESTS.**
+
+
+        | Code| Name| Description |
+
+        |-----|-----|-------------|
+
+        | 130 | TOO_MANY_REQUESTS_RECEIVED|In order to prevent being spammed by poll requests and status queries the service makes use of a request cache. If the number of requests received in a certain amount of time exceed a certain threshold this error will be returned. Every 5 minutes the cache will be cleared automatically|
+
+        '
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/failure-429'
+    '404':
+      description: '**NOT FOUND.**
+
+
+        In case the message could not be found
+
+        '
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/failure-404'
+    '400':
+      description: '**BAD REQUEST**
+
+
+        In case an error occurred during the processing of the request.
+
+        '
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/failure-400-get'
+  requestBodies:
+    callbackRequest:
+      description: The status of the processing of the fetched message in the target IT system, e.g., an ERP system.
+      content:
+        application/json:
+          schema:
+            oneOf:
+            - $ref: '#/components/schemas/callback-positive'
+            - $ref: '#/components/schemas/callback-negative'
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    X-APP-KEY:
+      in: header
+      name: X-APP-KEY
+      type: apiKey
+      description: The ecosio app key is passed as HTTP header.

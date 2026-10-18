@@ -1,0 +1,897 @@
+openapi: 3.2.0
+info:
+  title: Management Connectors API
+  description: API for managing companies and executing compliance and connectivity workflows on the ecosio platform.
+  contact:
+    name: ecosio GmbH
+    url: https://ecosio.com/en
+    email: support@ecosio.com
+  version: 1.4.0
+servers:
+- url: https://api.test.ecosio-hub.com
+  description: TEST instance of ecosio management.api
+tags:
+- name: Connectors
+  description: Methods for managing messaging connectors
+paths:
+  /api/v1/management/connectors/{connectorUuid}:
+    get:
+      tags:
+      - Connectors
+      summary: Retrieve a connector
+      operationId: getConnector
+      parameters:
+      - name: connectorUuid
+        in: path
+        description: ID of the connector to be retrieved. This can be the external or internal identifier.
+        required: true
+        schema:
+          type: string
+          minLength: 1
+          pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectorRetrievalResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Connector not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '405':
+          description: Method Not Allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Too Many Requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - bearerAuth: []
+      - basicAuth: []
+      - X-APP-KEY: []
+    put:
+      tags:
+      - Connectors
+      summary: Update a connector
+      description: Updates an existing connector.
+      operationId: updateConnector
+      parameters:
+      - name: connectorUuid
+        in: path
+        description: ID of the connector to update. This can be the external or internal identifier.
+        required: true
+        schema:
+          type: string
+          minLength: 1
+          pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+              - $ref: '#/components/schemas/APIConnectorUpdateRequest'
+              - $ref: '#/components/schemas/HTTPSConnectorUpdateRequest'
+        required: true
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectorUpdateResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '405':
+          description: Method Not Allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Too Many Requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - bearerAuth: []
+      - basicAuth: []
+      - X-APP-KEY: []
+  /api/v1/management/connectors/{connectorUuid}/companies:
+    put:
+      tags:
+      - Connectors
+      summary: Update a connector's companies
+      description: Replaces the connector's companies. The response returns information about the updated connector.
+      operationId: replaceCompanies
+      parameters:
+      - name: connectorUuid
+        in: path
+        description: ID of the connector to be updated. This can be the external or internal identifier.
+        required: true
+        schema:
+          type: string
+          minLength: 1
+          pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectorCompaniesRequest'
+        required: true
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectorUpdateResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '405':
+          description: Method Not Allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Too Many Requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - bearerAuth: []
+      - basicAuth: []
+      - X-APP-KEY: []
+  /api/v1/management/connectors:
+    get:
+      tags:
+      - Connectors
+      summary: List all connectors
+      operationId: findConnectors
+      parameters:
+      - name: page
+        in: query
+        description: Page number to be retrieved (0-indexed). The size of the page is 50
+        required: false
+        schema:
+          type: string
+          default: '0'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectorRetrievalPageResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '405':
+          description: Method Not Allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Too Many Requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - bearerAuth: []
+      - basicAuth: []
+      - X-APP-KEY: []
+    post:
+      tags:
+      - Connectors
+      summary: Create a connector
+      description: Creates a new connector. The response returns information about the new connector.
+      operationId: createConnector
+      parameters:
+      - name: usedForTestOnly
+        in: query
+        description: Marks the entity to be used only for testing purposes.
+        required: false
+        schema:
+          type: boolean
+          default: false
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+              - $ref: '#/components/schemas/APIConnectorCreateRequest'
+              - $ref: '#/components/schemas/HTTPSConnectorCreateRequest'
+        required: true
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectorOperationResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '405':
+          description: Method Not Allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Too Many Requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - bearerAuth: []
+      - basicAuth: []
+      - X-APP-KEY: []
+  /api/v1/management/connectors/{connectorUuid}/regenerateCredentials:
+    post:
+      tags:
+      - Connectors
+      summary: Regenerate a connector's credentials
+      operationId: regenerateCredentials
+      parameters:
+      - name: connectorUuid
+        in: path
+        description: ID of the connector to update. This can be the external or internal identifier.
+        required: true
+        schema:
+          type: string
+          minLength: 1
+          pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectorOperationResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '405':
+          description: Method Not Allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Too Many Requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - bearerAuth: []
+      - basicAuth: []
+      - X-APP-KEY: []
+components:
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          $ref: '#/components/schemas/Error'
+          description: Detailed Error description
+      required:
+      - error
+    ConnectorType:
+      type: string
+      enum:
+      - MESSAGING_API
+      - HTTPS
+    Oauth2Request:
+      type: object
+      properties:
+        authorizationUrl:
+          type: string
+          minLength: 1
+        clientId:
+          type: string
+          minLength: 1
+        clientSecret:
+          type: string
+          format: password
+          minLength: 1
+        additionalParameters:
+          type: string
+      required:
+      - authorizationUrl
+      - clientId
+      - clientSecret
+    ErrorDetail:
+      type: object
+      description: Represent a related error that occurred during the request
+      properties:
+        code:
+          type: string
+          description: 'One of a server-defined set of error codes. '
+          example: VALID_110
+        message:
+          type: string
+          description: A human-readable representation of the error.
+          example: JSON is not valid
+      required:
+      - code
+      - message
+    APIConnectorUpdateRequest:
+      allOf:
+      - $ref: '#/components/schemas/ConnectorUpdateRequest'
+      description: HTTPS Connector UpdateRequest.
+      required:
+      - type
+    ConnectorRetrievalPageResponse:
+      type: object
+      properties:
+        content:
+          type: array
+          description: List of items for the current page.
+          items:
+            oneOf:
+            - $ref: '#/components/schemas/APIConnectorRetrievalResponse'
+            - $ref: '#/components/schemas/HTTPSConnectorRetrievalResponse'
+        totalPages:
+          type: integer
+          format: int32
+          description: Total number of pages.
+          example: 2
+        totalElements:
+          type: integer
+          format: int64
+          description: Total number of items in the entire collection.
+          example: 62
+        numberOfElements:
+          type: integer
+          format: int32
+          description: Number of items for the current page.
+          example: 12
+        pageSize:
+          type: integer
+          format: int32
+          description: Number of items requested per page.
+          example: 50
+        pageNumber:
+          type: integer
+          format: int32
+          description: Current page number (0-indexed). The first page is 0.
+          example: 1
+      required:
+      - content
+      - numberOfElements
+      - pageNumber
+      - pageSize
+      - totalElements
+      - totalPages
+    ApprovalStatus:
+      type: string
+      enum:
+      - PENDING
+      - APPROVED
+      - ERROR
+      - REJECTED
+      - FAILED
+      - APPLIED
+    BasicAuthRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          minLength: 1
+        password:
+          type: string
+          format: password
+          minLength: 1
+      required:
+      - password
+      - username
+    ConnectorOperationResponse:
+      type: object
+      description: Base representation of a connector.
+      discriminator:
+        propertyName: type
+        mapping:
+          MESSAGING_API: '#/components/schemas/APIConnectorOperationResponse'
+          HTTPS: '#/components/schemas/HTTPSConnectorOperationResponse'
+      properties:
+        managedConnectorUuid:
+          type: string
+          format: uuid
+          description: External ID of the retrieved connector.
+          example: cd13fea0-2108-11f0-836c-d3d769f7e115
+        connectorUuid:
+          type: string
+          format: uuid
+          description: Internal ID of the retrieved connector.
+          example: cd13fea0-2108-11f0-836c-d3d769f7e115
+        type:
+          $ref: '#/components/schemas/ConnectorType'
+          description: Type of the connector.
+          enum:
+          - MESSAGING_API
+          - HTTPS
+        approvalUuid:
+          type: string
+          format: uuid
+          description: ID of this connector request.
+          example: cd13fea0-2108-11f0-836c-d3d769f7e115
+        approvalStatus:
+          $ref: '#/components/schemas/ApprovalStatus'
+          description: The current status of the latest approval request.
+          examples:
+          - PENDING
+          - APPROVED
+          - REJECTED
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+      - approvalUuid
+      - createdAt
+      - type
+      - updatedAt
+    HTTPSConnectorUpdateRequest:
+      allOf:
+      - $ref: '#/components/schemas/ConnectorUpdateRequest'
+      - type: object
+        properties:
+          url:
+            type: string
+            description: HTTPS URL the connector communicates with.
+          basicAuth:
+            $ref: '#/components/schemas/BasicAuthRequest'
+            description: Credentials for basic HTTPS authentication.
+          additionalHeaders:
+            type: object
+            additionalProperties:
+              type: string
+            description: Additional header properties for the fetching connector.
+          oauth2:
+            $ref: '#/components/schemas/Oauth2Request'
+      description: HTTPS Connector UpdateRequest.
+      required:
+      - type
+    APIConnectorRetrievalResponse:
+      allOf:
+      - $ref: '#/components/schemas/ConnectorRetrievalResponse'
+      - type: object
+        properties:
+          userId:
+            type: string
+      required:
+      - approvalUuid
+      - createdAt
+      - type
+      - updatedAt
+    BasicAuthResponse:
+      type: object
+      properties:
+        username:
+          type: string
+          minLength: 1
+      required:
+      - username
+    APIConnectorCreateRequest:
+      allOf:
+      - $ref: '#/components/schemas/ConnectorCreateRequest'
+      description: HTTPS Connector CreateRequest.
+      required:
+      - direction
+      - multiTenant
+      - type
+    ConnectorDirection:
+      type: string
+      enum:
+      - BOTH
+      - DELIVERY
+      - FETCH
+      - FORWARDER
+    ConnectorCompaniesRequest:
+      type: object
+      properties:
+        companyUuids:
+          type: array
+          description: List of company IDs.
+          example:
+          - 7a7e8b6b-4e6f-4d2a-8b8c-1e2f3d4a5b6c
+          - a1b2c3d4-e5f6-a7b8-c9d0-e1f2a3b4c5d6
+          items:
+            type: string
+            pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$
+          uniqueItems: true
+    Error:
+      type: object
+      description: Describes an error item
+      properties:
+        code:
+          type: string
+          description: 'One of a server-defined set of error codes. '
+          example: VALID_240
+        message:
+          type: string
+          description: A human-readable representation of the error.
+          example: Alias is not valid
+        target:
+          type: string
+          description: The target of the error.
+          example: Validation
+        details:
+          type: array
+          description: Represent an array of related errors that occurred during the request.
+          items:
+            $ref: '#/components/schemas/ErrorDetail'
+      required:
+      - code
+      - message
+    ConnectorRetrievalResponse:
+      type: object
+      description: Base representation of a connector.
+      discriminator:
+        propertyName: type
+        mapping:
+          MESSAGING_API: '#/components/schemas/APIConnectorRetrievalResponse'
+          HTTPS: '#/components/schemas/HTTPSConnectorRetrievalResponse'
+      properties:
+        managedConnectorUuid:
+          type: string
+          format: uuid
+          description: External ID of the retrieved connector.
+          example: cd13fea0-2108-11f0-836c-d3d769f7e115
+        connectorUuid:
+          type: string
+          format: uuid
+          description: Internal ID of the retrieved connector.
+          example: cd13fea0-2108-11f0-836c-d3d769f7e115
+        type:
+          $ref: '#/components/schemas/ConnectorType'
+          description: Type of the connector.
+          enum:
+          - MESSAGING_API
+          - HTTPS
+        approvalUuid:
+          type: string
+          format: uuid
+          description: ID of this connector request.
+          example: cd13fea0-2108-11f0-836c-d3d769f7e115
+        approvalStatus:
+          $ref: '#/components/schemas/ApprovalStatus'
+          description: The current status of the latest approval request.
+          examples:
+          - PENDING
+          - APPROVED
+          - REJECTED
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        companyUuids:
+          type: array
+          description: List of managed company IDs associated with this connector. For single-tenant connectors, this is a single ID.
+          items:
+            type: string
+        direction:
+          $ref: '#/components/schemas/ConnectorDirection'
+          description: Direction of the connector.
+          example: BOTH
+        multiTenant:
+          type: boolean
+          description: If true, indicates the connector is multi-tenant.
+      required:
+      - approvalUuid
+      - createdAt
+      - type
+      - updatedAt
+    HTTPSConnectorCreateRequest:
+      allOf:
+      - $ref: '#/components/schemas/ConnectorCreateRequest'
+      - type: object
+        properties:
+          url:
+            type: string
+            description: HTTPS URL the connector communicates with.
+          basicAuth:
+            $ref: '#/components/schemas/BasicAuthRequest'
+            description: Credentials for basic HTTPS authentication.
+          additionalHeaders:
+            type: object
+            additionalProperties:
+              type: string
+            description: Additional header properties for the forwarding connector.
+          oauth2:
+            $ref: '#/components/schemas/Oauth2Request'
+      description: HTTPS Connector CreateRequest.
+      required:
+      - direction
+      - multiTenant
+      - type
+    ConnectorUpdateRequest:
+      type: object
+      discriminator:
+        propertyName: type
+        mapping:
+          MESSAGING_API: '#/components/schemas/APIConnectorUpdateRequest'
+          HTTPS: '#/components/schemas/HTTPSConnectorUpdateRequest'
+      properties:
+        type:
+          $ref: '#/components/schemas/ConnectorType'
+          description: Type of the connector.
+          enum:
+          - MESSAGING_API
+          - HTTPS
+      required:
+      - type
+    Oauth2Response:
+      type: object
+      properties:
+        authorizationUrl:
+          type: string
+          minLength: 1
+        clientId:
+          type: string
+          minLength: 1
+        additionalParameters:
+          type: string
+      required:
+      - authorizationUrl
+      - clientId
+    ConnectorCreateRequest:
+      type: object
+      discriminator:
+        propertyName: type
+        mapping:
+          MESSAGING_API: '#/components/schemas/APIConnectorCreateRequest'
+          HTTPS: '#/components/schemas/HTTPSConnectorCreateRequest'
+      properties:
+        type:
+          $ref: '#/components/schemas/ConnectorType'
+          description: Type of the connector.
+          enum:
+          - MESSAGING_API
+          - HTTPS
+        direction:
+          $ref: '#/components/schemas/ConnectorDirection'
+          description: Direction of the connector.
+          examples:
+          - BOTH
+          - DELIVERY
+          - FORWARDER
+        companyUuids:
+          type: array
+          description: List of company IDs separated by commas.
+          items:
+            type: string
+            pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$
+          uniqueItems: true
+        multiTenant:
+          type: boolean
+          description: If true, indicates the connector is multi-tenant.
+      required:
+      - direction
+      - multiTenant
+      - type
+    HTTPSConnectorRetrievalResponse:
+      allOf:
+      - $ref: '#/components/schemas/ConnectorRetrievalResponse'
+      - type: object
+        properties:
+          url:
+            type: string
+          basicAuth:
+            $ref: '#/components/schemas/BasicAuthResponse'
+          additionalHeaders:
+            type: object
+            additionalProperties:
+              type: string
+          oauth2:
+            $ref: '#/components/schemas/Oauth2Response'
+      required:
+      - approvalUuid
+      - createdAt
+      - type
+      - updatedAt
+    ConnectorUpdateResponse:
+      type: object
+      properties:
+        managedConnectorUuid:
+          type: string
+          format: uuid
+          description: External ID of the retrieved connector.
+          example: cd13fea0-2108-11f0-836c-d3d769f7e115
+        connectorUuid:
+          type: string
+          format: uuid
+          description: Internal ID of the retrieved connector.
+          example: cd13fea0-2108-11f0-836c-d3d769f7e115
+        type:
+          $ref: '#/components/schemas/ConnectorType'
+          description: Type of the connector.
+          enum:
+          - MESSAGING_API
+          - HTTPS
+        approvalUuid:
+          type: string
+          format: uuid
+          description: ID of this connector request.
+          example: cd13fea0-2108-11f0-836c-d3d769f7e115
+        approvalStatus:
+          $ref: '#/components/schemas/ApprovalStatus'
+          description: The current status of the latest approval request.
+          examples:
+          - PENDING
+          - APPROVED
+          - REJECTED
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+      - approvalUuid
+      - createdAt
+      - type
+      - updatedAt
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    X-APP-KEY:
+      type: apiKey
+      name: X-APP-KEY
+      in: header

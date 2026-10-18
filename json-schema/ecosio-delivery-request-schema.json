@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/ecosio/main/json-schema/ecosio-delivery-request-schema.json",
+  "title": "DeliveryRequest",
+  "description": "Content of the message to be sent.",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/ecosio-vertex-messaging-api-openapi.yml#/components/schemas/DeliveryRequest",
+  "properties": {
+    "message": {
+      "description": "Message content, specified in Base64 format.",
+      "format": "byte",
+      "type": "string"
+    }
+  },
+  "required": [
+    "message"
+  ],
+  "type": "object"
+}

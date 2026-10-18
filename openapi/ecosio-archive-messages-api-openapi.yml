@@ -1,0 +1,675 @@
+openapi: 3.2.0
+info:
+  title: ecosio.api Archive messages API
+  description: This documentation describes the features of the ecosio messaging API (aka ecosio.api). ecosio.api is used to send structured electronic documents from an ERP system or any other IT system to ecosio and to fetch electronic messages from ecosio.
+  contact:
+    name: ecosio GmbH
+    url: https://ecosio.com/en
+    email: support@ecosio.com
+  version: 1.1.1
+servers:
+- url: https://api.test.ecosio-hub.com:{port}
+  description: TEST instance of ecosio.api (port 443 for CA SSL; 8443 for self signed SSL)
+  variables:
+    port:
+      enum:
+      - '443'
+      - '8443'
+      default: '443'
+      description: 443 for CA SSL; 8443 for self signed SSL
+security:
+- basicAuth: []
+  X-APP-KEY: []
+tags:
+- name: Archive messages
+paths:
+  /api/v1/archives:
+    post:
+      tags:
+      - Archive messages
+      summary: Create an archive request
+      description: Creates a request to archive EDI messages matching the specified patterns. The response returns a unique archive request ID.
+      operationId: create-archive
+      requestBody:
+        $ref: '#/components/requestBodies/createArchiveRequest'
+      responses:
+        '202':
+          $ref: '#/components/responses/ArchiveCreationResponse'
+        '400':
+          $ref: '#/components/responses/400-Archive'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+  /api/v1/archives/{archiveId}:
+    get:
+      tags:
+      - Archive messages
+      summary: Retrieve the current status of the archive process
+      description: 'As the archiving process may take some time to complete, the services provides an endpoint to check for the current status of the request.
+
+
+        If the request has finished the response will contain a URL to a download link which if invoked will start the download of the archive.'
+      parameters:
+      - in: path
+        name: archiveId
+        schema:
+          type: string
+        required: true
+        description: The UUID of the archive, which shall be acknowledged
+        example: b1488649-d6c1-4c4b-a1bf-cc3faf6ed1d9
+      responses:
+        '200':
+          $ref: '#/components/responses/200ArchiveDetails'
+        '400':
+          $ref: '#/components/responses/400-Archive-Download'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+      operationId: getApiV1ArchivesByArchiveId
+      x-operation-id-source: derived
+  /api/v1/downloads/{archiveId}:
+    get:
+      tags:
+      - Archive messages
+      summary: Download the archive
+      parameters:
+      - in: path
+        name: archiveId
+        schema:
+          type: string
+        required: true
+        description: The UUID of the archive, which shall be acknowledged
+        example: b1488649-d6c1-4c4b-a1bf-cc3faf6ed1d9
+      responses:
+        '200':
+          $ref: '#/components/responses/getArchiveDownload'
+        '400':
+          $ref: '#/components/responses/400-Archive-Download'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404-archive-download'
+        '500':
+          $ref: '#/components/responses/500'
+      operationId: getApiV1DownloadsByArchiveId
+      x-operation-id-source: derived
+components:
+  responses:
+    '500':
+      description: '**INTERNAL SERVER ERROR.**
+
+
+        | Code| Name| Description |
+
+        |-----|-----|-------------|
+
+        | 300 |INTERNAL_SERVER_ERROR | An unexpected error occurred while processing the request. Please contact support@ecosio.com to gain updates on the cause of the error (deprecated)|
+
+        '
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/failure-500'
+    404-archive-download:
+      description: '**NOT FOUND.**
+
+
+        In case the archive could not be found
+
+        '
+      content:
+        text/plain:
+          schema:
+            type: string
+            example: Archive  not available
+    '401':
+      description: "**UNAUTHORIZED**\n\nIn case the authentication credentials are not valid\n\n  | Code| Name | Description |\n  |-----|-----|-------------|\n  | 102 | CREDENTIALS_INVALID | The provided credentials are invalid |\n"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/failure-401'
+    getArchiveDownload:
+      description: '**OK.** Download was successful, please save your archive to a file.'
+      content:
+        application/zip:
+          schema:
+            type: string
+            format: binary
+    ArchiveCreationResponse:
+      description: '**ACCEPTED.** Archive creation has been accepted'
+      headers:
+        Location:
+          $ref: '#/components/headers/ArchiveLocation'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/archiveCreation'
+    '403':
+      description: "**FORBIDDEN.**\n\nIn case the user could not be authenticated\n\n  | Code| Name| Description |\n  |-----|-----|-------------|\n  |101| USER_KEY_INVALID| The user provided a wrong user key (deprecated) |\n  |104| USER_NOT_PERMITTED| The user authenticated successfully but has no rights to fulfill the requested task |\n"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/failure-403'
+    400-Archive:
+      description: "**BAD REQUEST**\n\n  | Code| Name| Description |\n  |-----|-----|-------------|\n  |100| APPLICATION_KEY_INVALID|Thrown if either no or an invalid application key was provided|\n  |110| INVALID_JSON_MESSAGE|Is thrown in case the request is invalid JSON\n  |120|EXPECTED_QUERY_PARAMETER_MISSING|Indicates that a required query parameter is missing in a request. Often this indicates that the appKey parameter is missing|\n  |123|QUERY_PARAMETER_UNKNOWN|The value of a provided query parameter is unknown to the service.|\n  |200|ARGUMENT_NULL|Indicates that a required argument is null|\n"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/failure-400'
+    '429':
+      description: '**TOO MANY REQUESTS.**
+
+
+        | Code| Name| Description |
+
+        |-----|-----|-------------|
+
+        | 130 | TOO_MANY_REQUESTS_RECEIVED|In order to prevent being spammed by poll requests and status queries the service makes use of a request cache. If the number of requests received in a certain amount of time exceed a certain threshold this error will be returned. Every 5 minutes the cache will be cleared automatically|
+
+        '
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/failure-429'
+    '404':
+      description: '**NOT FOUND.**
+
+
+        In case the message could not be found
+
+        '
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/failure-404'
+    200ArchiveDetails:
+      description: '**OK.**'
+      content:
+        application/json:
+          schema:
+            oneOf:
+            - $ref: '#/components/schemas/archiveOk'
+            - $ref: '#/components/schemas/archiveFailed'
+    400-Archive-Download:
+      description: "**BAD REQUEST**\n\n  | Code| Name| Description |\n  |-----|-----|-------------|\n  |100| APPLICATION_KEY_INVALID|Thrown if either no or an invalid application key was provided|\n  |110| INVALID_JSON_MESSAGE|Is thrown in case the request is invalid JSON\n  |120|EXPECTED_QUERY_PARAMETER_MISSING|Indicates that a required query parameter is missing in a request. Often this indicates that the appKey parameter is missing|\n  |123|QUERY_PARAMETER_UNKNOWN|The value of a provided query parameter is unknown to the service.|\n  |200|ARGUMENT_NULL|Indicates that a required argument is null|\n"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/failure-400-get'
+        text/plain:
+          schema:
+            type: string
+            example: Archive e339f0f0-9959-4009-b425-b3fa487a4df3 is in invalid state
+  requestBodies:
+    createArchiveRequest:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/archiveRequest'
+      description: 'For the entryPattern the following fields are recognized for substitution:
+
+
+        | EntryPattern Options| Description |
+
+        |---------------------|-------------|
+
+        | YEAR   | The year the document was received by the Integration Hub   |
+
+        | MONTH | The month in the year the document was received by the Integration Hub|
+
+        | DAY | The day of the mont the document was received by the Integration Hub|
+
+        | TIMESTAMP | The timestamp the document was received at|
+
+        | MESSAGE_ID | The unique identifier of the message archived|
+
+        | MESSAGE_STATUS |   The status of the message archived|
+
+        | MIME_TYPE | The MIME type of the document (i.e. XML, CSV, …)|
+
+        | EXTENSION | The extension of the document in the archive|
+
+        | SENDER_UUID | The unique identifier of the sending company |
+
+        | SENDER_NAME | Human readable name of the sender of the document |
+
+        | RECEIVER_UUID | The unique identifier of the receiving company |
+
+        | RECEIVER_NAME | Human readable name of the receiver of the document |
+
+        | DOCUMENT_TYPE | The unique identifier of the identified document type |
+
+        | RANDOM_ALPHANUMERIC_1 | Random alphanumeric character |
+
+        | RANDOM_ALPHANUMERIC_8 | Sequence of 8 alphanumeric random characters |
+
+        | RANDOM_NUMERIC_1 | Random numeric character |
+
+        | RANDOM_NUMERIC_8 | Sequence of 8 numeric random characters |
+
+        | IN_OUT | If specified will separate received files from sent files by including a dedicated segment named IN, for received, and OUT, for sent documents. |
+
+        '
+  schemas:
+    failure-403:
+      allOf:
+      - $ref: '#/components/schemas/failure-object'
+      - type: object
+        properties:
+          failure:
+            properties:
+              errorCode:
+                example: '104'
+              reason:
+                example: USER_NOT_PERMITTED
+              details:
+                example: Invalid user credentials found
+              reference:
+                example: 70d4ec9d-33f9-47c1-94fc-91938dad7612
+    archiveOk:
+      description: Information about current state of archive
+      properties:
+        companyUuid:
+          type: string
+          description: The unique identifier the company the process was triggered for
+          example: 05c3875e-338e-4dcc-be2d-020cec6890b9
+        companyName:
+          type: string
+          description: Name of your company
+          example: ecosio API Test Receiver
+        state:
+          type: string
+          description: The current state of the archiving process. This may be one of the following QUEUED, RUNNING, FINISHED and FAILED
+          example: RUNNING
+        direction:
+          type: string
+          description: The specified value of the archive generation request of the corresponding field. One of DELIVERED, FETCHED or ALL
+          example: ALL
+        entryPattern:
+          type: string
+          description: The specified entry pattern, if defined
+          example: ${YEAR}/${MONTH}/${DAY}/${MESSAGE_ID}/${TIMESTAMP}_${MESSAGE_STATUS}.${EXTENSION}
+        from:
+          type: string
+          format: date-time
+          description: Will include documents younger than this timestamp in the resulting archive. The date must be in ISO 8601 format.
+          example: '2023-10-01T08:00:00Z'
+        till:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Will include documents older than this timestamp in the resulting archive. The date must be in ISO 8601 format.
+          example: '2023-10-02T08:00:00Z'
+        messageIds:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+          description: The messageIds listed in this array are added to the archive.
+          example:
+          - cbd8425a-a130-4ac3-825d-98125d8acd32
+          - af6bdfad-81d3-451c-88ab-c2554b4bb195
+          - 1dc68f00-3815-41ac-a977-3c6c42cba9d6
+        downloadUrl:
+          type: string
+          description: The URL of the final archive. This field is only available if the status is FINISHED and at least one message was found within the provided time range. Accessing the URL requires full authentication.
+          example: https://api.test.ecosio-hub.com/api/v1/downloads/b1488649-d6c1-4c4b-a1bf-cc3faf6ed1d9
+        md5Hash:
+          type: string
+          description: The MD5 hash of the final archive to check the validity of the archive. This field is only available if the status of the process is FINISHED and at least one message was found within the provided time range.
+          example: 250c0fba063e9388e4c87426fdfa4387c"
+        numMessagesArchived:
+          type: string
+          description: Returns the number of archived messages. Note that messages relate to a document flow with a unique messageId
+          example: '5'
+        numFilesArchived:
+          type: string
+          description: Returns the number of files within the archive. Note per message multiple files may be archived depending on the states the message has gone through.
+          example: '10'
+        includeAcknowledgment:
+          type: boolean
+          description: Indicates whether acknowledgment files are in the archive (e.g. for outbound invoices to SDI)
+          example: true
+        includePdf:
+          type: boolean
+          description: Indicates whether PDF files are in the archive (e.g. for eInvoices)
+          example: true
+        archiveSize:
+          type: integer
+          description: Size of the archive.
+          example: 13880
+    failure-429:
+      allOf:
+      - $ref: '#/components/schemas/failure-object-without-reference'
+      - type: object
+        properties:
+          failure:
+            properties:
+              errorCode:
+                example: '130'
+              reason:
+                example: TOO_MANY_REQUESTS_RECEIVED
+              details:
+                example: Too many requests have been received in a short amount of time. Please respect the terms of services and increase the interval of polling requests.
+    failure-404:
+      allOf:
+      - $ref: '#/components/schemas/failure-object'
+      - type: object
+        properties:
+          failure:
+            properties:
+              errorCode:
+                example: '160'
+              reason:
+                example: MESSAGE_RETRIEVAL_FAILED_MESSAGE_ID_UNKNOWN
+              details:
+                example: Unknown messageId
+              reference:
+                example: 0441e9b0-993f-11eb-943c-91d1a9b71250c
+    archiveCreation:
+      description: Information about created archive request
+      properties:
+        companyUuid:
+          type: string
+          description: The unique identifier the company the process was triggered for
+          example: 05c3875e-338e-4dcc-be2d-020cec6890b9
+        companyName:
+          type: string
+          description: Name of your company
+          example: ecosio API Test Receiver
+        state:
+          type: string
+          description: The current state of the archiving process. This may be one of the following QUEUED, RUNNING, FINISHED and FAILED
+          example: QUEUED
+        direction:
+          type: string
+          description: The specified value of the archive generation request of the corresponding field. One of DELIVERED, FETCHED or ALL
+          example: ALL
+        entryPattern:
+          type: string
+          description: The specified entry pattern, if defined
+          example: ${YEAR}/${MONTH}/${DAY}/${MESSAGE_ID}/${TIMESTAMP}_${MESSAGE_STATUS}.${EXTENSION}
+        from:
+          type: string
+          format: date-time
+          description: Will include documents younger than this timestamp in the resulting archive. The date must be in ISO 8601 format.
+          example: '2023-10-01T08:00:00Z'
+        till:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Will include documents older than this timestamp in the resulting archive. The date must be in ISO 8601 format.
+          example: '2023-10-02T08:00:00Z'
+        messageIds:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+          description: Following messageIds will be added to the archive.
+          example:
+          - cbd8425a-a130-4ac3-825d-98125d8acd32
+          - af6bdfad-81d3-451c-88ab-c2554b4bb195
+          - 1dc68f00-3815-41ac-a977-3c6c42cba9d6
+        includeAcknowledgment:
+          type:
+          - boolean
+          - 'null'
+          description: Indicates whether acknowledgment files are in the archive (e.g. for outbound invoices to SDI)
+          example: true
+        includePdf:
+          type:
+          - boolean
+          - 'null'
+          description: Indicates whether PDF files are in the archive (e.g. for eInvoices)
+          example: true
+        location:
+          type: string
+          description: HTTP Location Header pointing to the endpoint where information on the current status of the pending process can be fetched from.
+          example: https://api.test.ecosio-hub.com/api/v1/archives/b1488649-d6c1-4c4b-a1bf-cc3faf6ed1d9
+    failure-object:
+      type: object
+      properties:
+        failure:
+          $ref: '#/components/schemas/propertyFailure'
+    failure-object-without-reference:
+      type: object
+      properties:
+        failure:
+          $ref: '#/components/schemas/propertyFailureWithoutReference'
+    propertyFailure:
+      description: In case the message has reached an error state, the error details are denoted in this element. Whether the failure element is shown or not, depends on the configured state mode. For an overview of the different states and the state modes please refer to https://connect.ecosio.com/docs/state-mode#/
+      type:
+      - object
+      - 'null'
+      allOf:
+      - $ref: '#/components/schemas/propertyFailureWithoutReference'
+      - properties:
+          reference:
+            type: string
+            description: The message ID, for which the error occurred.
+            example: 92fd6790-ad7d-11eb-9825-19ebc28755dd
+    failure-500:
+      allOf:
+      - $ref: '#/components/schemas/failure-object'
+      - type: object
+        properties:
+          failure:
+            properties:
+              errorCode:
+                example: '300'
+              reason:
+                example: INTERNAL_SERVER_ERROR
+              details:
+                example: An unexpected error occurred while processing the request.
+              reference:
+                example: 0441e9b0-993f-11eb-943c-91d1a9b71250c
+    archiveRequest:
+      description: Archive details
+      type: object
+      properties:
+        direction:
+          type:
+          - string
+          - 'null'
+          description: Specifies if only EDI documents should be archived that have been sent to the Integration Hub (DELIVERED), that have been received from the service (RECEIVED) or if both sent and received EDI documents should be archived (ALL)
+          example: DELIVERED
+        companyUuid:
+          type:
+          - string
+          - 'null'
+          description: In case of a Multi Tenant Connector the Archive Creation process need to be verified through the companyUuid. This Uuid can be found in the ecosio.monitor section Connectors.
+          example: 4d8d46c0-b1e7-4d14-a112-c1a2d9c28888
+        from:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Will include EDI documents younger than this timestamp in the resulting archive. The date must be in ISO 8601 format.
+          example: '2023-10-01T08:00:00Z'
+        till:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Will include EDI documents older than this timestamp in the resulting archive. The date must be in ISO 8601 format.
+          example: '2023-10-02T08:00:00Z'
+        messageIds:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+          description: Specifies that only EDI messages with messageIds listed in this array will be added to the archive. If this field is available any time-based related settings (from and till) will be ignored! Entries of that array should be the messageId strings to include
+          example:
+          - cbd8425a-a130-4ac3-825d-98125d8acd32
+          - af6bdfad-81d3-451c-88ab-c2554b4bb195
+          - 1dc68f00-3815-41ac-a977-3c6c42cba9d6
+        entryPattern:
+          type:
+          - string
+          - 'null'
+          description: Defines the path structure and file name of the respective files within the archive
+          example: ${YEAR}/${MONTH}/${DAY}/${MESSAGE_ID}/${TIMESTAMP}_${MESSAGE_STATUS}.${EXTENSION}
+        includeAcknowledgment:
+          type:
+          - boolean
+          - 'null'
+          description: Allows to add acknowledgment files to the archive (e.g. for outbound invoices to SDI)
+        includePdf:
+          type:
+          - boolean
+          - 'null'
+          description: Allows to add PDF files to the archive
+        includeManifest:
+          type:
+          - boolean
+          - 'null'
+          description: Allows to add a JSON file with the overview of the merged/split messages
+    failure-400:
+      allOf:
+      - $ref: '#/components/schemas/failure-object-without-reference'
+      - type: object
+        properties:
+          failure:
+            properties:
+              errorCode:
+                example: '110'
+              reason:
+                example: INVALID_JSON_MESSAGE
+              details:
+                example: Error converting received message into a JSON object!
+    failure-400-get:
+      allOf:
+      - $ref: '#/components/schemas/failure-object-without-reference'
+      - type: object
+        properties:
+          failure:
+            properties:
+              errorCode:
+                example: '200'
+              reason:
+                example: ARGUMENT_NULL
+              details:
+                example: No id found
+    failure-401:
+      allOf:
+      - $ref: '#/components/schemas/failure-object-without-reference'
+      - type: object
+        properties:
+          failure:
+            properties:
+              errorCode:
+                example: '102'
+              reason:
+                example: CREDENTIALS_INVALID
+              details:
+                example: The provided credentials are invalid!
+    propertyFailureWithoutReference:
+      description: In case the message has reached an error state, the error details are denoted in this element. Whether the failure element is shown or not, depends on the configured state mode. For an overview of the different states and the state modes please refer to https://connect.ecosio.com/docs/state-mode#/
+      type:
+      - object
+      - 'null'
+      properties:
+        errorCode:
+          type: string
+          description: A code, identifying the error.
+          example: '261'
+        reason:
+          type: string
+          description: The reason for the error
+          example: RECEIVER_INVALID
+        details:
+          type: string
+          description: Further details about the error
+          example: 'No receiver could be identified using either on message level (identifier: xyz) or on protocol level (xyz)'
+    archiveFailed:
+      description: Information for failed archive creation
+      properties:
+        companyUuid:
+          type: string
+          description: The unique identifier the company the process was triggered for
+          example: 05c3875e-338e-4dcc-be2d-020cec6890b9
+        companyName:
+          type: string
+          description: Name of your company
+          example: ecosio API Test Receiver
+        state:
+          type: string
+          description: The current state of the archiving process. This may be one of the following QUEUED, RUNNING, FINISHED and FAILED
+          example: FAILED
+        direction:
+          type: string
+          description: The specified value of the archive generation request of the corresponding field. One of DELIVERED, FETCHED or ALL
+          example: DELIVERED
+        entryPattern:
+          type: string
+          description: The specified entry pattern, if defined
+          example: ${YEAR}/${MONTH}/${DAY}/${MESSAGE_ID}/${TIMESTAMP}_${MESSAGE_STATUS}.${EXTENSION}
+        from:
+          type: string
+          format: date-time
+          description: Will include documents younger than this timestamp in the resulting archive. The date must be in ISO 8601 format.
+          example: '2023-10-01T08:00:00Z'
+        till:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Will include documents older than this timestamp in the resulting archive. The date must be in ISO 8601 format.
+          example: '2023-10-02T08:00:00Z'
+        error:
+          type: string
+          description: The URL of the final archive. This field is only available if the status is FINISHED and at least one message was found within the provided time range. Accessing the URL requires full authentication.
+          example: https://api.test.ecosio-hub.com/api/v1/downloads/b1488649-d6c1-4c4b-a1bf-cc3faf6ed1d9
+        messageIds:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+          description: The messageIds listed in this array were tried to be added to the archive.
+          example:
+          - cbd8425a-a130-4ac3-825d-98125d8acd32
+          - af6bdfad-81d3-451c-88ab-c2554b4bb195
+          - 1dc68f00-3815-41ac-a977-3c6c42cba9d6
+        includeAcknowledgment:
+          type: boolean
+          description: Indicates whether acknowledgment files are in the archive (e.g. for outbound invoices to SDI)
+          example: true
+        includePdf:
+          type: boolean
+          description: Indicates whether PDF files are in the archive (e.g. for eInvoices)
+          example: true
+  headers:
+    ArchiveLocation:
+      description: The REST-accessible location of the archive on the ecosio Integration Hub
+      schema:
+        type: string
+        example: http://api.test.ecosio-hub.com/api/v1/archives/2544702d-97bd-4f07-a97f-52d961839c24
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    X-APP-KEY:
+      in: header
+      name: X-APP-KEY
+      type: apiKey
+      description: The ecosio app key is passed as HTTP header.

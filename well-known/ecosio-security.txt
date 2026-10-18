@@ -1,0 +1,18 @@
+# Security Contact
+Contact: mailto:security@ecosio.com
+
+# Expiration Date
+Expires: 2027-12-31T23:00:00.000Z
+
+# Preferred Languages for Reporting
+Preferred-Languages: en
+
+# Data Protection Policy
+Policy: https://ecosio.com/en/data-protection/
+
+# Certifications
+# We are ISO 27001 certified. You can view our certificate here:
+# https://ecosio.com/app/uploads/2025/09/zertifikat-isms_ecosio_09_2025en-_signed.pdf
+
+# Canonical Location
+Canonical: https://ecosio.com/.well-known/security.txt

@@ -1,0 +1,564 @@
+openapi: 3.2.0
+info:
+  title: ecosio.api Deliver messages to the Hub API
+  description: This documentation describes the features of the ecosio messaging API (aka ecosio.api). ecosio.api is used to send structured electronic documents from an ERP system or any other IT system to ecosio and to fetch electronic messages from ecosio.
+  contact:
+    name: ecosio GmbH
+    url: https://ecosio.com/en
+    email: support@ecosio.com
+  version: 1.1.1
+servers:
+- url: https://api.test.ecosio-hub.com:{port}
+  description: TEST instance of ecosio.api (port 443 for CA SSL; 8443 for self signed SSL)
+  variables:
+    port:
+      enum:
+      - '443'
+      - '8443'
+      default: '443'
+      description: 443 for CA SSL; 8443 for self signed SSL
+security:
+- basicAuth: []
+  X-APP-KEY: []
+tags:
+- name: Deliver messages to the Hub
+paths:
+  /api/v1/delivery:
+    post:
+      tags:
+      - Deliver messages to the Hub
+      summary: Deliver a message to the ecosio Integration Hub
+      operationId: deliverMessage
+      requestBody:
+        $ref: '#/components/requestBodies/deliverMessageRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/deliverMessageIdResponse'
+        '400':
+          $ref: '#/components/responses/400-Delivery'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '413':
+          $ref: '#/components/responses/413'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+  /api/v1/delivery/{messageId}:
+    get:
+      tags:
+      - Deliver messages to the Hub
+      summary: Get the status of a delivered message from the ecosio Integration Hub
+      operationId: getStatusOfDeliveredMessage
+      parameters:
+      - $ref: '#/components/parameters/includeAck'
+      - $ref: '#/components/parameters/includeLog'
+      - in: path
+        name: messageId
+        schema:
+          type: string
+        required: true
+        description: The UUID of the message, whose status shall be retrieved
+        example: 70d4ec9d-33f9-47c1-94fc-91938dad7612
+      responses:
+        '200':
+          $ref: '#/components/responses/200-getMessageIDStatusResponses'
+        '400':
+          $ref: '#/components/responses/400-Delivery'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+  /api/v1/ack/{messageId}:
+    get:
+      tags:
+      - Deliver messages to the Hub
+      summary: Get the acknowledgement of a delivered e-invoice
+      operationId: getAcknowledgement
+      parameters:
+      - in: path
+        name: messageId
+        schema:
+          type: string
+        required: true
+        description: The UUID of the message, whose acknowledgment shall be retrieved
+        example: 70d4ec9d-33f9-47c1-94fc-91938dad7612
+      responses:
+        '200':
+          $ref: '#/components/responses/200-Ack'
+        '400':
+          $ref: '#/components/responses/400-Delivery'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+components:
+  responses:
+    200-getMessageIDStatusResponses:
+      description: '**OK.** The details of the sent messages. Among the details is also the state of every sent message.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/200-getmessageID'
+    400-Delivery:
+      description: "**BAD REQUEST**\n\n  | Code| Name| Description |\n  |-----|-----|-------------|\n  |100| APPLICATION_KEY_INVALID|Thrown if either no or an invalid application key was provided|\n  |110| INVALID_JSON_MESSAGE|Is thrown in case the request is invalid JSON\n  |111|JSON_DOCUMENT_NOT_BASE64_ENCODED|Is thrown if the actual document is not properly base64-encoded within the message field of the JSON message.|\n  |120|EXPECTED_QUERY_PARAMETER_MISSING|Indicates that a required query parameter is missing in a request. Often this indicates that the appKey parameter is missing|\n  |123|QUERY_PARAMETER_UNKNOWN|The value of a provided query parameter is unknown to the service.|\n  |200|ARGUMENT_NULL|Indicates that a required argument is null|\n  |368|DOCUMENT_NOT_VALID|May be thrown by the service if the received document syntax is not valid|\n"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/failure-400'
+    '500':
+      description: '**INTERNAL SERVER ERROR.**
+
+
+        | Code| Name| Description |
+
+        |-----|-----|-------------|
+
+        | 300 |INTERNAL_SERVER_ERROR | An unexpected error occurred while processing the request. Please contact support@ecosio.com to gain updates on the cause of the error (deprecated)|
+
+        '
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/failure-500'
+    '401':
+      description: "**UNAUTHORIZED**\n\nIn case the authentication credentials are not valid\n\n  | Code| Name | Description |\n  |-----|-----|-------------|\n  | 102 | CREDENTIALS_INVALID | The provided credentials are invalid |\n"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/failure-401'
+    '403':
+      description: "**FORBIDDEN.**\n\nIn case the user could not be authenticated\n\n  | Code| Name| Description |\n  |-----|-----|-------------|\n  |101| USER_KEY_INVALID| The user provided a wrong user key (deprecated) |\n  |104| USER_NOT_PERMITTED| The user authenticated successfully but has no rights to fulfill the requested task |\n"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/failure-403'
+    '413':
+      description: '**PAYLOAD TOO LARGE.**
+
+
+        | Code| Name| Description |
+
+        |-----|-----|-------------|
+
+        | 131 |MESSAGE_SIZE_TO_LARGE|The size of the transmitted document is too large. If larger documents need to be transferred please contact support@ecosio.com|
+
+        '
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/failure-object'
+    deliverMessageIdResponse:
+      description: '
+
+
+        **OK.** The UUID of the message, which was created on the ecosio Integration Hub
+
+
+
+        | Code| Name| Description |
+
+        |-----|-----|-------------|
+
+        |107|NO_FIREWALL_PERMISSION|The request was blocked by the ecosio business relation firewall as the permissions are either not set or were revoked|
+
+        |260|SENDER_INVALID|The unique identifier of the sender company is either not set or is unknown to the Integration Hub|
+
+        |261|RECEIVER_INVALID|The unique identifier of the receiver company is either not set or is unknown to the Integration Hub|
+
+        |263|SENDER_DOES_NOT_MATCH|Indicates a mismatch of the sending company on document and on protocol level|
+
+        |361|DOUBLE_SUBMISSION|Is thrown when the same document is sent more than one time|
+
+        |369|DOCUMENT_TYPE_NOT_SUPPORTED_BY_RECEIVER|Indicates that the sent document format is not supported by the receiver company|
+
+        |370|DOCUMENT_TYPE_NOT_SUPPORTED_BY_SENDER|Indicates that the sent document format is not supported by the sending company. Please contact support@ecosio.com to register this type for your company|
+
+        |371|DOCUMENT_TYPE_NOT_SUPPORTED|Indicates that the document failed the validation while determining the document type as well as the MIME type|
+
+        |379|MIMETYPE_NOT_SUPPORTED|Indicates that the MIME type of the transferred document is not supported. Supported MIME types are: XML, EDIFACT, CSV, PDF/PDFex
+
+        |Null|NULL_VALUE|Indicates that a certain object was null|
+
+        '
+      headers:
+        Location:
+          $ref: '#/components/headers/Location'
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              messageId:
+                type: string
+                description: The UUID of the message on the ecosio Integration Hub
+                example: 70d4ec9d-33f9-47c1-94fc-91938dad7612
+    '429':
+      description: '**TOO MANY REQUESTS.**
+
+
+        | Code| Name| Description |
+
+        |-----|-----|-------------|
+
+        | 130 | TOO_MANY_REQUESTS_RECEIVED|In order to prevent being spammed by poll requests and status queries the service makes use of a request cache. If the number of requests received in a certain amount of time exceed a certain threshold this error will be returned. Every 5 minutes the cache will be cleared automatically|
+
+        '
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/failure-429'
+    '404':
+      description: '**NOT FOUND.**
+
+
+        In case the message could not be found
+
+        '
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/failure-404'
+    200-Ack:
+      description: '**OK.** The Acknowledgment of a sent invoice to the government of the desired country.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/acknowledgment'
+  schemas:
+    200-getmessageID:
+      description: ''
+      type: object
+      properties:
+        messageId:
+          type: string
+          description: The UUID of the message on the ecosio Integration Hub
+          example: 70d4ec9d-33f9-46c1-94fc-93548dad7612
+        senderUuid:
+          type: string
+          description: The UUID of the sender of the message
+          example: 45c2dae5-4235-45b0-98c2-c2342b10919f
+        senderName:
+          type: string
+          description: The name of the sender of the message
+          example: ecosio API Test Sender
+        receiverUuid:
+          type: string
+          description: The UUID of the receiver of the message
+          example: 4ac1e432-f900-424f-92ab-edd501812342
+        receiverName:
+          type: string
+          description: The name of the receiver of the message
+          example: ecosio API Test Receiver
+        receivedAt:
+          type: string
+          format: date-time
+          description: The timestamp, when the message has been received on the ecosio Integration Hub
+          example: '2023-09-22T14:25:03Z'
+        state:
+          type: string
+          description: The state of the message. For a complete list of states please see https://connect.ecosio.com/docs/state-mode#/
+          example: PROCESSED
+        messageSize:
+          type: integer
+          description: The size of the message in Bytes
+          example: '1212341'
+        documentTypeId:
+          type: string
+          description: The ecosio document type id, which has been identified for the message
+          example: XML_4p1_ebInterface
+        mimeType:
+          type: string
+          description: The type of the message, which has been identified.
+          example: XML
+        charset:
+          type: string
+          description: The charset of the message
+          example: UTF-8
+        fileName:
+          type: string
+          description: The filename of the message
+          example: 70d4ec9d-33f9-46c1-94fc-93548dad7612.xml
+        lastChanged:
+          type: string
+          format: date-time
+          description: The timestamp, when the message was last changed on the ecosio Integration Hub
+          example: '2023-09-22T14:26:00Z'
+        reference:
+          type:
+          - string
+          - 'null'
+          format: string
+          description: A reference id, which has been fetched from the message on the ecosio Integration Hub. In case of EDIFACT the reference id is for instance the UNB message interchange id. For other message types such as XML messages, the reference id can be custom set.
+          example: '4711'
+        failure:
+          $ref: '#/components/schemas/propertyFailure'
+        acknowledgment:
+          type: string
+          format: byte
+          description: The base64-encoded acknowledgment
+          example: VGhpcyBpcyBhIHRlc3QNDVDMDI0RkQzLUNDMzZFNzNGQkMtQjIiLCJwcm9jZXNzaW5nQ29kZSI6MjAwLCJwcm9jZXNzaW5nRGVzY3JpcHRpb24iOiJaYWtvxYRjemVuaWUgZXRhcHUgYXJjaGl3aXphY2ppIGRhbnljaCBmYWt0dXJ5IiwiZWxlbWVudFJlZmVyZW5jZU51bWJlciI6IjIwMjMwODA4LUVFLURDQkQyNjZFMjQtRjA4NjFDNjFFNy02OSIsImludm9pY2VTdGF0dXMiOnsiaW52b2ljZU51bWJlciI6IkVGMTEwNzQ5Iiwia3NlZlJlZmVyZW5jZU51bWJlciI6Ijc3NzMwNjAzMjEtMjAyMzA4MDgtM0Q4QjRFN0RDRDJELTc5IiwiYWNxdWlzaXRpb25UaW1lc3RhbXAiOiIyMDIzLTA4LTA4VDA3OjEwOjE2LjIwM=
+        externalReferences:
+          type:
+          - object
+          - 'null'
+          additionalProperties:
+            type: string
+          description: Reference of an external party f.e. government
+          example:
+            RO_ID_INCARCARE: '4371452761'
+        log:
+          type:
+          - array
+          - 'null'
+          description: The log information of a message
+          items:
+            $ref: '#/components/schemas/log'
+    failure-403:
+      allOf:
+      - $ref: '#/components/schemas/failure-object'
+      - type: object
+        properties:
+          failure:
+            properties:
+              errorCode:
+                example: '104'
+              reason:
+                example: USER_NOT_PERMITTED
+              details:
+                example: Invalid user credentials found
+              reference:
+                example: 70d4ec9d-33f9-47c1-94fc-91938dad7612
+    failure-429:
+      allOf:
+      - $ref: '#/components/schemas/failure-object-without-reference'
+      - type: object
+        properties:
+          failure:
+            properties:
+              errorCode:
+                example: '130'
+              reason:
+                example: TOO_MANY_REQUESTS_RECEIVED
+              details:
+                example: Too many requests have been received in a short amount of time. Please respect the terms of services and increase the interval of polling requests.
+    failure-404:
+      allOf:
+      - $ref: '#/components/schemas/failure-object'
+      - type: object
+        properties:
+          failure:
+            properties:
+              errorCode:
+                example: '160'
+              reason:
+                example: MESSAGE_RETRIEVAL_FAILED_MESSAGE_ID_UNKNOWN
+              details:
+                example: Unknown messageId
+              reference:
+                example: 0441e9b0-993f-11eb-943c-91d1a9b71250c
+    failure-object:
+      type: object
+      properties:
+        failure:
+          $ref: '#/components/schemas/propertyFailure'
+    failure-object-without-reference:
+      type: object
+      properties:
+        failure:
+          $ref: '#/components/schemas/propertyFailureWithoutReference'
+    propertyFailure:
+      description: In case the message has reached an error state, the error details are denoted in this element. Whether the failure element is shown or not, depends on the configured state mode. For an overview of the different states and the state modes please refer to https://connect.ecosio.com/docs/state-mode#/
+      type:
+      - object
+      - 'null'
+      allOf:
+      - $ref: '#/components/schemas/propertyFailureWithoutReference'
+      - properties:
+          reference:
+            type: string
+            description: The message ID, for which the error occurred.
+            example: 92fd6790-ad7d-11eb-9825-19ebc28755dd
+    failure-500:
+      allOf:
+      - $ref: '#/components/schemas/failure-object'
+      - type: object
+        properties:
+          failure:
+            properties:
+              errorCode:
+                example: '300'
+              reason:
+                example: INTERNAL_SERVER_ERROR
+              details:
+                example: An unexpected error occurred while processing the request.
+              reference:
+                example: 0441e9b0-993f-11eb-943c-91d1a9b71250c
+    attachmentsRequest:
+      description: An attachment consists of the attachment's name, the MIME type and the base64-encoded attachment
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the attachment
+          example: attachment-file-1.pdf
+        contentType:
+          type: string
+          description: The content MIME type.
+          example: application/pdf
+        base64Content:
+          type: string
+          description: The base64-encoded attachment
+          example: VGhpcyBpcyBhIHRlc3Q=
+    failure-400:
+      allOf:
+      - $ref: '#/components/schemas/failure-object-without-reference'
+      - type: object
+        properties:
+          failure:
+            properties:
+              errorCode:
+                example: '110'
+              reason:
+                example: INVALID_JSON_MESSAGE
+              details:
+                example: Error converting received message into a JSON object!
+    log:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          example: '2024-06-26T18:41:46Z'
+        state:
+          type: string
+          example: SENT
+        message:
+          type: string
+          example: Successful processing confirmed by https://api.anaf.ro/prod/FCTEL.
+    failure-401:
+      allOf:
+      - $ref: '#/components/schemas/failure-object-without-reference'
+      - type: object
+        properties:
+          failure:
+            properties:
+              errorCode:
+                example: '102'
+              reason:
+                example: CREDENTIALS_INVALID
+              details:
+                example: The provided credentials are invalid!
+    acknowledgment:
+      description: ''
+      type: object
+      properties:
+        acknowledgement:
+          type: string
+          description: The base64-encoded acknowledgement
+          example: PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/PjxoZWFkZXIgeG1sbnM9Im1mcDphbmFmOmRndGk6c3B2OnN0YXJlTWVzYWpGYWN0dXJhOnYxIiBzdGFyZT0ib2siIGlkX2Rlc2NhcmNhcmU9IjU0ODI2OTM0OTIiLz4=
+        receivedAt:
+          type: string
+          format: date-time
+          description: The timestamp, when the acknowledgement has been received on the ecosio Integration Hub
+          example: 2024-07-29T09:33:19.301413952Z[UTC]
+        charset:
+          type: string
+          description: The charset of the acknowledgement
+          example: UTF-8
+        mimeType:
+          type: string
+          description: The type of the decoded acknowledgement, which has been identified.
+          example: XML
+    propertyFailureWithoutReference:
+      description: In case the message has reached an error state, the error details are denoted in this element. Whether the failure element is shown or not, depends on the configured state mode. For an overview of the different states and the state modes please refer to https://connect.ecosio.com/docs/state-mode#/
+      type:
+      - object
+      - 'null'
+      properties:
+        errorCode:
+          type: string
+          description: A code, identifying the error.
+          example: '261'
+        reason:
+          type: string
+          description: The reason for the error
+          example: RECEIVER_INVALID
+        details:
+          type: string
+          description: Further details about the error
+          example: 'No receiver could be identified using either on message level (identifier: xyz) or on protocol level (xyz)'
+  headers:
+    Location:
+      description: The REST-accessible location of the message on the ecosio Integration Hub
+      schema:
+        type: string
+        example: http://api.test.ecosio-hub.com/api/v1/delivery/66d9a2d0-a171-44e1-86e1-dc0871c5d680
+  requestBodies:
+    deliverMessageRequest:
+      description: The electronic message and optional attachments, which shall be processed by the ecosio Integration Hub
+      content:
+        application/json:
+          schema:
+            properties:
+              message:
+                description: Base64-encoded message. Structured syntaxes are supported, such as CSV, XML, EDIFACT, and JSON. Custom data formats are permitted if they meet requirements defined during onboarding. Specifically, the format, sender IDs, and recipient IDs must be uniquely identifiable using the approach agreed upon during onboarding. The message must contain all content relevant to the recipient.
+                type: string
+                example: dGhpcyBpcyBhIGJhc2UgNjQgY29kZWQgbWVzc2FnZSAtIENVIERvcmlzIEJ1cmRh
+              attachments:
+                description: In addition to the actual payload, a set of base64-encoded attachments can be sent.
+                type: array
+                items:
+                  $ref: '#/components/schemas/attachmentsRequest'
+                minItems: 0
+                uniqueItems: true
+            required:
+            - message
+  parameters:
+    includeAck:
+      name: includeAck
+      in: header
+      description: '
+
+        Display the acknowledgment of a sent e-invoice to a government in Base64 and its external references.<br>
+
+        External references and their availability are country-specific.
+
+        For a detailed list of availability per country, see
+
+        [External references for acknowledgements](https://connect.ecosio.com/reference/external-references-for-acknowledgements).
+
+        '
+      required: false
+      schema:
+        type: boolean
+      example: true
+    includeLog:
+      name: includeLog
+      in: header
+      description: Display the logs of a message to review its details and history. This can help you understand the message's journey, including when it was sent, received, and any actions taken on it.
+      required: false
+      schema:
+        type: boolean
+      example: true
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    X-APP-KEY:
+      in: header
+      name: X-APP-KEY
+      type: apiKey
+      description: The ecosio app key is passed as HTTP header.

@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/ecosio/main/json-schema/ecosio-company-retrieval-response-schema.json",
+  "title": "CompanyRetrievalResponse",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/ecosio-management-api-openapi.yml#/components/schemas/CompanyRetrievalResponse",
+  "type": "object",
+  "properties": {
+    "managedCompanyUuid": {
+      "type": "string",
+      "format": "uuid",
+      "description": "The external unique identifier of the retrieved company"
+    },
+    "companyUuid": {
+      "type": "string",
+      "format": "uuid",
+      "description": "The internal unique identifier of the retrieved company. Can be used in the ecosio monitor or in the ecosio API."
+    },
+    "companyName": {
+      "type": "string",
+      "description": "The name of the company"
+    },
+    "email": {
+      "type": "string",
+      "format": "email",
+      "description": "The email address of the company's main person of contact"
+    },
+    "language": {
+      "type": "string",
+      "description": "The language of the company's main person of contact, in ISO 639-1 format"
+    },
+    "aliases": {
+      "type": "array",
+      "description": "Unique aliases to identify the company",
+      "items": {
+        "$ref": "#/$defs/CompanyAlias"
+      },
+      "uniqueItems": true
+    },
+    "parentCompanyUuid": {
+      "type": "string",
+      "format": "uuid",
+      "description": "The unique identifier of the parent company. If parent company is not yet approved, it can be the external identifier (Managed-Company-UUID), otherwise the internal identifier (Company-UUID)"
+    },
+    "approvalUuid": {
+      "type": "string",
+      "format": "uuid",
+      "description": "ID of this company request."
+    },
+    "approvalStatus": {
+      "$ref": "#/$defs/ApprovalStatus",
+      "description": "The current status of the latest approval request."
+    }
+  },
+  "$defs": {
+    "ApprovalStatus": {
+      "type": "string",
+      "enum": [
+        "PENDING",
+        "APPROVED",
+        "ERROR",
+        "REJECTED",
+        "FAILED",
+        "APPLIED"
+      ]
+    },
+    "CompanyAlias": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "An alternate name or alias the company is known by. This value must be unique across all aliases.",
+          "maxLength": 255,
+          "minLength": 9
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of the company alias.",
+          "maxLength": 255,
+          "minLength": 0
+        },
+        "type": {
+          "type": "string",
+          "description": "Type of the alias",
+          "enum": [
+            "GLN",
+            "EMAIL_INBOUND_PARTICIPANT_ID",
+            "PEPPOL_SENDER_PARTICIPANT_ID",
+            "PRIMARY"
+          ]
+        }
+      }
+    }
+  }
+}

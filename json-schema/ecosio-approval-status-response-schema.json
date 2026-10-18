@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/ecosio/main/json-schema/ecosio-approval-status-response-schema.json",
+  "title": "ApprovalStatusResponse",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/ecosio-management-api-openapi.yml#/components/schemas/ApprovalStatusResponse",
+  "type": "object",
+  "properties": {
+    "approvalUuid": {
+      "type": "string",
+      "format": "uuid",
+      "description": "ID of the connector request."
+    },
+    "status": {
+      "type": "string",
+      "description": "Status of the connector request.\n\n<table>\n  <tr>\n    <th>Status</th>\n    <th>Final</th>\n    <th>Description</th>\n  </tr>\n  <tr>\n    <td>APPLIED</td>\n    <td>Yes</td>\n    <td>The changes have been successfully applied to the connector.</td>\n  </tr>\n  <tr>\n    <td>FAILED</td>\n    <td>Yes</td>\n    <td>The changes failed to process or apply to the connector./td>\n  </tr>\n  <tr>\n    <td>PENDING</td>\n    <td>No</td>\n    <td>The connector's changes are awaiting approval and processing.</td>\n  </tr>\n  <tr>\n    <td>REJECTED</td>\n    <td>Yes</td>\n    <td>The connector's changes were rejected. Check the reason for details.</td>\n  </tr>\n</table>\n",
+      "enum": [
+        "APPLIED",
+        "FAILED",
+        "PENDING",
+        "REJECTED"
+      ]
+    },
+    "reason": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "The reason for the unapproved status"
+    },
+    "submittedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Date and time the connector changes were submitted, specified in ISO 8601 format."
+    },
+    "lastUpdatedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Date and time the connector was last updated, specified in ISO 8601 format."
+    }
+  },
+  "required": [
+    "approvalUuid",
+    "lastUpdatedAt",
+    "status",
+    "submittedAt"
+  ]
+}

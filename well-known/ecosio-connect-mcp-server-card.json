@@ -1,0 +1,1 @@
+{"$schema":"https://static.modelcontextprotocol.io/schemas/v1/server-card.schema.json","name":"com.readme/ecosio","version":"1.1.1","title":"ecosio Documentation","description":"MCP server for ecosio Documentation. Lets AI agents explore this project's API reference and documentation.","remotes":[{"type":"streamable-http","url":"https://connect.ecosio.com/mcp"}]}

@@ -1,0 +1,20 @@
+generated: '2026-10-18'
+method: searched
+source: https://connect.ecosio.com/changelog/changelog.md
+versioning:
+  scheme: semantic
+  current_version: 1.4.0
+  evidence: Management API Changelog v1.4.0 released September 18, 2026
+  note: Version numbers follow semantic versioning (major.minor.patch)
+deprecation:
+  policy: Gradual deprecation with migration period
+  evidence: Basic authentication marked for deprecation but no removal date announced
+  note: OAuth2 is recommended for new integrations; basic auth still available during migration period
+status_page: https://ecosio-status.com/
+sla:
+  published: false
+  note: No SLA information found in public documentation
+support_period:
+  published: false
+  note: No support period policy found in public documentation
+note: Changelog maintained via FeatureBase platform with categories for General Public Documentation, Connect Public Documentation, and E-invoicing Public Documentation. Status page shows operational status of EDI connectors, e-invoicing countries, and other components.

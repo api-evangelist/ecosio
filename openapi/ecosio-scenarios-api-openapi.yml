@@ -1,0 +1,1766 @@
+openapi: 3.2.0
+info:
+  title: Management Scenarios API
+  description: API for managing companies and executing compliance and connectivity workflows on the ecosio platform.
+  contact:
+    name: ecosio GmbH
+    url: https://ecosio.com/en
+    email: support@ecosio.com
+  version: 1.4.0
+servers:
+- url: https://api.test.ecosio-hub.com
+  description: TEST instance of ecosio management.api
+tags:
+- name: Scenarios
+  description: Methods for managing scenarios
+paths:
+  /api/v1/management/scenarios/{scenarioUuid}:
+    get:
+      tags:
+      - Scenarios
+      summary: Retrieve a scenario
+      description: Retrieves the details of an applied scenario.
+      operationId: getScenarioById
+      parameters:
+      - name: scenarioUuid
+        in: path
+        description: ID of the scenario to be retrieved.
+        required: true
+        schema:
+          type: string
+          minLength: 1
+          pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScenarioResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '405':
+          description: Method Not Allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Too Many Requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - bearerAuth: []
+      - basicAuth: []
+      - X-APP-KEY: []
+    put:
+      tags:
+      - Scenarios
+      summary: Update a scenario
+      description: Updates an applied scenario.
+      operationId: updateScenario
+      parameters:
+      - name: scenarioUuid
+        in: path
+        description: ID of the scenario to be updated.
+        required: true
+        schema:
+          type: string
+          minLength: 1
+          pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+              - $ref: '#/components/schemas/BelgiumEInvoiceUpdateRequest'
+              - $ref: '#/components/schemas/DenmarkEInvoiceUpdateRequest'
+              - $ref: '#/components/schemas/EstoniaEInvoiceUpdateRequest'
+              - $ref: '#/components/schemas/FinlandEInvoiceUpdateRequest'
+              - $ref: '#/components/schemas/FranceEInvoiceUpdateRequest'
+              - $ref: '#/components/schemas/GermanyEInvoiceUpdateRequest'
+              - $ref: '#/components/schemas/HungaryEInvoiceUpdateRequest'
+              - $ref: '#/components/schemas/ItalyEInvoiceUpdateRequest'
+              - $ref: '#/components/schemas/NetherlandsEInvoiceUpdateRequest'
+              - $ref: '#/components/schemas/NorwayEInvoiceUpdateRequest'
+              - $ref: '#/components/schemas/PolandEInvoiceUpdateRequest'
+              - $ref: '#/components/schemas/RomaniaEInvoiceUpdateRequest'
+              - $ref: '#/components/schemas/SwedenEInvoiceUpdateRequest'
+              - $ref: '#/components/schemas/UnitedKingdomEInvoiceUpdateRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScenarioOperationResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '405':
+          description: Method Not Allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Too Many Requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - bearerAuth: []
+      - basicAuth: []
+      - X-APP-KEY: []
+  /api/v1/management/companies/{companyUuid}/scenarios:
+    get:
+      tags:
+      - Scenarios
+      summary: List company scenarios
+      description: Lists the scenarios that are applied to a company.
+      operationId: listAppliedScenarios
+      parameters:
+      - name: companyUuid
+        in: path
+        description: The ID of the company to which the scenario will be applied.
+        required: true
+        schema:
+          type: string
+          minLength: 1
+          pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ScenarioResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '405':
+          description: Method Not Allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Too Many Requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - bearerAuth: []
+      - basicAuth: []
+      - X-APP-KEY: []
+    post:
+      tags:
+      - Scenarios
+      summary: Apply a scenario
+      description: Applies a scenario to a company. The response returns information about the applied scenario.
+      operationId: createScenario
+      parameters:
+      - name: companyUuid
+        in: path
+        description: The ID of the company to which the scenario will be applied.
+        required: true
+        schema:
+          type: string
+          minLength: 1
+          pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$
+      - name: usedForTestOnly
+        in: query
+        description: Marks the entity to be used only for testing purposes.
+        required: false
+        schema:
+          type: boolean
+          default: false
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+              - $ref: '#/components/schemas/BelgiumEInvoiceCreateRequest'
+              - $ref: '#/components/schemas/DenmarkEInvoiceCreateRequest'
+              - $ref: '#/components/schemas/EstoniaEInvoiceCreateRequest'
+              - $ref: '#/components/schemas/FinlandEInvoiceCreateRequest'
+              - $ref: '#/components/schemas/FranceEInvoiceCreateRequest'
+              - $ref: '#/components/schemas/GermanyEInvoiceCreateRequest'
+              - $ref: '#/components/schemas/HungaryEInvoiceCreateRequest'
+              - $ref: '#/components/schemas/ItalyEInvoiceCreateRequest'
+              - $ref: '#/components/schemas/NetherlandsEInvoiceCreateRequest'
+              - $ref: '#/components/schemas/NorwayEInvoiceCreateRequest'
+              - $ref: '#/components/schemas/PolandEInvoiceCreateRequest'
+              - $ref: '#/components/schemas/RomaniaEInvoiceCreateRequest'
+              - $ref: '#/components/schemas/SwedenEInvoiceCreateRequest'
+              - $ref: '#/components/schemas/UnitedKingdomEInvoiceCreateRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScenarioOperationResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '405':
+          description: Method Not Allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Too Many Requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - bearerAuth: []
+      - basicAuth: []
+      - X-APP-KEY: []
+  /api/v1/management/scenarios:
+    get:
+      tags:
+      - Scenarios
+      summary: List all scenarios
+      description: Lists all scenarios that can be applied to your companies. These scenarios must first be pre-configured by ecosio.
+      operationId: listAvailableScenarios
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ScenarioName'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '405':
+          description: Method Not Allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Too Many Requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - bearerAuth: []
+      - basicAuth: []
+      - X-APP-KEY: []
+components:
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          $ref: '#/components/schemas/Error'
+          description: Detailed Error description
+      required:
+      - error
+    RomaniaEInvoiceCreateRequest:
+      allOf:
+      - $ref: '#/components/schemas/ScenarioCreateRequest'
+      - type: object
+        properties:
+          taxNumber:
+            type: string
+            description: The company's unique Romanian fiscal registration code (Codul Fiscal or CUI).
+            examples:
+            - '1900101223457'
+          clientId:
+            type: string
+            description: The client ID issued to your application by ANAF.
+            examples:
+            - your_spv_client_id
+          clientSecret:
+            type: string
+            format: password
+            description: The client secret issued to your application by ANAF.
+          accessToken:
+            type: string
+            format: password
+            description: The OAuth 2.0 access token used to authorise all API calls to ANAF.
+          accessTokenExpiry:
+            type: string
+            format: date-time
+            description: The expiration date and time of the access token, specified ISO 8601 format with a timezone offset. For example, 2025-01-09T10:00:00+02:00, where +02:00 is the time zone offset.
+            examples:
+            - '2024-12-10T10:30:00+02:00'
+          refreshToken:
+            type: string
+            format: password
+            description: The OAuth 2.0 refresh token used to automatically obtain a new access token from ANAF before the current one expires.
+          refreshTokenExpiry:
+            type: string
+            format: date-time
+            description: The expiration date and time of the refresh token, specified ISO 8601 format with a timezone offset. For example, 2025-01-09T10:00:00+02:00, where +02:00 is the time zone offset.
+            examples:
+            - '2025-01-09T10:00:00+02:00'
+      description: Romania EInvoice Scenario CreateRequest.
+      required:
+      - accessToken
+      - accessTokenExpiry
+      - clientId
+      - clientSecret
+      - name
+      - refreshToken
+      - refreshTokenExpiry
+      - taxNumber
+    FranceEInvoiceCreateRequest:
+      allOf:
+      - $ref: '#/components/schemas/ScenarioCreateRequest'
+      - type: object
+        properties:
+          peppolParticipantIds:
+            type: array
+            deprecated: true
+            items:
+              type: string
+              deprecated: true
+              description: List of Peppol Participant Ids.
+            minItems: 1
+            uniqueItems: true
+          emailAddressesForValidationErrors:
+            type: array
+            description: List of email addresses for validation errors.
+            items:
+              type: string
+              maxLength: 320
+              minLength: 6
+            uniqueItems: true
+          direction:
+            $ref: '#/components/schemas/DeprecatedPeppolDirection'
+            deprecated: true
+            description: Direction of the scenario.
+            examples:
+            - BOTH
+            - IN
+            - OUT
+            - SELF
+          peppolSenderParticipantInfos:
+            type: array
+            items:
+              $ref: '#/components/schemas/PeppolSenderParticipantInfoRequest'
+              description: List of Peppol sender participant infos.
+            minItems: 1
+            uniqueItems: true
+          paAuthorisationContract:
+            type: boolean
+            default: false
+            description: Indicates if the the authorisation contract is available
+            example: false
+          siren:
+            type: string
+            description: The 9-digit SIREN number identifying the French legal entity.
+            example: '123456789'
+            minLength: 1
+            pattern: ^\d{9}$
+          siret:
+            type: string
+            description: The 14-digit SIRET number identifying the specific establishment of the French company (9-digit SIREN + 5-digit NIC).
+            example: '12345678900012'
+            pattern: ^\d{14}$
+      description: France E-Invoice Create Request
+      required:
+      - name
+      - siren
+    ErrorDetail:
+      type: object
+      description: Represent a related error that occurred during the request
+      properties:
+        code:
+          type: string
+          description: 'One of a server-defined set of error codes. '
+          example: VALID_110
+        message:
+          type: string
+          description: A human-readable representation of the error.
+          example: JSON is not valid
+      required:
+      - code
+      - message
+    KeyStore:
+      type: object
+      properties:
+        certificate:
+          type: string
+          format: byte
+          description: The PKCS12 certificate
+        privateKey:
+          $ref: '#/components/schemas/PrivateKey'
+          description: The Private Key and Passphrase for the Certificate
+      required:
+      - certificate
+      - privateKey
+    NetherlandsEInvoiceCreateRequest:
+      allOf:
+      - $ref: '#/components/schemas/ScenarioCreateRequest'
+      - type: object
+        properties:
+          peppolParticipantIds:
+            type: array
+            deprecated: true
+            items:
+              type: string
+              deprecated: true
+              description: List of Peppol Participant Ids.
+            minItems: 1
+            uniqueItems: true
+          emailAddressesForValidationErrors:
+            type: array
+            description: List of email addresses for validation errors.
+            items:
+              type: string
+              maxLength: 320
+              minLength: 6
+            uniqueItems: true
+          direction:
+            $ref: '#/components/schemas/DeprecatedPeppolDirection'
+            deprecated: true
+            description: Direction of the scenario.
+            examples:
+            - BOTH
+            - IN
+            - OUT
+            - SELF
+          peppolSenderParticipantInfos:
+            type: array
+            items:
+              $ref: '#/components/schemas/PeppolSenderParticipantInfoRequest'
+              description: List of Peppol sender participant infos.
+            minItems: 1
+            uniqueItems: true
+      description: Netherlands E-Invoice Create Request
+      required:
+      - name
+    ScenarioName:
+      type: string
+      enum:
+      - BELGIUM_EINVOICE
+      - DENMARK_EINVOICE
+      - ESTONIA_EINVOICE
+      - FINLAND_EINVOICE
+      - FRANCE_EINVOICE
+      - GERMANY_EINVOICE
+      - HUNGARY_EINVOICE
+      - ITALY_EINVOICE
+      - NETHERLANDS_EINVOICE
+      - NORWAY_EINVOICE
+      - POLAND_EINVOICE
+      - ROMANIA_EINVOICE
+      - SWEDEN_EINVOICE
+      - UNITED_KINGDOM_EINVOICE
+    UnitedKingdomEInvoiceCreateRequest:
+      allOf:
+      - $ref: '#/components/schemas/ScenarioCreateRequest'
+      - type: object
+        properties:
+          peppolParticipantIds:
+            type: array
+            deprecated: true
+            items:
+              type: string
+              deprecated: true
+              description: List of Peppol Participant Ids.
+            minItems: 1
+            uniqueItems: true
+          emailAddressesForValidationErrors:
+            type: array
+            description: List of email addresses for validation errors.
+            items:
+              type: string
+              maxLength: 320
+              minLength: 6
+            uniqueItems: true
+          direction:
+            $ref: '#/components/schemas/DeprecatedPeppolDirection'
+            deprecated: true
+            description: Direction of the scenario.
+            examples:
+            - BOTH
+            - IN
+            - OUT
+            - SELF
+          peppolSenderParticipantInfos:
+            type: array
+            items:
+              $ref: '#/components/schemas/PeppolSenderParticipantInfoRequest'
+              description: List of Peppol sender participant infos.
+            minItems: 1
+            uniqueItems: true
+      description: Uk E-Invoice Create Request
+      required:
+      - name
+    UnitedKingdomEInvoiceUpdateRequest:
+      allOf:
+      - $ref: '#/components/schemas/ScenarioUpdateRequest'
+      - type: object
+        properties:
+          peppolParticipantIds:
+            type: array
+            deprecated: true
+            items:
+              type: string
+              deprecated: true
+              description: List of Peppol Participant Ids.
+            minItems: 1
+            uniqueItems: true
+          emailAddressesForValidationErrors:
+            type: array
+            description: List of email addresses for validation errors.
+            items:
+              type: string
+              maxLength: 320
+              minLength: 6
+            uniqueItems: true
+          direction:
+            $ref: '#/components/schemas/DeprecatedPeppolDirection'
+            deprecated: true
+            description: Direction of the scenario.
+            examples:
+            - BOTH
+            - IN
+            - OUT
+            - SELF
+          peppolSenderParticipantInfos:
+            type: array
+            items:
+              $ref: '#/components/schemas/PeppolSenderParticipantInfoRequest'
+              description: List of Peppol sender participant infos.
+            minItems: 1
+            uniqueItems: true
+      description: UK E-Invoice Update Request
+      required:
+      - name
+    HungaryEInvoiceUpdateRequest:
+      allOf:
+      - $ref: '#/components/schemas/ScenarioUpdateRequest'
+      - type: object
+        properties:
+          taxNumber:
+            type: string
+            description: The first 8 digits of the tax number belonging to the taxpayer that registered and owns the Technical User Account for the NAV Online Invoice System.
+            examples:
+            - '12345678'
+          username:
+            type: string
+            description: The username of the Technical User Account registered with the NAV Online Invoice System.
+            examples:
+            - my_nav_tech_user
+          password:
+            type: string
+            format: password
+            description: The password for the Technical User Account registered with the NAV Online Invoice System.
+          signatureKey:
+            type: string
+            format: password
+            description: The signature key generated within the NAV system that's associated with the Technical User Account.
+          encryptionKey:
+            type: string
+            format: password
+            description: The encryption key generated within the NAV system that's associated with the Technical User Account.
+          softwareId:
+            type: string
+            description: The unique identifier of the software being used to connect to the NAV Online Invoice System. This ID must be registered by the taxpayer.
+            examples:
+            - MY_CUSTOM_ERP_V1_2
+      description: Hungary EInvoice Scenario UpdateRequest.
+      required:
+      - encryptionKey
+      - name
+      - password
+      - signatureKey
+      - softwareId
+      - taxNumber
+      - username
+    EstoniaEInvoiceCreateRequest:
+      allOf:
+      - $ref: '#/components/schemas/ScenarioCreateRequest'
+      - type: object
+        properties:
+          peppolParticipantIds:
+            type: array
+            deprecated: true
+            items:
+              type: string
+              deprecated: true
+              description: List of Peppol Participant Ids.
+            minItems: 1
+            uniqueItems: true
+          emailAddressesForValidationErrors:
+            type: array
+            description: List of email addresses for validation errors.
+            items:
+              type: string
+              maxLength: 320
+              minLength: 6
+            uniqueItems: true
+          direction:
+            $ref: '#/components/schemas/DeprecatedPeppolDirection'
+            deprecated: true
+            description: Direction of the scenario.
+            examples:
+            - BOTH
+            - IN
+            - OUT
+            - SELF
+          peppolSenderParticipantInfos:
+            type: array
+            items:
+              $ref: '#/components/schemas/PeppolSenderParticipantInfoRequest'
+              description: List of Peppol sender participant infos.
+            minItems: 1
+            uniqueItems: true
+      description: Estonia E-Invoice Create Request
+      required:
+      - name
+    ApprovalStatus:
+      type: string
+      enum:
+      - PENDING
+      - APPROVED
+      - ERROR
+      - REJECTED
+      - FAILED
+      - APPLIED
+    DenmarkEInvoiceUpdateRequest:
+      allOf:
+      - $ref: '#/components/schemas/ScenarioUpdateRequest'
+      - type: object
+        properties:
+          peppolParticipantIds:
+            type: array
+            deprecated: true
+            items:
+              type: string
+              deprecated: true
+              description: List of Peppol Participant Ids.
+            minItems: 1
+            uniqueItems: true
+          emailAddressesForValidationErrors:
+            type: array
+            description: List of email addresses for validation errors.
+            items:
+              type: string
+              maxLength: 320
+              minLength: 6
+            uniqueItems: true
+          direction:
+            $ref: '#/components/schemas/DeprecatedPeppolDirection'
+            deprecated: true
+            description: Direction of the scenario.
+            examples:
+            - BOTH
+            - IN
+            - OUT
+            - SELF
+          peppolSenderParticipantInfos:
+            type: array
+            items:
+              $ref: '#/components/schemas/PeppolSenderParticipantInfoRequest'
+              description: List of Peppol sender participant infos.
+            minItems: 1
+            uniqueItems: true
+      description: Denmark E-Invoice Update Request
+      required:
+      - name
+    GermanyEInvoiceCreateRequest:
+      allOf:
+      - $ref: '#/components/schemas/ScenarioCreateRequest'
+      - type: object
+        properties:
+          peppolParticipantIds:
+            type: array
+            deprecated: true
+            items:
+              type: string
+              deprecated: true
+              description: List of Peppol Participant Ids.
+            minItems: 1
+            uniqueItems: true
+          emailAddressesForValidationErrors:
+            type: array
+            description: List of email addresses for validation errors.
+            items:
+              type: string
+              maxLength: 320
+              minLength: 6
+            uniqueItems: true
+          direction:
+            $ref: '#/components/schemas/DeprecatedPeppolDirection'
+            deprecated: true
+            description: Direction of the scenario.
+            examples:
+            - BOTH
+            - IN
+            - OUT
+            - SELF
+          peppolSenderParticipantInfos:
+            type: array
+            items:
+              $ref: '#/components/schemas/PeppolSenderParticipantInfoRequest'
+              description: List of Peppol sender participant infos.
+            minItems: 1
+            uniqueItems: true
+      description: Germany E-Invoice Create Request
+      required:
+      - name
+    ScenarioOperationResponse:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          description: The ID of the applied scenario.
+          example: cd13fea0-2108-11f0-836c-d3d769f7e115
+        name:
+          $ref: '#/components/schemas/ScenarioName'
+        companyUuid:
+          type: string
+          format: uuid
+          description: The unique identifier of the company
+          example: cd13fea0-2108-11f0-836c-d3d769f7e115
+        approvalUuid:
+          type: string
+          format: uuid
+          description: ID of this scenario request.
+          example: cd13fea0-2108-11f0-836c-d3d769f7e115
+        approvalStatus:
+          $ref: '#/components/schemas/ApprovalStatus'
+          description: The current status of the latest approval request.
+          examples:
+          - PENDING
+          - APPROVED
+          - REJECTED
+        rejectionReason:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+      - approvalUuid
+      - createdAt
+      - name
+      - updatedAt
+    PeppolDirection:
+      type: string
+      enum:
+      - BOTH
+      - IN
+      - OUT
+    PeppolSenderParticipantInfoRequest:
+      type: object
+      description: Peppol sender participant info, describing a single Peppol Participant ID together with its direction and whether it is used for self-billing.
+      properties:
+        peppolParticipantId:
+          type: string
+          description: Peppol Participant ID.
+          minLength: 1
+        direction:
+          $ref: '#/components/schemas/PeppolDirection'
+          description: Direction of the Peppol participant.
+        selfBilling:
+          type: boolean
+          default: false
+          description: Whether this Peppol Participant ID is used for self-billing.
+      required:
+      - direction
+      - peppolParticipantId
+    ScenarioCreateRequest:
+      type: object
+      description: Base ScenarioCreateRequest.
+      discriminator:
+        propertyName: name
+        mapping:
+          BELGIUM_EINVOICE: '#/components/schemas/BelgiumEInvoiceCreateRequest'
+          DENMARK_EINVOICE: '#/components/schemas/DenmarkEInvoiceCreateRequest'
+          ESTONIA_EINVOICE: '#/components/schemas/EstoniaEInvoiceCreateRequest'
+          FINLAND_EINVOICE: '#/components/schemas/FinlandEInvoiceCreateRequest'
+          FRANCE_EINVOICE: '#/components/schemas/FranceEInvoiceCreateRequest'
+          GERMANY_EINVOICE: '#/components/schemas/GermanyEInvoiceCreateRequest'
+          HUNGARY_EINVOICE: '#/components/schemas/HungaryEInvoiceCreateRequest'
+          ITALY_EINVOICE: '#/components/schemas/ItalyEInvoiceCreateRequest'
+          NETHERLANDS_EINVOICE: '#/components/schemas/NetherlandsEInvoiceCreateRequest'
+          NORWAY_EINVOICE: '#/components/schemas/NorwayEInvoiceCreateRequest'
+          POLAND_EINVOICE: '#/components/schemas/PolandEInvoiceCreateRequest'
+          ROMANIA_EINVOICE: '#/components/schemas/RomaniaEInvoiceCreateRequest'
+          SWEDEN_EINVOICE: '#/components/schemas/SwedenEInvoiceCreateRequest'
+          UNITED_KINGDOM_EINVOICE: '#/components/schemas/UnitedKingdomEInvoiceCreateRequest'
+      properties:
+        name:
+          $ref: '#/components/schemas/ScenarioName'
+          description: The unique name of the scenario type.
+      required:
+      - name
+    BelgiumEInvoiceCreateRequest:
+      allOf:
+      - $ref: '#/components/schemas/ScenarioCreateRequest'
+      - type: object
+        properties:
+          peppolParticipantIds:
+            type: array
+            deprecated: true
+            items:
+              type: string
+              deprecated: true
+              description: List of Peppol Participant Ids.
+            minItems: 1
+            uniqueItems: true
+          emailAddressesForValidationErrors:
+            type: array
+            description: List of email addresses for validation errors.
+            items:
+              type: string
+              maxLength: 320
+              minLength: 6
+            uniqueItems: true
+          direction:
+            $ref: '#/components/schemas/DeprecatedPeppolDirection'
+            deprecated: true
+            description: Direction of the scenario.
+            examples:
+            - BOTH
+            - IN
+            - OUT
+            - SELF
+          peppolSenderParticipantInfos:
+            type: array
+            items:
+              $ref: '#/components/schemas/PeppolSenderParticipantInfoRequest'
+              description: List of Peppol sender participant infos.
+            minItems: 1
+            uniqueItems: true
+      description: Belgium E-Invoice Create Request
+      required:
+      - name
+    SwedenEInvoiceUpdateRequest:
+      allOf:
+      - $ref: '#/components/schemas/ScenarioUpdateRequest'
+      - type: object
+        properties:
+          peppolParticipantIds:
+            type: array
+            deprecated: true
+            items:
+              type: string
+              deprecated: true
+              description: List of Peppol Participant Ids.
+            minItems: 1
+            uniqueItems: true
+          emailAddressesForValidationErrors:
+            type: array
+            description: List of email addresses for validation errors.
+            items:
+              type: string
+              maxLength: 320
+              minLength: 6
+            uniqueItems: true
+          direction:
+            $ref: '#/components/schemas/DeprecatedPeppolDirection'
+            deprecated: true
+            description: Direction of the scenario.
+            examples:
+            - BOTH
+            - IN
+            - OUT
+            - SELF
+          peppolSenderParticipantInfos:
+            type: array
+            items:
+              $ref: '#/components/schemas/PeppolSenderParticipantInfoRequest'
+              description: List of Peppol sender participant infos.
+            minItems: 1
+            uniqueItems: true
+      description: Sweden E-Invoice Update Request
+      required:
+      - name
+    Error:
+      type: object
+      description: Describes an error item
+      properties:
+        code:
+          type: string
+          description: 'One of a server-defined set of error codes. '
+          example: VALID_240
+        message:
+          type: string
+          description: A human-readable representation of the error.
+          example: Alias is not valid
+        target:
+          type: string
+          description: The target of the error.
+          example: Validation
+        details:
+          type: array
+          description: Represent an array of related errors that occurred during the request.
+          items:
+            $ref: '#/components/schemas/ErrorDetail'
+      required:
+      - code
+      - message
+    DeprecatedPeppolDirection:
+      type: string
+      enum:
+      - BOTH
+      - IN
+      - OUT
+      - SELF
+    DenmarkEInvoiceCreateRequest:
+      allOf:
+      - $ref: '#/components/schemas/ScenarioCreateRequest'
+      - type: object
+        properties:
+          peppolParticipantIds:
+            type: array
+            deprecated: true
+            items:
+              type: string
+              deprecated: true
+              description: List of Peppol Participant Ids.
+            minItems: 1
+            uniqueItems: true
+          emailAddressesForValidationErrors:
+            type: array
+            description: List of email addresses for validation errors.
+            items:
+              type: string
+              maxLength: 320
+              minLength: 6
+            uniqueItems: true
+          direction:
+            $ref: '#/components/schemas/DeprecatedPeppolDirection'
+            deprecated: true
+            description: Direction of the scenario.
+            examples:
+            - BOTH
+            - IN
+            - OUT
+            - SELF
+          peppolSenderParticipantInfos:
+            type: array
+            items:
+              $ref: '#/components/schemas/PeppolSenderParticipantInfoRequest'
+              description: List of Peppol sender participant infos.
+            minItems: 1
+            uniqueItems: true
+      description: Denmark E-Invoice Create Request
+      required:
+      - name
+    PolandEInvoiceCreateRequest:
+      allOf:
+      - $ref: '#/components/schemas/ScenarioCreateRequest'
+      - type: object
+        properties:
+          taxNumber:
+            type: string
+            description: The company's unique tax identifier, without 'PL' prefix.
+            examples:
+            - '1900101223'
+            minLength: 1
+            pattern: ^\d{10}$
+          ksefToken:
+            type: string
+            description: 'KSeF token '
+            examples:
+            - '1900101223'
+          digitalCertificate:
+            $ref: '#/components/schemas/KeyStore'
+            description: The Digital Certificate and the corresponding Private Key
+          offlineDigitalCertificate:
+            $ref: '#/components/schemas/KeyStore'
+            description: The offline Digital Certificate and the corresponding Private Key
+      description: Poland EInvoice Scenario CreateRequest.
+      required:
+      - name
+      - taxNumber
+    NorwayEInvoiceUpdateRequest:
+      allOf:
+      - $ref: '#/components/schemas/ScenarioUpdateRequest'
+      - type: object
+        properties:
+          peppolParticipantIds:
+            type: array
+            deprecated: true
+            items:
+              type: string
+              deprecated: true
+              description: List of Peppol Participant Ids.
+            minItems: 1
+            uniqueItems: true
+          emailAddressesForValidationErrors:
+            type: array
+            description: List of email addresses for validation errors.
+            items:
+              type: string
+              maxLength: 320
+              minLength: 6
+            uniqueItems: true
+          direction:
+            $ref: '#/components/schemas/DeprecatedPeppolDirection'
+            deprecated: true
+            description: Direction of the scenario.
+            examples:
+            - BOTH
+            - IN
+            - OUT
+            - SELF
+          peppolSenderParticipantInfos:
+            type: array
+            items:
+              $ref: '#/components/schemas/PeppolSenderParticipantInfoRequest'
+              description: List of Peppol sender participant infos.
+            minItems: 1
+            uniqueItems: true
+      description: Norway E-Invoice Update Request
+      required:
+      - name
+    FranceEInvoiceUpdateRequest:
+      allOf:
+      - $ref: '#/components/schemas/ScenarioUpdateRequest'
+      - type: object
+        properties:
+          peppolParticipantIds:
+            type: array
+            deprecated: true
+            items:
+              type: string
+              deprecated: true
+              description: List of Peppol Participant Ids.
+            minItems: 1
+            uniqueItems: true
+          emailAddressesForValidationErrors:
+            type: array
+            description: List of email addresses for validation errors.
+            items:
+              type: string
+              maxLength: 320
+              minLength: 6
+            uniqueItems: true
+          direction:
+            $ref: '#/components/schemas/DeprecatedPeppolDirection'
+            deprecated: true
+            description: Direction of the scenario.
+            examples:
+            - BOTH
+            - IN
+            - OUT
+            - SELF
+          peppolSenderParticipantInfos:
+            type: array
+            items:
+              $ref: '#/components/schemas/PeppolSenderParticipantInfoRequest'
+              description: List of Peppol sender participant infos.
+            minItems: 1
+            uniqueItems: true
+          paAuthorisationContract:
+            type: boolean
+            default: false
+            description: Indicates if the the authorisation contract is available
+            example: false
+          siren:
+            type: string
+            description: The 9-digit SIREN number identifying the French legal entity.
+            example: '123456789'
+            minLength: 1
+            pattern: ^\d{9}$
+          siret:
+            type: string
+            description: The 14-digit SIRET number identifying the specific establishment of the French company (9-digit SIREN + 5-digit NIC).
+            example: '12345678900012'
+            pattern: ^\d{14}$
+      description: France E-Invoice Update Request
+      required:
+      - name
+      - siren
+    ScenarioUpdateRequest:
+      type: object
+      description: Object to update a scenario.
+      discriminator:
+        propertyName: name
+        mapping:
+          BELGIUM_EINVOICE: '#/components/schemas/BelgiumEInvoiceUpdateRequest'
+          DENMARK_EINVOICE: '#/components/schemas/DenmarkEInvoiceUpdateRequest'
+          ESTONIA_EINVOICE: '#/components/schemas/EstoniaEInvoiceUpdateRequest'
+          FINLAND_EINVOICE: '#/components/schemas/FinlandEInvoiceUpdateRequest'
+          FRANCE_EINVOICE: '#/components/schemas/FranceEInvoiceUpdateRequest'
+          GERMANY_EINVOICE: '#/components/schemas/GermanyEInvoiceUpdateRequest'
+          HUNGARY_EINVOICE: '#/components/schemas/HungaryEInvoiceUpdateRequest'
+          ITALY_EINVOICE: '#/components/schemas/ItalyEInvoiceUpdateRequest'
+          NETHERLANDS_EINVOICE: '#/components/schemas/NetherlandsEInvoiceUpdateRequest'
+          NORWAY_EINVOICE: '#/components/schemas/NorwayEInvoiceUpdateRequest'
+          POLAND_EINVOICE: '#/components/schemas/PolandEInvoiceUpdateRequest'
+          ROMANIA_EINVOICE: '#/components/schemas/RomaniaEInvoiceUpdateRequest'
+          SWEDEN_EINVOICE: '#/components/schemas/SwedenEInvoiceUpdateRequest'
+          UNITED_KINGDOM_EINVOICE: '#/components/schemas/UnitedKingdomEInvoiceUpdateRequest'
+      properties:
+        name:
+          $ref: '#/components/schemas/ScenarioName'
+          description: The unique name of the scenario type.
+      required:
+      - name
+    SwedenEInvoiceCreateRequest:
+      allOf:
+      - $ref: '#/components/schemas/ScenarioCreateRequest'
+      - type: object
+        properties:
+          peppolParticipantIds:
+            type: array
+            deprecated: true
+            items:
+              type: string
+              deprecated: true
+              description: List of Peppol Participant Ids.
+            minItems: 1
+            uniqueItems: true
+          emailAddressesForValidationErrors:
+            type: array
+            description: List of email addresses for validation errors.
+            items:
+              type: string
+              maxLength: 320
+              minLength: 6
+            uniqueItems: true
+          direction:
+            $ref: '#/components/schemas/DeprecatedPeppolDirection'
+            deprecated: true
+            description: Direction of the scenario.
+            examples:
+            - BOTH
+            - IN
+            - OUT
+            - SELF
+          peppolSenderParticipantInfos:
+            type: array
+            items:
+              $ref: '#/components/schemas/PeppolSenderParticipantInfoRequest'
+              description: List of Peppol sender participant infos.
+            minItems: 1
+            uniqueItems: true
+      description: Sweden E-Invoice Create Request
+      required:
+      - name
+    RomaniaEInvoiceUpdateRequest:
+      allOf:
+      - $ref: '#/components/schemas/ScenarioUpdateRequest'
+      - type: object
+        properties:
+          taxNumber:
+            type: string
+            description: The company's unique Romanian fiscal registration code (Codul Fiscal or CUI).
+            examples:
+            - '1900101223457'
+          clientId:
+            type: string
+            description: The client ID issued to your application by ANAF.
+            examples:
+            - your_spv_client_id
+          clientSecret:
+            type: string
+            format: password
+            description: The client secret issued to your application by ANAF.
+          accessToken:
+            type: string
+            format: password
+            description: The OAuth 2.0 access token used to authorise all API calls to ANAF.
+          accessTokenExpiry:
+            type: string
+            format: date-time
+            description: The expiration date and time of the access token, specified ISO 8601 format with a timezone offset. For example, 2025-01-09T10:00:00+02:00, where +02:00 is the time zone offset.
+            examples:
+            - '2024-12-10T10:30:00+02:00'
+          refreshToken:
+            type: string
+            format: password
+            description: The OAuth 2.0 refresh token used to automatically obtain a new access token from ANAF before the current one expires.
+          refreshTokenExpiry:
+            type: string
+            format: date-time
+            description: The expiration date and time of the refresh token, specified ISO 8601 format with a timezone offset. For example, 2025-01-09T10:00:00+02:00, where +02:00 is the time zone offset.
+            examples:
+            - '2025-01-09T10:00:00+02:00'
+      description: Romania EInvoice Scenario UpdateRequest.
+      required:
+      - accessToken
+      - accessTokenExpiry
+      - clientId
+      - clientSecret
+      - name
+      - refreshToken
+      - refreshTokenExpiry
+      - taxNumber
+    NorwayEInvoiceCreateRequest:
+      allOf:
+      - $ref: '#/components/schemas/ScenarioCreateRequest'
+      - type: object
+        properties:
+          peppolParticipantIds:
+            type: array
+            deprecated: true
+            items:
+              type: string
+              deprecated: true
+              description: List of Peppol Participant Ids.
+            minItems: 1
+            uniqueItems: true
+          emailAddressesForValidationErrors:
+            type: array
+            description: List of email addresses for validation errors.
+            items:
+              type: string
+              maxLength: 320
+              minLength: 6
+            uniqueItems: true
+          direction:
+            $ref: '#/components/schemas/DeprecatedPeppolDirection'
+            deprecated: true
+            description: Direction of the scenario.
+            examples:
+            - BOTH
+            - IN
+            - OUT
+            - SELF
+          peppolSenderParticipantInfos:
+            type: array
+            items:
+              $ref: '#/components/schemas/PeppolSenderParticipantInfoRequest'
+              description: List of Peppol sender participant infos.
+            minItems: 1
+            uniqueItems: true
+      description: Norway E-Invoice Create Request
+      required:
+      - name
+    NetherlandsEInvoiceUpdateRequest:
+      allOf:
+      - $ref: '#/components/schemas/ScenarioUpdateRequest'
+      - type: object
+        properties:
+          peppolParticipantIds:
+            type: array
+            deprecated: true
+            items:
+              type: string
+              deprecated: true
+              description: List of Peppol Participant Ids.
+            minItems: 1
+            uniqueItems: true
+          emailAddressesForValidationErrors:
+            type: array
+            description: List of email addresses for validation errors.
+            items:
+              type: string
+              maxLength: 320
+              minLength: 6
+            uniqueItems: true
+          direction:
+            $ref: '#/components/schemas/DeprecatedPeppolDirection'
+            deprecated: true
+            description: Direction of the scenario.
+            examples:
+            - BOTH
+            - IN
+            - OUT
+            - SELF
+          peppolSenderParticipantInfos:
+            type: array
+            items:
+              $ref: '#/components/schemas/PeppolSenderParticipantInfoRequest'
+              description: List of Peppol sender participant infos.
+            minItems: 1
+            uniqueItems: true
+      description: Netherlands E-Invoice Update Request
+      required:
+      - name
+    ItalyEInvoiceUpdateRequest:
+      allOf:
+      - $ref: '#/components/schemas/ScenarioUpdateRequest'
+      description: Italy EInvoice Scenario UpdateRequest.
+      required:
+      - name
+    FinlandEInvoiceCreateRequest:
+      allOf:
+      - $ref: '#/components/schemas/ScenarioCreateRequest'
+      - type: object
+        properties:
+          peppolParticipantIds:
+            type: array
+            deprecated: true
+            items:
+              type: string
+              deprecated: true
+              description: List of Peppol Participant Ids.
+            minItems: 1
+            uniqueItems: true
+          emailAddressesForValidationErrors:
+            type: array
+            description: List of email addresses for validation errors.
+            items:
+              type: string
+              maxLength: 320
+              minLength: 6
+            uniqueItems: true
+          direction:
+            $ref: '#/components/schemas/DeprecatedPeppolDirection'
+            deprecated: true
+            description: Direction of the scenario.
+            examples:
+            - BOTH
+            - IN
+            - OUT
+            - SELF
+          peppolSenderParticipantInfos:
+            type: array
+            items:
+              $ref: '#/components/schemas/PeppolSenderParticipantInfoRequest'
+              description: List of Peppol sender participant infos.
+            minItems: 1
+            uniqueItems: true
+      description: Finland E-Invoice Create Request
+      required:
+      - name
+    BelgiumEInvoiceUpdateRequest:
+      allOf:
+      - $ref: '#/components/schemas/ScenarioUpdateRequest'
+      - type: object
+        properties:
+          peppolParticipantIds:
+            type: array
+            deprecated: true
+            items:
+              type: string
+              deprecated: true
+              description: List of Peppol Participant Ids.
+            minItems: 1
+            uniqueItems: true
+          emailAddressesForValidationErrors:
+            type: array
+            description: List of email addresses for validation errors.
+            items:
+              type: string
+              maxLength: 320
+              minLength: 6
+            uniqueItems: true
+          direction:
+            $ref: '#/components/schemas/DeprecatedPeppolDirection'
+            deprecated: true
+            description: Direction of the scenario.
+            examples:
+            - BOTH
+            - IN
+            - OUT
+            - SELF
+          peppolSenderParticipantInfos:
+            type: array
+            items:
+              $ref: '#/components/schemas/PeppolSenderParticipantInfoRequest'
+              description: List of Peppol sender participant infos.
+            minItems: 1
+            uniqueItems: true
+      description: Belgium E-Invoice Update Request
+      required:
+      - name
+    ItalyEInvoiceCreateRequest:
+      allOf:
+      - $ref: '#/components/schemas/ScenarioCreateRequest'
+      description: Italy EInvoice Scenario CreateRequest.
+      required:
+      - name
+    FinlandEInvoiceUpdateRequest:
+      allOf:
+      - $ref: '#/components/schemas/ScenarioUpdateRequest'
+      - type: object
+        properties:
+          peppolParticipantIds:
+            type: array
+            deprecated: true
+            items:
+              type: string
+              deprecated: true
+              description: List of Peppol Participant Ids.
+            minItems: 1
+            uniqueItems: true
+          emailAddressesForValidationErrors:
+            type: array
+            description: List of email addresses for validation errors.
+            items:
+              type: string
+              maxLength: 320
+              minLength: 6
+            uniqueItems: true
+          direction:
+            $ref: '#/components/schemas/DeprecatedPeppolDirection'
+            deprecated: true
+            description: Direction of the scenario.
+            examples:
+            - BOTH
+            - IN
+            - OUT
+            - SELF
+          peppolSenderParticipantInfos:
+            type: array
+            items:
+              $ref: '#/components/schemas/PeppolSenderParticipantInfoRequest'
+              description: List of Peppol sender participant infos.
+            minItems: 1
+            uniqueItems: true
+      description: Finland E-Invoice Update Request
+      required:
+      - name
+    ScenarioResponse:
+      type: object
+      description: Base ScenarioResponse.
+      discriminator:
+        propertyName: name
+        mapping:
+          BELGIUM_EINVOICE: '#/components/schemas/PeppolCountryEInvoiceRetrievalResponse'
+          DENMARK_EINVOICE: '#/components/schemas/PeppolCountryEInvoiceRetrievalResponse'
+          ESTONIA_EINVOICE: '#/components/schemas/PeppolCountryEInvoiceRetrievalResponse'
+          FINLAND_EINVOICE: '#/components/schemas/PeppolCountryEInvoiceRetrievalResponse'
+          FRANCE_EINVOICE: '#/components/schemas/FranceEInvoiceRetrievalResponse'
+          GERMANY_EINVOICE: '#/components/schemas/PeppolCountryEInvoiceRetrievalResponse'
+          HUNGARY_EINVOICE: '#/components/schemas/HungaryEInvoiceRetrievalResponse'
+          ITALY_EINVOICE: '#/components/schemas/ItalyEInvoiceRetrievalResponse'
+          NETHERLANDS_EINVOICE: '#/components/schemas/PeppolCountryEInvoiceRetrievalResponse'
+          NORWAY_EINVOICE: '#/components/schemas/PeppolCountryEInvoiceRetrievalResponse'
+          POLAND_EINVOICE: '#/components/schemas/PolandEInvoiceRetrievalResponse'
+          ROMANIA_EINVOICE: '#/components/schemas/RomaniaEInvoiceRetrievalResponse'
+          SWEDEN_EINVOICE: '#/components/schemas/PeppolCountryEInvoiceRetrievalResponse'
+          UNITED_KINGDOM_EINVOICE: '#/components/schemas/PeppolCountryEInvoiceRetrievalResponse'
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          description: The ID of the applied scenario.
+          example: cd13fea0-2108-11f0-836c-d3d769f7e115
+        name:
+          $ref: '#/components/schemas/ScenarioName'
+        companyUuid:
+          type: string
+          format: uuid
+          description: The unique identifier of the company
+          example: cd13fea0-2108-11f0-836c-d3d769f7e115
+        approvalUuid:
+          type: string
+          format: uuid
+          description: ID of this scenario request.
+          example: cd13fea0-2108-11f0-836c-d3d769f7e115
+        approvalStatus:
+          $ref: '#/components/schemas/ApprovalStatus'
+          description: The current status of the latest approval request.
+          examples:
+          - PENDING
+          - APPROVED
+          - REJECTED
+        rejectionReason:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+      - approvalUuid
+      - createdAt
+      - name
+      - updatedAt
+    EstoniaEInvoiceUpdateRequest:
+      allOf:
+      - $ref: '#/components/schemas/ScenarioUpdateRequest'
+      - type: object
+        properties:
+          peppolParticipantIds:
+            type: array
+            deprecated: true
+            items:
+              type: string
+              deprecated: true
+              description: List of Peppol Participant Ids.
+            minItems: 1
+            uniqueItems: true
+          emailAddressesForValidationErrors:
+            type: array
+            description: List of email addresses for validation errors.
+            items:
+              type: string
+              maxLength: 320
+              minLength: 6
+            uniqueItems: true
+          direction:
+            $ref: '#/components/schemas/DeprecatedPeppolDirection'
+            deprecated: true
+            description: Direction of the scenario.
+            examples:
+            - BOTH
+            - IN
+            - OUT
+            - SELF
+          peppolSenderParticipantInfos:
+            type: array
+            items:
+              $ref: '#/components/schemas/PeppolSenderParticipantInfoRequest'
+              description: List of Peppol sender participant infos.
+            minItems: 1
+            uniqueItems: true
+      description: Estonia E-Invoice Update Request
+      required:
+      - name
+    PrivateKey:
+      type: object
+      properties:
+        key:
+          type: string
+          format: byte
+          description: The Private Key
+        passphrase:
+          type: string
+          description: The Passphrase
+          minLength: 1
+      required:
+      - key
+      - passphrase
+    HungaryEInvoiceCreateRequest:
+      allOf:
+      - $ref: '#/components/schemas/ScenarioCreateRequest'
+      - type: object
+        properties:
+          taxNumber:
+            type: string
+            description: The first 8 digits of the tax number belonging to the taxpayer that registered and owns the Technical User Account for the NAV Online Invoice System.
+            examples:
+            - '12345678'
+          username:
+            type: string
+            description: The username of the Technical User Account registered with the NAV Online Invoice System.
+            examples:
+            - my_nav_tech_user
+          password:
+            type: string
+            format: password
+            description: The password for the Technical User Account registered with the NAV Online Invoice System.
+          signatureKey:
+            type: string
+            format: password
+            description: The signature key generated within the NAV system that's associated with the Technical User Account.
+          encryptionKey:
+            type: string
+            format: password
+            description: The encryption key generated within the NAV system that's associated with the Technical User Account.
+          softwareId:
+            type: string
+            description: The unique identifier of the software being used to connect to the NAV Online Invoice System. This ID must be registered by the taxpayer.
+            examples:
+            - MY_CUSTOM_ERP_V1_2
+      description: Hungary EInvoice Scenario CreateRequest.
+      required:
+      - encryptionKey
+      - name
+      - password
+      - signatureKey
+      - softwareId
+      - taxNumber
+      - username
+    PolandEInvoiceUpdateRequest:
+      allOf:
+      - $ref: '#/components/schemas/ScenarioUpdateRequest'
+      - type: object
+        properties:
+          taxNumber:
+            type: string
+            description: The company's unique tax identifier, without 'PL' prefix.
+            examples:
+            - '1900101223'
+            minLength: 1
+            pattern: ^\d{10}$
+          ksefToken:
+            type: string
+            description: 'KSeF token '
+            examples:
+            - '1900101223'
+          digitalCertificate:
+            $ref: '#/components/schemas/KeyStore'
+            description: The Digital Certificate and the corresponding Private Key
+          offlineDigitalCertificate:
+            $ref: '#/components/schemas/KeyStore'
+            description: The offline Digital Certificate and the corresponding Private Key
+      description: Poland EInvoice Scenario UpdateRequest.
+      required:
+      - name
+      - taxNumber
+    GermanyEInvoiceUpdateRequest:
+      allOf:
+      - $ref: '#/components/schemas/ScenarioUpdateRequest'
+      - type: object
+        properties:
+          peppolParticipantIds:
+            type: array
+            deprecated: true
+            items:
+              type: string
+              deprecated: true
+              description: List of Peppol Participant Ids.
+            minItems: 1
+            uniqueItems: true
+          emailAddressesForValidationErrors:
+            type: array
+            description: List of email addresses for validation errors.
+            items:
+              type: string
+              maxLength: 320
+              minLength: 6
+            uniqueItems: true
+          direction:
+            $ref: '#/components/schemas/DeprecatedPeppolDirection'
+            deprecated: true
+            description: Direction of the scenario.
+            examples:
+            - BOTH
+            - IN
+            - OUT
+            - SELF
+          peppolSenderParticipantInfos:
+            type: array
+            items:
+              $ref: '#/components/schemas/PeppolSenderParticipantInfoRequest'
+              description: List of Peppol sender participant infos.
+            minItems: 1
+            uniqueItems: true
+      description: Germany E-Invoice Update Request
+      required:
+      - name
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    X-APP-KEY:
+      type: apiKey
+      name: X-APP-KEY
+      in: header

@@ -1,0 +1,4533 @@
+[
+ {
+  "page": "https://connect.ecosio.com/reference/create-archive.md",
+  "definition": {
+   "openapi": "3.0.0",
+   "info": {
+    "title": "ecosio.api",
+    "description": "This documentation describes the features of the ecosio messaging API (aka ecosio.api). ecosio.api is used to send structured electronic documents from an ERP system or any other IT system to ecosio and to fetch electronic messages from ecosio.",
+    "contact": {
+     "name": "ecosio GmbH",
+     "url": "https://ecosio.com/en",
+     "email": "support@ecosio.com"
+    },
+    "version": "1.1.1"
+   },
+   "servers": [
+    {
+     "url": "https://api.test.ecosio-hub.com:{port}",
+     "description": "TEST instance of ecosio.api (port 443 for CA SSL; 8443 for self signed SSL)",
+     "variables": {
+      "port": {
+       "enum": [
+        "443",
+        "8443"
+       ],
+       "default": "443",
+       "description": "443 for CA SSL; 8443 for self signed SSL"
+      }
+     }
+    }
+   ],
+   "paths": {
+    "/api/v1/archives": {
+     "post": {
+      "tags": [
+       "Archive messages"
+      ],
+      "summary": "Create an archive request",
+      "description": "Creates a request to archive EDI messages matching the specified patterns. The response returns a unique archive request ID.",
+      "operationId": "create-archive",
+      "requestBody": {
+       "$ref": "#/components/requestBodies/createArchiveRequest"
+      },
+      "responses": {
+       "202": {
+        "$ref": "#/components/responses/ArchiveCreationResponse"
+       },
+       "400": {
+        "$ref": "#/components/responses/400-Archive"
+       },
+       "401": {
+        "$ref": "#/components/responses/401"
+       },
+       "403": {
+        "$ref": "#/components/responses/403"
+       },
+       "404": {
+        "$ref": "#/components/responses/404"
+       },
+       "500": {
+        "$ref": "#/components/responses/500"
+       }
+      }
+     }
+    }
+   },
+   "components": {
+    "schemas": {
+     "archiveCreation": {
+      "description": "Information about created archive request",
+      "properties": {
+       "companyUuid": {
+        "type": "string",
+        "description": "The unique identifier the company the process was triggered for",
+        "example": "05c3875e-338e-4dcc-be2d-020cec6890b9"
+       },
+       "companyName": {
+        "type": "string",
+        "description": "Name of your company",
+        "example": "ecosio API Test Receiver"
+       },
+       "state": {
+        "type": "string",
+        "description": "The current state of the archiving process. This may be one of the following QUEUED, RUNNING, FINISHED and FAILED",
+        "example": "QUEUED"
+       },
+       "direction": {
+        "type": "string",
+        "description": "The specified value of the archive generation request of the corresponding field. One of DELIVERED, FETCHED or ALL",
+        "example": "ALL"
+       },
+       "entryPattern": {
+        "type": "string",
+        "description": "The specified entry pattern, if defined",
+        "example": "${YEAR}/${MONTH}/${DAY}/${MESSAGE_ID}/${TIMESTAMP}_${MESSAGE_STATUS}.${EXTENSION}"
+       },
+       "from": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Will include documents younger than this timestamp in the resulting archive. The date must be in ISO 8601 format.",
+        "example": "2023-10-01T08:00:00Z"
+       },
+       "till": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Will include documents older than this timestamp in the resulting archive. The date must be in ISO 8601 format.",
+        "nullable": true,
+        "example": "2023-10-02T08:00:00Z"
+       },
+       "messageIds": {
+        "type": "array",
+        "items": {
+         "type": "string"
+        },
+        "description": "Following messageIds will be added to the archive.",
+        "nullable": true,
+        "example": [
+         "cbd8425a-a130-4ac3-825d-98125d8acd32",
+         "af6bdfad-81d3-451c-88ab-c2554b4bb195",
+         "1dc68f00-3815-41ac-a977-3c6c42cba9d6"
+        ]
+       },
+       "includeAcknowledgment": {
+        "type": "boolean",
+        "description": "Indicates whether acknowledgment files are in the archive (e.g. for outbound invoices to SDI)",
+        "nullable": true,
+        "example": true
+       },
+       "includePdf": {
+        "type": "boolean",
+        "description": "Indicates whether PDF files are in the archive (e.g. for eInvoices)",
+        "nullable": true,
+        "example": true
+       },
+       "location": {
+        "type": "string",
+        "description": "HTTP Location Header pointing to the endpoint where information on the current status of the pending process can be fetched from.",
+        "example": "https://api.test.ecosio-hub.com/api/v1/archives/b1488649-d6c1-4c4b-a1bf-cc3faf6ed1d9"
+       }
+      }
+     },
+     "archiveRequest": {
+      "description": "Archive details",
+      "type": "object",
+      "properties": {
+       "direction": {
+        "type": "string",
+        "description": "Specifies if only EDI documents should be archived that have been sent to the Integration Hub (DELIVERED), that have been received from the service (RECEIVED) or if both sent and received EDI documents should be archived (ALL)",
+        "nullable": true,
+        "example": "DELIVERED"
+       },
+       "companyUuid": {
+        "type": "string",
+        "description": "In case of a Multi Tenant Connector the Archive Creation process need to be verified through the companyUuid. This Uuid can be found in the ecosio.monitor section Connectors.",
+        "nullable": true,
+        "example": "4d8d46c0-b1e7-4d14-a112-c1a2d9c28888"
+       },
+       "from": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Will include EDI documents younger than this timestamp in the resulting archive. The date must be in ISO 8601 format.",
+        "nullable": true,
+        "example": "2023-10-01T08:00:00Z"
+       },
+       "till": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Will include EDI documents older than this timestamp in the resulting archive. The date must be in ISO 8601 format.",
+        "nullable": true,
+        "example": "2023-10-02T08:00:00Z"
+       },
+       "messageIds": {
+        "type": "array",
+        "items": {
+         "type": "string"
+        },
+        "description": "Specifies that only EDI messages with messageIds listed in this array will be added to the archive. If this field is available any time-based related settings (from and till) will be ignored! Entries of that array should be the messageId strings to include",
+        "nullable": true,
+        "example": [
+         "cbd8425a-a130-4ac3-825d-98125d8acd32",
+         "af6bdfad-81d3-451c-88ab-c2554b4bb195",
+         "1dc68f00-3815-41ac-a977-3c6c42cba9d6"
+        ]
+       },
+       "entryPattern": {
+        "type": "string",
+        "description": "Defines the path structure and file name of the respective files within the archive",
+        "nullable": true,
+        "example": "${YEAR}/${MONTH}/${DAY}/${MESSAGE_ID}/${TIMESTAMP}_${MESSAGE_STATUS}.${EXTENSION}"
+       },
+       "includeAcknowledgment": {
+        "type": "boolean",
+        "description": "Allows to add acknowledgment files to the archive (e.g. for outbound invoices to SDI)",
+        "nullable": true
+       },
+       "includePdf": {
+        "type": "boolean",
+        "description": "Allows to add PDF files to the archive",
+        "nullable": true
+       },
+       "includeManifest": {
+        "type": "boolean",
+        "description": "Allows to add a JSON file with the overview of the merged/split messages",
+        "nullable": true
+       }
+      }
+     },
+     "failure-400": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/failure-object-without-reference"
+       },
+       {
+        "type": "object",
+        "properties": {
+         "failure": {
+          "properties": {
+           "errorCode": {
+            "example": "110"
+           },
+           "reason": {
+            "example": "INVALID_JSON_MESSAGE"
+           },
+           "details": {
+            "example": "Error converting received message into a JSON object!"
+           }
+          }
+         }
+        }
+       }
+      ]
+     },
+     "failure-401": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/failure-object-without-reference"
+       },
+       {
+        "type": "object",
+        "properties": {
+         "failure": {
+          "properties": {
+           "errorCode": {
+            "example": "102"
+           },
+           "reason": {
+            "example": "CREDENTIALS_INVALID"
+           },
+           "details": {
+            "example": "The provided credentials are invalid!"
+           }
+          }
+         }
+        }
+       }
+      ]
+     },
+     "failure-403": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/failure-object"
+       },
+       {
+        "type": "object",
+        "properties": {
+         "failure": {
+          "properties": {
+           "errorCode": {
+            "example": "104"
+           },
+           "reason": {
+            "example": "USER_NOT_PERMITTED"
+           },
+           "details": {
+            "example": "Invalid user credentials found"
+           },
+           "reference": {
+            "example": "70d4ec9d-33f9-47c1-94fc-91938dad7612"
+           }
+          }
+         }
+        }
+       }
+      ]
+     },
+     "failure-404": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/failure-object"
+       },
+       {
+        "type": "object",
+        "properties": {
+         "failure": {
+          "properties": {
+           "errorCode": {
+            "example": "160"
+           },
+           "reason": {
+            "example": "MESSAGE_RETRIEVAL_FAILED_MESSAGE_ID_UNKNOWN"
+           },
+           "details": {
+            "example": "Unknown messageId"
+           },
+           "reference": {
+            "example": "0441e9b0-993f-11eb-943c-91d1a9b71250c"
+           }
+          }
+         }
+        }
+       }
+      ]
+     },
+     "failure-500": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/failure-object"
+       },
+       {
+        "type": "object",
+        "properties": {
+         "failure": {
+          "properties": {
+           "errorCode": {
+            "example": "300"
+           },
+           "reason": {
+            "example": "INTERNAL_SERVER_ERROR"
+           },
+           "details": {
+            "example": "An unexpected error occurred while processing the request."
+           },
+           "reference": {
+            "example": "0441e9b0-993f-11eb-943c-91d1a9b71250c"
+           }
+          }
+         }
+        }
+       }
+      ]
+     },
+     "failure-object-without-reference": {
+      "type": "object",
+      "properties": {
+       "failure": {
+        "$ref": "#/components/schemas/propertyFailureWithoutReference"
+       }
+      }
+     },
+     "failure-object": {
+      "type": "object",
+      "properties": {
+       "failure": {
+        "$ref": "#/components/schemas/propertyFailure"
+       }
+      }
+     },
+     "propertyFailure": {
+      "description": "In case the message has reached an error state, the error details are denoted in this element. Whether the failure element is shown or not, depends on the configured state mode. For an overview of the different states and the state modes please refer to https://connect.ecosio.com/docs/state-mode#/",
+      "type": "object",
+      "nullable": true,
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/propertyFailureWithoutReference"
+       },
+       {
+        "properties": {
+         "reference": {
+          "type": "string",
+          "description": "The message ID, for which the error occurred.",
+          "example": "92fd6790-ad7d-11eb-9825-19ebc28755dd"
+         }
+        }
+       }
+      ]
+     },
+     "propertyFailureWithoutReference": {
+      "description": "In case the message has reached an error state, the error details are denoted in this element. Whether the failure element is shown or not, depends on the configured state mode. For an overview of the different states and the state modes please refer to https://connect.ecosio.com/docs/state-mode#/",
+      "type": "object",
+      "nullable": true,
+      "properties": {
+       "errorCode": {
+        "type": "string",
+        "description": "A code, identifying the error.",
+        "example": "261"
+       },
+       "reason": {
+        "type": "string",
+        "description": "The reason for the error",
+        "example": "RECEIVER_INVALID"
+       },
+       "details": {
+        "type": "string",
+        "description": "Further details about the error",
+        "example": "No receiver could be identified using either on message level (identifier: xyz) or on protocol level (xyz)"
+       }
+      }
+     }
+    },
+    "responses": {
+     "401": {
+      "description": "**UNAUTHORIZED**\n\nIn case the authentication credentials are not valid\n\n  | Code| Name | Description |\n  |-----|-----|-------------|\n  | 102 | CREDENTIALS_INVALID | The provided credentials are invalid |\n",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/failure-401"
+        }
+       }
+      }
+     },
+     "403": {
+      "description": "**FORBIDDEN.**\n\nIn case the user could not be authenticated\n\n  | Code| Name| Description |\n  |-----|-----|-------------|\n  |101| USER_KEY_INVALID| The user provided a wrong user key (deprecated) |\n  |104| USER_NOT_PERMITTED| The user authenticated successfully but has no rights to fulfill the requested task |\n",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/failure-403"
+        }
+       }
+      }
+     },
+     "404": {
+      "description": "**NOT FOUND.**\n\nIn case the message could not be found\n",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/failure-404"
+        }
+       }
+      }
+     },
+     "500": {
+      "description": "**INTERNAL SERVER ERROR.**\n\n| Code| Name| Description |\n|-----|-----|-------------|\n| 300 |INTERNAL_SERVER_ERROR | An unexpected error occurred while processing the request. Please contact support@ecosio.com to gain updates on the cause of the error (deprecated)|\n",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/failure-500"
+        }
+       }
+      }
+     },
+     "400-Archive": {
+      "description": "**BAD REQUEST**\n\n  | Code| Name| Description |\n  |-----|-----|-------------|\n  |100| APPLICATION_KEY_INVALID|Thrown if either no or an invalid application key was provided|\n  |110| INVALID_JSON_MESSAGE|Is thrown in case the request is invalid JSON\n  |120|EXPECTED_QUERY_PARAMETER_MISSING|Indicates that a required query parameter is missing in a request. Often this indicates that the appKey parameter is missing|\n  |123|QUERY_PARAMETER_UNKNOWN|The value of a provided query parameter is unknown to the service.|\n  |200|ARGUMENT_NULL|Indicates that a required argument is null|\n",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/failure-400"
+        }
+       }
+      }
+     },
+     "ArchiveCreationResponse": {
+      "description": "**ACCEPTED.** Archive creation has been accepted",
+      "headers": {
+       "Location": {
+        "$ref": "#/components/headers/ArchiveLocation"
+       }
+      },
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/archiveCreation"
+        }
+       }
+      }
+     }
+    },
+    "requestBodies": {
+     "createArchiveRequest": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/archiveRequest"
+        }
+       }
+      },
+      "description": "For the entryPattern the following fields are recognized for substitution:\n\n| EntryPattern Options| Description |\n|---------------------|-------------|\n| YEAR   | The year the document was received by the Integration Hub   |\n| MONTH | The month in the year the document was received by the Integration Hub|\n| DAY | The day of the mont the document was received by the Integration Hub|\n| TIMESTAMP | The timestamp the document was received at|\n| MESSAGE_ID | The unique identifier of the message archived|\n| MESSAGE_STATUS |   The status of the message archived|\n| MIME_TYPE | The MIME type of the document (i.e. XML, CSV, …)|\n| EXTENSION | The extension of the document in the archive|\n| SENDER_UUID | The unique identifier of the sending company |\n| SENDER_NAME | Human readable name of the sender of the document |\n| RECEIVER_UUID | The unique identifier of the receiving company |\n| RECEIVER_NAME | Human readable name of the receiver of the document |\n| DOCUMENT_TYPE | The unique identifier of the identified document type |\n| RANDOM_ALPHANUMERIC_1 | Random alphanumeric character |\n| RANDOM_ALPHANUMERIC_8 | Sequence of 8 alphanumeric random characters |\n| RANDOM_NUMERIC_1 | Random numeric character |\n| RANDOM_NUMERIC_8 | Sequence of 8 numeric random characters |\n| IN_OUT | If specified will separate received files from sent files by including a dedicated segment named IN, for received, and OUT, for sent documents. |\n"
+     }
+    },
+    "headers": {
+     "ArchiveLocation": {
+      "description": "The REST-accessible location of the archive on the ecosio Integration Hub",
+      "schema": {
+       "type": "string",
+       "example": "http://api.test.ecosio-hub.com/api/v1/archives/2544702d-97bd-4f07-a97f-52d961839c24"
+      }
+     }
+    },
+    "securitySchemes": {
+     "basicAuth": {
+      "type": "http",
+      "scheme": "basic"
+     },
+     "X-APP-KEY": {
+      "in": "header",
+      "name": "X-APP-KEY",
+      "type": "apiKey",
+      "description": "The ecosio app key is passed as HTTP header."
+     }
+    }
+   },
+   "security": [
+    {
+     "basicAuth": [],
+     "X-APP-KEY": []
+    }
+   ]
+  }
+ },
+ {
+  "page": "https://connect.ecosio.com/reference/get_api-v1-archives-archiveid.md",
+  "definition": {
+   "openapi": "3.0.0",
+   "info": {
+    "title": "ecosio.api",
+    "description": "This documentation describes the features of the ecosio messaging API (aka ecosio.api). ecosio.api is used to send structured electronic documents from an ERP system or any other IT system to ecosio and to fetch electronic messages from ecosio.",
+    "contact": {
+     "name": "ecosio GmbH",
+     "url": "https://ecosio.com/en",
+     "email": "support@ecosio.com"
+    },
+    "version": "1.1.1"
+   },
+   "servers": [
+    {
+     "url": "https://api.test.ecosio-hub.com:{port}",
+     "description": "TEST instance of ecosio.api (port 443 for CA SSL; 8443 for self signed SSL)",
+     "variables": {
+      "port": {
+       "enum": [
+        "443",
+        "8443"
+       ],
+       "default": "443",
+       "description": "443 for CA SSL; 8443 for self signed SSL"
+      }
+     }
+    }
+   ],
+   "paths": {
+    "/api/v1/archives/{archiveId}": {
+     "get": {
+      "tags": [
+       "Archive messages"
+      ],
+      "summary": "Retrieve the current status of the archive process",
+      "description": "As the archiving process may take some time to complete, the services provides an endpoint to check for the current status of the request.\n\nIf the request has finished the response will contain a URL to a download link which if invoked will start the download of the archive.",
+      "parameters": [
+       {
+        "in": "path",
+        "name": "archiveId",
+        "schema": {
+         "type": "string"
+        },
+        "required": true,
+        "description": "The UUID of the archive, which shall be acknowledged",
+        "example": "b1488649-d6c1-4c4b-a1bf-cc3faf6ed1d9"
+       }
+      ],
+      "responses": {
+       "200": {
+        "$ref": "#/components/responses/200ArchiveDetails"
+       },
+       "400": {
+        "$ref": "#/components/responses/400-Archive-Download"
+       },
+       "401": {
+        "$ref": "#/components/responses/401"
+       },
+       "403": {
+        "$ref": "#/components/responses/403"
+       },
+       "404": {
+        "$ref": "#/components/responses/404"
+       },
+       "429": {
+        "$ref": "#/components/responses/429"
+       },
+       "500": {
+        "$ref": "#/components/responses/500"
+       }
+      }
+     }
+    }
+   },
+   "components": {
+    "schemas": {
+     "archiveFailed": {
+      "description": "Information for failed archive creation",
+      "properties": {
+       "companyUuid": {
+        "type": "string",
+        "description": "The unique identifier the company the process was triggered for",
+        "example": "05c3875e-338e-4dcc-be2d-020cec6890b9"
+       },
+       "companyName": {
+        "type": "string",
+        "description": "Name of your company",
+        "example": "ecosio API Test Receiver"
+       },
+       "state": {
+        "type": "string",
+        "description": "The current state of the archiving process. This may be one of the following QUEUED, RUNNING, FINISHED and FAILED",
+        "example": "FAILED"
+       },
+       "direction": {
+        "type": "string",
+        "description": "The specified value of the archive generation request of the corresponding field. One of DELIVERED, FETCHED or ALL",
+        "example": "DELIVERED"
+       },
+       "entryPattern": {
+        "type": "string",
+        "description": "The specified entry pattern, if defined",
+        "example": "${YEAR}/${MONTH}/${DAY}/${MESSAGE_ID}/${TIMESTAMP}_${MESSAGE_STATUS}.${EXTENSION}"
+       },
+       "from": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Will include documents younger than this timestamp in the resulting archive. The date must be in ISO 8601 format.",
+        "example": "2023-10-01T08:00:00Z"
+       },
+       "till": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Will include documents older than this timestamp in the resulting archive. The date must be in ISO 8601 format.",
+        "nullable": true,
+        "example": "2023-10-02T08:00:00Z"
+       },
+       "error": {
+        "type": "string",
+        "description": "The URL of the final archive. This field is only available if the status is FINISHED and at least one message was found within the provided time range. Accessing the URL requires full authentication.",
+        "example": "https://api.test.ecosio-hub.com/api/v1/downloads/b1488649-d6c1-4c4b-a1bf-cc3faf6ed1d9"
+       },
+       "messageIds": {
+        "type": "array",
+        "items": {
+         "type": "string"
+        },
+        "description": "The messageIds listed in this array were tried to be added to the archive.",
+        "nullable": true,
+        "example": [
+         "cbd8425a-a130-4ac3-825d-98125d8acd32",
+         "af6bdfad-81d3-451c-88ab-c2554b4bb195",
+         "1dc68f00-3815-41ac-a977-3c6c42cba9d6"
+        ]
+       },
+       "includeAcknowledgment": {
+        "type": "boolean",
+        "description": "Indicates whether acknowledgment files are in the archive (e.g. for outbound invoices to SDI)",
+        "example": true
+       },
+       "includePdf": {
+        "type": "boolean",
+        "description": "Indicates whether PDF files are in the archive (e.g. for eInvoices)",
+        "example": true
+       }
+      }
+     },
+     "archiveOk": {
+      "description": "Information about current state of archive",
+      "properties": {
+       "companyUuid": {
+        "type": "string",
+        "description": "The unique identifier the company the process was triggered for",
+        "example": "05c3875e-338e-4dcc-be2d-020cec6890b9"
+       },
+       "companyName": {
+        "type": "string",
+        "description": "Name of your company",
+        "example": "ecosio API Test Receiver"
+       },
+       "state": {
+        "type": "string",
+        "description": "The current state of the archiving process. This may be one of the following QUEUED, RUNNING, FINISHED and FAILED",
+        "example": "RUNNING"
+       },
+       "direction": {
+        "type": "string",
+        "description": "The specified value of the archive generation request of the corresponding field. One of DELIVERED, FETCHED or ALL",
+        "example": "ALL"
+       },
+       "entryPattern": {
+        "type": "string",
+        "description": "The specified entry pattern, if defined",
+        "example": "${YEAR}/${MONTH}/${DAY}/${MESSAGE_ID}/${TIMESTAMP}_${MESSAGE_STATUS}.${EXTENSION}"
+       },
+       "from": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Will include documents younger than this timestamp in the resulting archive. The date must be in ISO 8601 format.",
+        "example": "2023-10-01T08:00:00Z"
+       },
+       "till": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Will include documents older than this timestamp in the resulting archive. The date must be in ISO 8601 format.",
+        "nullable": true,
+        "example": "2023-10-02T08:00:00Z"
+       },
+       "messageIds": {
+        "type": "array",
+        "items": {
+         "type": "string"
+        },
+        "description": "The messageIds listed in this array are added to the archive.",
+        "nullable": true,
+        "example": [
+         "cbd8425a-a130-4ac3-825d-98125d8acd32",
+         "af6bdfad-81d3-451c-88ab-c2554b4bb195",
+         "1dc68f00-3815-41ac-a977-3c6c42cba9d6"
+        ]
+       },
+       "downloadUrl": {
+        "type": "string",
+        "description": "The URL of the final archive. This field is only available if the status is FINISHED and at least one message was found within the provided time range. Accessing the URL requires full authentication.",
+        "example": "https://api.test.ecosio-hub.com/api/v1/downloads/b1488649-d6c1-4c4b-a1bf-cc3faf6ed1d9"
+       },
+       "md5Hash": {
+        "type": "string",
+        "description": "The MD5 hash of the final archive to check the validity of the archive. This field is only available if the status of the process is FINISHED and at least one message was found within the provided time range.",
+        "example": "250c0fba063e9388e4c87426fdfa4387c\""
+       },
+       "numMessagesArchived": {
+        "type": "string",
+        "description": "Returns the number of archived messages. Note that messages relate to a document flow with a unique messageId",
+        "example": "5"
+       },
+       "numFilesArchived": {
+        "type": "string",
+        "description": "Returns the number of files within the archive. Note per message multiple files may be archived depending on the states the message has gone through.",
+        "example": "10"
+       },
+       "includeAcknowledgment": {
+        "type": "boolean",
+        "description": "Indicates whether acknowledgment files are in the archive (e.g. for outbound invoices to SDI)",
+        "example": true
+       },
+       "includePdf": {
+        "type": "boolean",
+        "description": "Indicates whether PDF files are in the archive (e.g. for eInvoices)",
+        "example": true
+       },
+       "archiveSize": {
+        "type": "integer",
+        "description": "Size of the archive.",
+        "example": 13880
+       }
+      }
+     },
+     "failure-400-get": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/failure-object-without-reference"
+       },
+       {
+        "type": "object",
+        "properties": {
+         "failure": {
+          "properties": {
+           "errorCode": {
+            "example": "200"
+           },
+           "reason": {
+            "example": "ARGUMENT_NULL"
+           },
+           "details": {
+            "example": "No id found"
+           }
+          }
+         }
+        }
+       }
+      ]
+     },
+     "failure-401": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/failure-object-without-reference"
+       },
+       {
+        "type": "object",
+        "properties": {
+         "failure": {
+          "properties": {
+           "errorCode": {
+            "example": "102"
+           },
+           "reason": {
+            "example": "CREDENTIALS_INVALID"
+           },
+           "details": {
+            "example": "The provided credentials are invalid!"
+           }
+          }
+         }
+        }
+       }
+      ]
+     },
+     "failure-403": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/failure-object"
+       },
+       {
+        "type": "object",
+        "properties": {
+         "failure": {
+          "properties": {
+           "errorCode": {
+            "example": "104"
+           },
+           "reason": {
+            "example": "USER_NOT_PERMITTED"
+           },
+           "details": {
+            "example": "Invalid user credentials found"
+           },
+           "reference": {
+            "example": "70d4ec9d-33f9-47c1-94fc-91938dad7612"
+           }
+          }
+         }
+        }
+       }
+      ]
+     },
+     "failure-404": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/failure-object"
+       },
+       {
+        "type": "object",
+        "properties": {
+         "failure": {
+          "properties": {
+           "errorCode": {
+            "example": "160"
+           },
+           "reason": {
+            "example": "MESSAGE_RETRIEVAL_FAILED_MESSAGE_ID_UNKNOWN"
+           },
+           "details": {
+            "example": "Unknown messageId"
+           },
+           "reference": {
+            "example": "0441e9b0-993f-11eb-943c-91d1a9b71250c"
+           }
+          }
+         }
+        }
+       }
+      ]
+     },
+     "failure-429": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/failure-object-without-reference"
+       },
+       {
+        "type": "object",
+        "properties": {
+         "failure": {
+          "properties": {
+           "errorCode": {
+            "example": "130"
+           },
+           "reason": {
+            "example": "TOO_MANY_REQUESTS_RECEIVED"
+           },
+           "details": {
+            "example": "Too many requests have been received in a short amount of time. Please respect the terms of services and increase the interval of polling requests."
+           }
+          }
+         }
+        }
+       }
+      ]
+     },
+     "failure-500": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/failure-object"
+       },
+       {
+        "type": "object",
+        "properties": {
+         "failure": {
+          "properties": {
+           "errorCode": {
+            "example": "300"
+           },
+           "reason": {
+            "example": "INTERNAL_SERVER_ERROR"
+           },
+           "details": {
+            "example": "An unexpected error occurred while processing the request."
+           },
+           "reference": {
+            "example": "0441e9b0-993f-11eb-943c-91d1a9b71250c"
+           }
+          }
+         }
+        }
+       }
+      ]
+     },
+     "failure-object-without-reference": {
+      "type": "object",
+      "properties": {
+       "failure": {
+        "$ref": "#/components/schemas/propertyFailureWithoutReference"
+       }
+      }
+     },
+     "failure-object": {
+      "type": "object",
+      "properties": {
+       "failure": {
+        "$ref": "#/components/schemas/propertyFailure"
+       }
+      }
+     },
+     "propertyFailure": {
+      "description": "In case the message has reached an error state, the error details are denoted in this element. Whether the failure element is shown or not, depends on the configured state mode. For an overview of the different states and the state modes please refer to https://connect.ecosio.com/docs/state-mode#/",
+      "type": "object",
+      "nullable": true,
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/propertyFailureWithoutReference"
+       },
+       {
+        "properties": {
+         "reference": {
+          "type": "string",
+          "description": "The message ID, for which the error occurred.",
+          "example": "92fd6790-ad7d-11eb-9825-19ebc28755dd"
+         }
+        }
+       }
+      ]
+     },
+     "propertyFailureWithoutReference": {
+      "description": "In case the message has reached an error state, the error details are denoted in this element. Whether the failure element is shown or not, depends on the configured state mode. For an overview of the different states and the state modes please refer to https://connect.ecosio.com/docs/state-mode#/",
+      "type": "object",
+      "nullable": true,
+      "properties": {
+       "errorCode": {
+        "type": "string",
+        "description": "A code, identifying the error.",
+        "example": "261"
+       },
+       "reason": {
+        "type": "string",
+        "description": "The reason for the error",
+        "example": "RECEIVER_INVALID"
+       },
+       "details": {
+        "type": "string",
+        "description": "Further details about the error",
+        "example": "No receiver could be identified using either on message level (identifier: xyz) or on protocol level (xyz)"
+       }
+      }
+     }
+    },
+    "responses": {
+     "401": {
+      "description": "**UNAUTHORIZED**\n\nIn case the authentication credentials are not valid\n\n  | Code| Name | Description |\n  |-----|-----|-------------|\n  | 102 | CREDENTIALS_INVALID | The provided credentials are invalid |\n",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/failure-401"
+        }
+       }
+      }
+     },
+     "403": {
+      "description": "**FORBIDDEN.**\n\nIn case the user could not be authenticated\n\n  | Code| Name| Description |\n  |-----|-----|-------------|\n  |101| USER_KEY_INVALID| The user provided a wrong user key (deprecated) |\n  |104| USER_NOT_PERMITTED| The user authenticated successfully but has no rights to fulfill the requested task |\n",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/failure-403"
+        }
+       }
+      }
+     },
+     "404": {
+      "description": "**NOT FOUND.**\n\nIn case the message could not be found\n",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/failure-404"
+        }
+       }
+      }
+     },
+     "429": {
+      "description": "**TOO MANY REQUESTS.**\n\n| Code| Name| Description |\n|-----|-----|-------------|\n| 130 | TOO_MANY_REQUESTS_RECEIVED|In order to prevent being spammed by poll requests and status queries the service makes use of a request cache. If the number of requests received in a certain amount of time exceed a certain threshold this error will be returned. Every 5 minutes the cache will be cleared automatically|\n",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/failure-429"
+        }
+       }
+      }
+     },
+     "500": {
+      "description": "**INTERNAL SERVER ERROR.**\n\n| Code| Name| Description |\n|-----|-----|-------------|\n| 300 |INTERNAL_SERVER_ERROR | An unexpected error occurred while processing the request. Please contact support@ecosio.com to gain updates on the cause of the error (deprecated)|\n",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/failure-500"
+        }
+       }
+      }
+     },
+     "400-Archive-Download": {
+      "description": "**BAD REQUEST**\n\n  | Code| Name| Description |\n  |-----|-----|-------------|\n  |100| APPLICATION_KEY_INVALID|Thrown if either no or an invalid application key was provided|\n  |110| INVALID_JSON_MESSAGE|Is thrown in case the request is invalid JSON\n  |120|EXPECTED_QUERY_PARAMETER_MISSING|Indicates that a required query parameter is missing in a request. Often this indicates that the appKey parameter is missing|\n  |123|QUERY_PARAMETER_UNKNOWN|The value of a provided query parameter is unknown to the service.|\n  |200|ARGUMENT_NULL|Indicates that a required argument is null|\n",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/failure-400-get"
+        }
+       },
+       "text/plain": {
+        "schema": {
+         "type": "string",
+         "example": "Archive e339f0f0-9959-4009-b425-b3fa487a4df3 is in invalid state"
+        }
+       }
+      }
+     },
+     "200ArchiveDetails": {
+      "description": "**OK.**",
+      "content": {
+       "application/json": {
+        "schema": {
+         "oneOf": [
+          {
+           "$ref": "#/components/schemas/archiveOk"
+          },
+          {
+           "$ref": "#/components/schemas/archiveFailed"
+          }
+         ]
+        }
+       }
+      }
+     }
+    },
+    "securitySchemes": {
+     "basicAuth": {
+      "type": "http",
+      "scheme": "basic"
+     },
+     "X-APP-KEY": {
+      "in": "header",
+      "name": "X-APP-KEY",
+      "type": "apiKey",
+      "description": "The ecosio app key is passed as HTTP header."
+     }
+    }
+   },
+   "security": [
+    {
+     "basicAuth": [],
+     "X-APP-KEY": []
+    }
+   ]
+  }
+ },
+ {
+  "page": "https://connect.ecosio.com/reference/get_api-v1-downloads-archiveid.md",
+  "definition": {
+   "openapi": "3.0.0",
+   "info": {
+    "title": "ecosio.api",
+    "description": "This documentation describes the features of the ecosio messaging API (aka ecosio.api). ecosio.api is used to send structured electronic documents from an ERP system or any other IT system to ecosio and to fetch electronic messages from ecosio.",
+    "contact": {
+     "name": "ecosio GmbH",
+     "url": "https://ecosio.com/en",
+     "email": "support@ecosio.com"
+    },
+    "version": "1.1.1"
+   },
+   "servers": [
+    {
+     "url": "https://api.test.ecosio-hub.com:{port}",
+     "description": "TEST instance of ecosio.api (port 443 for CA SSL; 8443 for self signed SSL)",
+     "variables": {
+      "port": {
+       "enum": [
+        "443",
+        "8443"
+       ],
+       "default": "443",
+       "description": "443 for CA SSL; 8443 for self signed SSL"
+      }
+     }
+    }
+   ],
+   "paths": {
+    "/api/v1/downloads/{archiveId}": {
+     "get": {
+      "tags": [
+       "Archive messages"
+      ],
+      "summary": "Download the archive",
+      "parameters": [
+       {
+        "in": "path",
+        "name": "archiveId",
+        "schema": {
+         "type": "string"
+        },
+        "required": true,
+        "description": "The UUID of the archive, which shall be acknowledged",
+        "example": "b1488649-d6c1-4c4b-a1bf-cc3faf6ed1d9"
+       }
+      ],
+      "responses": {
+       "200": {
+        "$ref": "#/components/responses/getArchiveDownload"
+       },
+       "400": {
+        "$ref": "#/components/responses/400-Archive-Download"
+       },
+       "401": {
+        "$ref": "#/components/responses/401"
+       },
+       "403": {
+        "$ref": "#/components/responses/403"
+       },
+       "404": {
+        "$ref": "#/components/responses/404-archive-download"
+       },
+       "500": {
+        "$ref": "#/components/responses/500"
+       }
+      }
+     }
+    }
+   },
+   "components": {
+    "schemas": {
+     "failure-400-get": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/failure-object-without-reference"
+       },
+       {
+        "type": "object",
+        "properties": {
+         "failure": {
+          "properties": {
+           "errorCode": {
+            "example": "200"
+           },
+           "reason": {
+            "example": "ARGUMENT_NULL"
+           },
+           "details": {
+            "example": "No id found"
+           }
+          }
+         }
+        }
+       }
+      ]
+     },
+     "failure-401": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/failure-object-without-reference"
+       },
+       {
+        "type": "object",
+        "properties": {
+         "failure": {
+          "properties": {
+           "errorCode": {
+            "example": "102"
+           },
+           "reason": {
+            "example": "CREDENTIALS_INVALID"
+           },
+           "details": {
+            "example": "The provided credentials are invalid!"
+           }
+          }
+         }
+        }
+       }
+      ]
+     },
+     "failure-403": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/failure-object"
+       },
+       {
+        "type": "object",
+        "properties": {
+         "failure": {
+          "properties": {
+           "errorCode": {
+            "example": "104"
+           },
+           "reason": {
+            "example": "USER_NOT_PERMITTED"
+           },
+           "details": {
+            "example": "Invalid user credentials found"
+           },
+           "reference": {
+            "example": "70d4ec9d-33f9-47c1-94fc-91938dad7612"
+           }
+          }
+         }
+        }
+       }
+      ]
+     },
+     "failure-500": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/failure-object"
+       },
+       {
+        "type": "object",
+        "properties": {
+         "failure": {
+          "properties": {
+           "errorCode": {
+            "example": "300"
+           },
+           "reason": {
+            "example": "INTERNAL_SERVER_ERROR"
+           },
+           "details": {
+            "example": "An unexpected error occurred while processing the request."
+           },
+           "reference": {
+            "example": "0441e9b0-993f-11eb-943c-91d1a9b71250c"
+           }
+          }
+         }
+        }
+       }
+      ]
+     },
+     "failure-object-without-reference": {
+      "type": "object",
+      "properties": {
+       "failure": {
+        "$ref": "#/components/schemas/propertyFailureWithoutReference"
+       }
+      }
+     },
+     "failure-object": {
+      "type": "object",
+      "properties": {
+       "failure": {
+        "$ref": "#/components/schemas/propertyFailure"
+       }
+      }
+     },
+     "propertyFailure": {
+      "description": "In case the message has reached an error state, the error details are denoted in this element. Whether the failure element is shown or not, depends on the configured state mode. For an overview of the different states and the state modes please refer to https://connect.ecosio.com/docs/state-mode#/",
+      "type": "object",
+      "nullable": true,
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/propertyFailureWithoutReference"
+       },
+       {
+        "properties": {
+         "reference": {
+          "type": "string",
+          "description": "The message ID, for which the error occurred.",
+          "example": "92fd6790-ad7d-11eb-9825-19ebc28755dd"
+         }
+        }
+       }
+      ]
+     },
+     "propertyFailureWithoutReference": {
+      "description": "In case the message has reached an error state, the error details are denoted in this element. Whether the failure element is shown or not, depends on the configured state mode. For an overview of the different states and the state modes please refer to https://connect.ecosio.com/docs/state-mode#/",
+      "type": "object",
+      "nullable": true,
+      "properties": {
+       "errorCode": {
+        "type": "string",
+        "description": "A code, identifying the error.",
+        "example": "261"
+       },
+       "reason": {
+        "type": "string",
+        "description": "The reason for the error",
+        "example": "RECEIVER_INVALID"
+       },
+       "details": {
+        "type": "string",
+        "description": "Further details about the error",
+        "example": "No receiver could be identified using either on message level (identifier: xyz) or on protocol level (xyz)"
+       }
+      }
+     }
+    },
+    "responses": {
+     "401": {
+      "description": "**UNAUTHORIZED**\n\nIn case the authentication credentials are not valid\n\n  | Code| Name | Description |\n  |-----|-----|-------------|\n  | 102 | CREDENTIALS_INVALID | The provided credentials are invalid |\n",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/failure-401"
+        }
+       }
+      }
+     },
+     "403": {
+      "description": "**FORBIDDEN.**\n\nIn case the user could not be authenticated\n\n  | Code| Name| Description |\n  |-----|-----|-------------|\n  |101| USER_KEY_INVALID| The user provided a wrong user key (deprecated) |\n  |104| USER_NOT_PERMITTED| The user authenticated successfully but has no rights to fulfill the requested task |\n",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/failure-403"
+        }
+       }
+      }
+     },
+     "500": {
+      "description": "**INTERNAL SERVER ERROR.**\n\n| Code| Name| Description |\n|-----|-----|-------------|\n| 300 |INTERNAL_SERVER_ERROR | An unexpected error occurred while processing the request. Please contact support@ecosio.com to gain updates on the cause of the error (deprecated)|\n",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/failure-500"
+        }
+       }
+      }
+     },
+     "400-Archive-Download": {
+      "description": "**BAD REQUEST**\n\n  | Code| Name| Description |\n  |-----|-----|-------------|\n  |100| APPLICATION_KEY_INVALID|Thrown if either no or an invalid application key was provided|\n  |110| INVALID_JSON_MESSAGE|Is thrown in case the request is invalid JSON\n  |120|EXPECTED_QUERY_PARAMETER_MISSING|Indicates that a required query parameter is missing in a request. Often this indicates that the appKey parameter is missing|\n  |123|QUERY_PARAMETER_UNKNOWN|The value of a provided query parameter is unknown to the service.|\n  |200|ARGUMENT_NULL|Indicates that a required argument is null|\n",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/failure-400-get"
+        }
+       },
+       "text/plain": {
+        "schema": {
+         "type": "string",
+         "example": "Archive e339f0f0-9959-4009-b425-b3fa487a4df3 is in invalid state"
+        }
+       }
+      }
+     },
+     "404-archive-download": {
+      "description": "**NOT FOUND.**\n\nIn case the archive could not be found\n",
+      "content": {
+       "text/plain": {
+        "schema": {
+         "type": "string",
+         "example": "Archive  not available"
+        }
+       }
+      }
+     },
+     "getArchiveDownload": {
+      "description": "**OK.** Download was successful, please save your archive to a file.",
+      "content": {
+       "application/zip": {
+        "schema": {
+         "type": "string",
+         "format": "binary"
+        }
+       }
+      }
+     }
+    },
+    "securitySchemes": {
+     "basicAuth": {
+      "type": "http",
+      "scheme": "basic"
+     },
+     "X-APP-KEY": {
+      "in": "header",
+      "name": "X-APP-KEY",
+      "type": "apiKey",
+      "description": "The ecosio app key is passed as HTTP header."
+     }
+    }
+   },
+   "security": [
+    {
+     "basicAuth": [],
+     "X-APP-KEY": []
+    }
+   ]
+  }
+ },
+ {
+  "page": "https://connect.ecosio.com/reference/securitycredentials.md",
+  "definition": {
+   "openapi": "3.0.0",
+   "info": {
+    "title": "ecosio.api",
+    "description": "This documentation describes the features of the ecosio messaging API (aka ecosio.api). ecosio.api is used to send structured electronic documents from an ERP system or any other IT system to ecosio and to fetch electronic messages from ecosio.",
+    "contact": {
+     "name": "ecosio GmbH",
+     "url": "https://ecosio.com/en",
+     "email": "support@ecosio.com"
+    },
+    "version": "1.1.1"
+   },
+   "servers": [
+    {
+     "url": "https://api.test.ecosio-hub.com:{port}",
+     "description": "TEST instance of ecosio.api (port 443 for CA SSL; 8443 for self signed SSL)",
+     "variables": {
+      "port": {
+       "enum": [
+        "443",
+        "8443"
+       ],
+       "default": "443",
+       "description": "443 for CA SSL; 8443 for self signed SSL"
+      }
+     }
+    }
+   ],
+   "paths": {
+    "/api/v1/securityCredentials": {
+     "get": {
+      "tags": [
+       "Check user credentials"
+      ],
+      "summary": "Check if the provided user credentials (user id, user key and app key) are valid",
+      "operationId": "securityCredentials",
+      "responses": {
+       "200": {
+        "description": "**OK.**\n\nThe provided credentials are OK"
+       },
+       "400": {
+        "$ref": "#/components/responses/400"
+       },
+       "401": {
+        "$ref": "#/components/responses/401"
+       },
+       "403": {
+        "$ref": "#/components/responses/403"
+       }
+      }
+     }
+    }
+   },
+   "components": {
+    "schemas": {
+     "failure-400-get": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/failure-object-without-reference"
+       },
+       {
+        "type": "object",
+        "properties": {
+         "failure": {
+          "properties": {
+           "errorCode": {
+            "example": "200"
+           },
+           "reason": {
+            "example": "ARGUMENT_NULL"
+           },
+           "details": {
+            "example": "No id found"
+           }
+          }
+         }
+        }
+       }
+      ]
+     },
+     "failure-401": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/failure-object-without-reference"
+       },
+       {
+        "type": "object",
+        "properties": {
+         "failure": {
+          "properties": {
+           "errorCode": {
+            "example": "102"
+           },
+           "reason": {
+            "example": "CREDENTIALS_INVALID"
+           },
+           "details": {
+            "example": "The provided credentials are invalid!"
+           }
+          }
+         }
+        }
+       }
+      ]
+     },
+     "failure-403": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/failure-object"
+       },
+       {
+        "type": "object",
+        "properties": {
+         "failure": {
+          "properties": {
+           "errorCode": {
+            "example": "104"
+           },
+           "reason": {
+            "example": "USER_NOT_PERMITTED"
+           },
+           "details": {
+            "example": "Invalid user credentials found"
+           },
+           "reference": {
+            "example": "70d4ec9d-33f9-47c1-94fc-91938dad7612"
+           }
+          }
+         }
+        }
+       }
+      ]
+     },
+     "failure-object-without-reference": {
+      "type": "object",
+      "properties": {
+       "failure": {
+        "$ref": "#/components/schemas/propertyFailureWithoutReference"
+       }
+      }
+     },
+     "failure-object": {
+      "type": "object",
+      "properties": {
+       "failure": {
+        "$ref": "#/components/schemas/propertyFailure"
+       }
+      }
+     },
+     "propertyFailure": {
+      "description": "In case the message has reached an error state, the error details are denoted in this element. Whether the failure element is shown or not, depends on the configured state mode. For an overview of the different states and the state modes please refer to https://connect.ecosio.com/docs/state-mode#/",
+      "type": "object",
+      "nullable": true,
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/propertyFailureWithoutReference"
+       },
+       {
+        "properties": {
+         "reference": {
+          "type": "string",
+          "description": "The message ID, for which the error occurred.",
+          "example": "92fd6790-ad7d-11eb-9825-19ebc28755dd"
+         }
+        }
+       }
+      ]
+     },
+     "propertyFailureWithoutReference": {
+      "description": "In case the message has reached an error state, the error details are denoted in this element. Whether the failure element is shown or not, depends on the configured state mode. For an overview of the different states and the state modes please refer to https://connect.ecosio.com/docs/state-mode#/",
+      "type": "object",
+      "nullable": true,
+      "properties": {
+       "errorCode": {
+        "type": "string",
+        "description": "A code, identifying the error.",
+        "example": "261"
+       },
+       "reason": {
+        "type": "string",
+        "description": "The reason for the error",
+        "example": "RECEIVER_INVALID"
+       },
+       "details": {
+        "type": "string",
+        "description": "Further details about the error",
+        "example": "No receiver could be identified using either on message level (identifier: xyz) or on protocol level (xyz)"
+       }
+      }
+     }
+    },
+    "responses": {
+     "400": {
+      "description": "**BAD REQUEST**\n\nIn case an error occurred during the processing of the request.\n",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/failure-400-get"
+        }
+       }
+      }
+     },
+     "401": {
+      "description": "**UNAUTHORIZED**\n\nIn case the authentication credentials are not valid\n\n  | Code| Name | Description |\n  |-----|-----|-------------|\n  | 102 | CREDENTIALS_INVALID | The provided credentials are invalid |\n",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/failure-401"
+        }
+       }
+      }
+     },
+     "403": {
+      "description": "**FORBIDDEN.**\n\nIn case the user could not be authenticated\n\n  | Code| Name| Description |\n  |-----|-----|-------------|\n  |101| USER_KEY_INVALID| The user provided a wrong user key (deprecated) |\n  |104| USER_NOT_PERMITTED| The user authenticated successfully but has no rights to fulfill the requested task |\n",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/failure-403"
+        }
+       }
+      }
+     }
+    },
+    "securitySchemes": {
+     "basicAuth": {
+      "type": "http",
+      "scheme": "basic"
+     },
+     "X-APP-KEY": {
+      "in": "header",
+      "name": "X-APP-KEY",
+      "type": "apiKey",
+      "description": "The ecosio app key is passed as HTTP header."
+     }
+    }
+   },
+   "security": [
+    {
+     "basicAuth": [],
+     "X-APP-KEY": []
+    }
+   ]
+  }
+ },
+ {
+  "page": "https://connect.ecosio.com/reference/delivermessage.md",
+  "definition": {
+   "openapi": "3.0.0",
+   "info": {
+    "title": "ecosio.api",
+    "description": "This documentation describes the features of the ecosio messaging API (aka ecosio.api). ecosio.api is used to send structured electronic documents from an ERP system or any other IT system to ecosio and to fetch electronic messages from ecosio.",
+    "contact": {
+     "name": "ecosio GmbH",
+     "url": "https://ecosio.com/en",
+     "email": "support@ecosio.com"
+    },
+    "version": "1.1.1"
+   },
+   "servers": [
+    {
+     "url": "https://api.test.ecosio-hub.com:{port}",
+     "description": "TEST instance of ecosio.api (port 443 for CA SSL; 8443 for self signed SSL)",
+     "variables": {
+      "port": {
+       "enum": [
+        "443",
+        "8443"
+       ],
+       "default": "443",
+       "description": "443 for CA SSL; 8443 for self signed SSL"
+      }
+     }
+    }
+   ],
+   "paths": {
+    "/api/v1/delivery": {
+     "post": {
+      "tags": [
+       "Deliver messages to the Hub"
+      ],
+      "summary": "Deliver a message to the ecosio Integration Hub",
+      "operationId": "deliverMessage",
+      "requestBody": {
+       "$ref": "#/components/requestBodies/deliverMessageRequest"
+      },
+      "responses": {
+       "200": {
+        "$ref": "#/components/responses/deliverMessageIdResponse"
+       },
+       "400": {
+        "$ref": "#/components/responses/400-Delivery"
+       },
+       "401": {
+        "$ref": "#/components/responses/401"
+       },
+       "403": {
+        "$ref": "#/components/responses/403"
+       },
+       "404": {
+        "$ref": "#/components/responses/404"
+       },
+       "413": {
+        "$ref": "#/components/responses/413"
+       },
+       "429": {
+        "$ref": "#/components/responses/429"
+       },
+       "500": {
+        "$ref": "#/components/responses/500"
+       }
+      }
+     }
+    }
+   },
+   "components": {
+    "schemas": {
+     "attachmentsRequest": {
+      "description": "An attachment consists of the attachment's name, the MIME type and the base64-encoded attachment",
+      "type": "object",
+      "properties": {
+       "name": {
+        "type": "string",
+        "description": "The name of the attachment",
+        "example": "attachment-file-1.pdf"
+       },
+       "contentType": {
+        "type": "string",
+        "description": "The content MIME type.",
+        "example": "application/pdf"
+       },
+       "base64Content": {
+        "type": "string",
+        "description": "The base64-encoded attachment",
+        "example": "VGhpcyBpcyBhIHRlc3Q="
+       }
+      }
+     },
+     "failure-400": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/failure-object-without-reference"
+       },
+       {
+        "type": "object",
+        "properties": {
+         "failure": {
+          "properties": {
+           "errorCode": {
+            "example": "110"
+           },
+           "reason": {
+            "example": "INVALID_JSON_MESSAGE"
+           },
+           "details": {
+            "example": "Error converting received message into a JSON object!"
+           }
+          }
+         }
+        }
+       }
+      ]
+     },
+     "failure-401": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/failure-object-without-reference"
+       },
+       {
+        "type": "object",
+        "properties": {
+         "failure": {
+          "properties": {
+           "errorCode": {
+            "example": "102"
+           },
+           "reason": {
+            "example": "CREDENTIALS_INVALID"
+           },
+           "details": {
+            "example": "The provided credentials are invalid!"
+           }
+          }
+         }
+        }
+       }
+      ]
+     },
+     "failure-403": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/failure-object"
+       },
+       {
+        "type": "object",
+        "properties": {
+         "failure": {
+          "properties": {
+           "errorCode": {
+            "example": "104"
+           },
+           "reason": {
+            "example": "USER_NOT_PERMITTED"
+           },
+           "details": {
+            "example": "Invalid user credentials found"
+           },
+           "reference": {
+            "example": "70d4ec9d-33f9-47c1-94fc-91938dad7612"
+           }
+          }
+         }
+        }
+       }
+      ]
+     },
+     "failure-404": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/failure-object"
+       },
+       {
+        "type": "object",
+        "properties": {
+         "failure": {
+          "properties": {
+           "errorCode": {
+            "example": "160"
+           },
+           "reason": {
+            "example": "MESSAGE_RETRIEVAL_FAILED_MESSAGE_ID_UNKNOWN"
+           },
+           "details": {
+            "example": "Unknown messageId"
+           },
+           "reference": {
+            "example": "0441e9b0-993f-11eb-943c-91d1a9b71250c"
+           }
+          }
+         }
+        }
+       }
+      ]
+     },
+     "failure-429": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/failure-object-without-reference"
+       },
+       {
+        "type": "object",
+        "properties": {
+         "failure": {
+          "properties": {
+           "errorCode": {
+            "example": "130"
+           },
+           "reason": {
+            "example": "TOO_MANY_REQUESTS_RECEIVED"
+           },
+           "details": {
+            "example": "Too many requests have been received in a short amount of time. Please respect the terms of services and increase the interval of polling requests."
+           }
+          }
+         }
+        }
+       }
+      ]
+     },
+     "failure-500": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/failure-object"
+       },
+       {
+        "type": "object",
+        "properties": {
+         "failure": {
+          "properties": {
+           "errorCode": {
+            "example": "300"
+           },
+           "reason": {
+            "example": "INTERNAL_SERVER_ERROR"
+           },
+           "details": {
+            "example": "An unexpected error occurred while processing the request."
+           },
+           "reference": {
+            "example": "0441e9b0-993f-11eb-943c-91d1a9b71250c"
+           }
+          }
+         }
+        }
+       }
+      ]
+     },
+     "failure-object-without-reference": {
+      "type": "object",
+      "properties": {
+       "failure": {
+        "$ref": "#/components/schemas/propertyFailureWithoutReference"
+       }
+      }
+     },
+     "failure-object": {
+      "type": "object",
+      "properties": {
+       "failure": {
+        "$ref": "#/components/schemas/propertyFailure"
+       }
+      }
+     },
+     "propertyFailure": {
+      "description": "In case the message has reached an error state, the error details are denoted in this element. Whether the failure element is shown or not, depends on the configured state mode. For an overview of the different states and the state modes please refer to https://connect.ecosio.com/docs/state-mode#/",
+      "type": "object",
+      "nullable": true,
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/propertyFailureWithoutReference"
+       },
+       {
+        "properties": {
+         "reference": {
+          "type": "string",
+          "description": "The message ID, for which the error occurred.",
+          "example": "92fd6790-ad7d-11eb-9825-19ebc28755dd"
+         }
+        }
+       }
+      ]
+     },
+     "propertyFailureWithoutReference": {
+      "description": "In case the message has reached an error state, the error details are denoted in this element. Whether the failure element is shown or not, depends on the configured state mode. For an overview of the different states and the state modes please refer to https://connect.ecosio.com/docs/state-mode#/",
+      "type": "object",
+      "nullable": true,
+      "properties": {
+       "errorCode": {
+        "type": "string",
+        "description": "A code, identifying the error.",
+        "example": "261"
+       },
+       "reason": {
+        "type": "string",
+        "description": "The reason for the error",
+        "example": "RECEIVER_INVALID"
+       },
+       "details": {
+        "type": "string",
+        "description": "Further details about the error",
+        "example": "No receiver could be identified using either on message level (identifier: xyz) or on protocol level (xyz)"
+       }
+      }
+     }
+    },
+    "responses": {
+     "401": {
+      "description": "**UNAUTHORIZED**\n\nIn case the authentication credentials are not valid\n\n  | Code| Name | Description |\n  |-----|-----|-------------|\n  | 102 | CREDENTIALS_INVALID | The provided credentials are invalid |\n",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/failure-401"
+        }
+       }
+      }
+     },
+     "403": {
+      "description": "**FORBIDDEN.**\n\nIn case the user could not be authenticated\n\n  | Code| Name| Description |\n  |-----|-----|-------------|\n  |101| USER_KEY_INVALID| The user provided a wrong user key (deprecated) |\n  |104| USER_NOT_PERMITTED| The user authenticated successfully but has no rights to fulfill the requested task |\n",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/failure-403"
+        }
+       }
+      }
+     },
+     "404": {
+      "description": "**NOT FOUND.**\n\nIn case the message could not be found\n",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/failure-404"
+        }
+       }
+      }
+     },
+     "413": {
+      "description": "**PAYLOAD TOO LARGE.**\n\n| Code| Name| Description |\n|-----|-----|-------------|\n| 131 |MESSAGE_SIZE_TO_LARGE|The size of the transmitted document is too large. If larger documents need to be transferred please contact support@ecosio.com|\n",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/failure-object"
+        }
+       }
+      }
+     },
+     "429": {
+      "description": "**TOO MANY REQUESTS.**\n\n| Code| Name| Description |\n|-----|-----|-------------|\n| 130 | TOO_MANY_REQUESTS_RECEIVED|In order to prevent being spammed by poll requests and status queries the service makes use of a request cache. If the number of requests received in a certain amount of time exceed a certain threshold this error will be returned. Every 5 minutes the cache will be cleared automatically|\n",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/failure-429"
+        }
+       }
+      }
+     },
+     "500": {
+      "description": "**INTERNAL SERVER ERROR.**\n\n| Code| Name| Description |\n|-----|-----|-------------|\n| 300 |INTERNAL_SERVER_ERROR | An unexpected error occurred while processing the request. Please contact support@ecosio.com to gain updates on the cause of the error (deprecated)|\n",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/failure-500"
+        }
+       }
+      }
+     },
+     "400-Delivery": {
+      "description": "**BAD REQUEST**\n\n  | Code| Name| Description |\n  |-----|-----|-------------|\n  |100| APPLICATION_KEY_INVALID|Thrown if either no or an invalid application key was provided|\n  |110| INVALID_JSON_MESSAGE|Is thrown in case the request is invalid JSON\n  |111|JSON_DOCUMENT_NOT_BASE64_ENCODED|Is thrown if the actual document is not properly base64-encoded within the message field of the JSON message.|\n  |120|EXPECTED_QUERY_PARAMETER_MISSING|Indicates that a required query parameter is missing in a request. Often this indicates that the appKey parameter is missing|\n  |123|QUERY_PARAMETER_UNKNOWN|The value of a provided query parameter is unknown to the service.|\n  |200|ARGUMENT_NULL|Indicates that a required argument is null|\n  |368|DOCUMENT_NOT_VALID|May be thrown by the service if the received document syntax is not valid|\n",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/failure-400"
+        }
+       }
+      }
+     },
+     "deliverMessageIdResponse": {
+      "description": "\n\n**OK.** The UUID of the message, which was created on the ecosio Integration Hub\n\n\n| Code| Name| Description |\n|-----|-----|-------------|\n|107|NO_FIREWALL_PERMISSION|The request was blocked by the ecosio business relation firewall as the permissions are either not set or were revoked|\n|260|SENDER_INVALID|The unique identifier of the sender company is either not set or is unknown to the Integration Hub|\n|261|RECEIVER_INVALID|The unique identifier of the receiver company is either not set or is unknown to the Integration Hub|\n|263|SENDER_DOES_NOT_MATCH|Indicates a mismatch of the sending company on document and on protocol level|\n|361|DOUBLE_SUBMISSION|Is thrown when the same document is sent more than one time|\n|369|DOCUMENT_TYPE_NOT_SUPPORTED_BY_RECEIVER|Indicates that the sent document format is not supported by the receiver company|\n|370|DOCUMENT_TYPE_NOT_SUPPORTED_BY_SENDER|Indicates that the sent document format is not supported by the sending company. Please contact support@ecosio.com to register this type for your company|\n|371|DOCUMENT_TYPE_NOT_SUPPORTED|Indicates that the document failed the validation while determining the document type as well as the MIME type|\n|379|MIMETYPE_NOT_SUPPORTED|Indicates that the MIME type of the transferred document is not supported. Supported MIME types are: XML, EDIFACT, CSV, PDF/PDFex\n|Null|NULL_VALUE|Indicates that a certain object was null|\n",
+      "headers": {
+       "Location": {
+        "$ref": "#/components/headers/Location"
+       }
+      },
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "messageId": {
+           "type": "string",
+           "description": "The UUID of the message on the ecosio Integration Hub",
+           "example": "70d4ec9d-33f9-47c1-94fc-91938dad7612"
+          }
+         }
+        }
+       }
+      }
+     }
+    },
+    "requestBodies": {
+     "deliverMessageRequest": {
+      "description": "The electronic message and optional attachments, which shall be processed by the ecosio Integration Hub",
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "message": {
+           "description": "Base64-encoded message. Structured syntaxes are supported, such as CSV, XML, EDIFACT, and JSON. Custom data formats are permitted if they meet requirements defined during onboarding. Specifically, the format, sender IDs, and recipient IDs must be uniquely identifiable using the approach agreed upon during onboarding. The message must contain all content relevant to the recipient.",
+           "type": "string",
+           "example": "dGhpcyBpcyBhIGJhc2UgNjQgY29kZWQgbWVzc2FnZSAtIENVIERvcmlzIEJ1cmRh"
+          },
+          "attachments": {
+           "description": "In addition to the actual payload, a set of base64-encoded attachments can be sent.",
+           "type": "array",
+           "items": {
+            "$ref": "#/components/schemas/attachmentsRequest"
+           },
+           "minItems": 0,
+           "uniqueItems": true
+          }
+         },
+         "required": [
+          "message"
+         ]
+        }
+       }
+      }
+     }
+    },
+    "headers": {
+     "Location": {
+      "description": "The REST-accessible location of the message on the ecosio Integration Hub",
+      "schema": {
+       "type": "string",
+       "example": "http://api.test.ecosio-hub.com/api/v1/delivery/66d9a2d0-a171-44e1-86e1-dc0871c5d680"
+      }
+     }
+    },
+    "securitySchemes": {
+     "basicAuth": {
+      "type": "http",
+      "scheme": "basic"
+     },
+     "X-APP-KEY": {
+      "in": "header",
+      "name": "X-APP-KEY",
+      "type": "apiKey",
+      "description": "The ecosio app key is passed as HTTP header."
+     }
+    }
+   },
+   "security": [
+    {
+     "basicAuth": [],
+     "X-APP-KEY": []
+    }
+   ]
+  }
+ },
+ {
+  "page": "https://connect.ecosio.com/reference/getacknowledgement.md",
+  "definition": {
+   "openapi": "3.0.0",
+   "info": {
+    "title": "ecosio.api",
+    "description": "This documentation describes the features of the ecosio messaging API (aka ecosio.api). ecosio.api is used to send structured electronic documents from an ERP system or any other IT system to ecosio and to fetch electronic messages from ecosio.",
+    "contact": {
+     "name": "ecosio GmbH",
+     "url": "https://ecosio.com/en",
+     "email": "support@ecosio.com"
+    },
+    "version": "1.1.1"
+   },
+   "servers": [
+    {
+     "url": "https://api.test.ecosio-hub.com:{port}",
+     "description": "TEST instance of ecosio.api (port 443 for CA SSL; 8443 for self signed SSL)",
+     "variables": {
+      "port": {
+       "enum": [
+        "443",
+        "8443"
+       ],
+       "default": "443",
+       "description": "443 for CA SSL; 8443 for self signed SSL"
+      }
+     }
+    }
+   ],
+   "paths": {
+    "/api/v1/ack/{messageId}": {
+     "get": {
+      "tags": [
+       "Deliver messages to the Hub"
+      ],
+      "summary": "Get the acknowledgement of a delivered e-invoice",
+      "operationId": "getAcknowledgement",
+      "parameters": [
+       {
+        "in": "path",
+        "name": "messageId",
+        "schema": {
+         "type": "string"
+        },
+        "required": true,
+        "description": "The UUID of the message, whose acknowledgment shall be retrieved",
+        "example": "70d4ec9d-33f9-47c1-94fc-91938dad7612"
+       }
+      ],
+      "responses": {
+       "200": {
+        "$ref": "#/components/responses/200-Ack"
+       },
+       "400": {
+        "$ref": "#/components/responses/400-Delivery"
+       },
+       "401": {
+        "$ref": "#/components/responses/401"
+       },
+       "403": {
+        "$ref": "#/components/responses/403"
+       },
+       "404": {
+        "$ref": "#/components/responses/404"
+       },
+       "429": {
+        "$ref": "#/components/responses/429"
+       }
+      }
+     }
+    }
+   },
+   "components": {
+    "schemas": {
+     "failure-400": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/failure-object-without-reference"
+       },
+       {
+        "type": "object",
+        "properties": {
+         "failure": {
+          "properties": {
+           "errorCode": {
+            "example": "110"
+           },
+           "reason": {
+            "example": "INVALID_JSON_MESSAGE"
+           },
+           "details": {
+            "example": "Error converting received message into a JSON object!"
+           }
+          }
+         }
+        }
+       }
+      ]
+     },
+     "failure-401": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/failure-object-without-reference"
+       },
+       {
+        "type": "object",
+        "properties": {
+         "failure": {
+          "properties": {
+           "errorCode": {
+            "example": "102"
+           },
+           "reason": {
+            "example": "CREDENTIALS_INVALID"
+           },
+           "details": {
+            "example": "The provided credentials are invalid!"
+           }
+          }
+         }
+        }
+       }
+      ]
+     },
+     "failure-403": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/failure-object"
+       },
+       {
+        "type": "object",
+        "properties": {
+         "failure": {
+          "properties": {
+           "errorCode": {
+            "example": "104"
+           },
+           "reason": {
+            "example": "USER_NOT_PERMITTED"
+           },
+           "details": {
+            "example": "Invalid user credentials found"
+           },
+           "reference": {
+            "example": "70d4ec9d-33f9-47c1-94fc-91938dad7612"
+           }
+          }
+         }
+        }
+       }
+      ]
+     },
+     "failure-404": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/failure-object"
+       },
+       {
+        "type": "object",
+        "properties": {
+         "failure": {
+          "properties": {
+           "errorCode": {
+            "example": "160"
+           },
+           "reason": {
+            "example": "MESSAGE_RETRIEVAL_FAILED_MESSAGE_ID_UNKNOWN"
+           },
+           "details": {
+            "example": "Unknown messageId"
+           },
+           "reference": {
+            "example": "0441e9b0-993f-11eb-943c-91d1a9b71250c"
+           }
+          }
+         }
+        }
+       }
+      ]
+     },
+     "failure-429": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/failure-object-without-reference"
+       },
+       {
+        "type": "object",
+        "properties": {
+         "failure": {
+          "properties": {
+           "errorCode": {
+            "example": "130"
+           },
+           "reason": {
+            "example": "TOO_MANY_REQUESTS_RECEIVED"
+           },
+           "details": {
+            "example": "Too many requests have been received in a short amount of time. Please respect the terms of services and increase the interval of polling requests."
+           }
+          }
+         }
+        }
+       }
+      ]
+     },
+     "failure-object-without-reference": {
+      "type": "object",
+      "properties": {
+       "failure": {
+        "$ref": "#/components/schemas/propertyFailureWithoutReference"
+       }
+      }
+     },
+     "failure-object": {
+      "type": "object",
+      "properties": {
+       "failure": {
+        "$ref": "#/components/schemas/propertyFailure"
+       }
+      }
+     },
+     "propertyFailure": {
+      "description": "In case the message has reached an error state, the error details are denoted in this element. Whether the failure element is shown or not, depends on the configured state mode. For an overview of the different states and the state modes please refer to https://connect.ecosio.com/docs/state-mode#/",
+      "type": "object",
+      "nullable": true,
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/propertyFailureWithoutReference"
+       },
+       {
+        "properties": {
+         "reference": {
+          "type": "string",
+          "description": "The message ID, for which the error occurred.",
+          "example": "92fd6790-ad7d-11eb-9825-19ebc28755dd"
+         }
+        }
+       }
+      ]
+     },
+     "propertyFailureWithoutReference": {
+      "description": "In case the message has reached an error state, the error details are denoted in this element. Whether the failure element is shown or not, depends on the configured state mode. For an overview of the different states and the state modes please refer to https://connect.ecosio.com/docs/state-mode#/",
+      "type": "object",
+      "nullable": true,
+      "properties": {
+       "errorCode": {
+        "type": "string",
+        "description": "A code, identifying the error.",
+        "example": "261"
+       },
+       "reason": {
+        "type": "string",
+        "description": "The reason for the error",
+        "example": "RECEIVER_INVALID"
+       },
+       "details": {
+        "type": "string",
+        "description": "Further details about the error",
+        "example": "No receiver could be identified using either on message level (identifier: xyz) or on protocol level (xyz)"
+       }
+      }
+     },
+     "acknowledgment": {
+      "description": "",
+      "type": "object",
+      "properties": {
+       "acknowledgement": {
+        "type": "string",
+        "description": "The base64-encoded acknowledgement",
+        "example": "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/PjxoZWFkZXIgeG1sbnM9Im1mcDphbmFmOmRndGk6c3B2OnN0YXJlTWVzYWpGYWN0dXJhOnYxIiBzdGFyZT0ib2siIGlkX2Rlc2NhcmNhcmU9IjU0ODI2OTM0OTIiLz4="
+       },
+       "receivedAt": {
+        "type": "string",
+        "format": "date-time",
+        "description": "The timestamp, when the acknowledgement has been received on the ecosio Integration Hub",
+        "example": "2024-07-29T09:33:19.301413952Z[UTC]"
+       },
+       "charset": {
+        "type": "string",
+        "description": "The charset of the acknowledgement",
+        "example": "UTF-8"
+       },
+       "mimeType": {
+        "type": "string",
+        "description": "The type of the decoded acknowledgement, which has been identified.",
+        "example": "XML"
+       }
+      }
+     }
+    },
+    "responses": {
+     "401": {
+      "description": "**UNAUTHORIZED**\n\nIn case the authentication credentials are not valid\n\n  | Code| Name | Description |\n  |-----|-----|-------------|\n  | 102 | CREDENTIALS_INVALID | The provided credentials are invalid |\n",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/failure-401"
+        }
+       }
+      }
+     },
+     "403": {
+      "description": "**FORBIDDEN.**\n\nIn case the user could not be authenticated\n\n  | Code| Name| Description |\n  |-----|-----|-------------|\n  |101| USER_KEY_INVALID| The user provided a wrong user key (deprecated) |\n  |104| USER_NOT_PERMITTED| The user authenticated successfully but has no rights to fulfill the requested task |\n",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/failure-403"
+        }
+       }
+      }
+     },
+     "404": {
+      "description": "**NOT FOUND.**\n\nIn case the message could not be found\n",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/failure-404"
+        }
+       }
+      }
+     },
+     "429": {
+      "description": "**TOO MANY REQUESTS.**\n\n| Code| Name| Description |\n|-----|-----|-------------|\n| 130 | TOO_MANY_REQUESTS_RECEIVED|In order to prevent being spammed by poll requests and status queries the service makes use of a request cache. If the number of requests received in a certain amount of time exceed a certain threshold this error will be returned. Every 5 minutes the cache will be cleared automatically|\n",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/failure-429"
+        }
+       }
+      }
+     },
+     "400-Delivery": {
+      "description": "**BAD REQUEST**\n\n  | Code| Name| Description |\n  |-----|-----|-------------|\n  |100| APPLICATION_KEY_INVALID|Thrown if either no or an invalid application key was provided|\n  |110| INVALID_JSON_MESSAGE|Is thrown in case the request is invalid JSON\n  |111|JSON_DOCUMENT_NOT_BASE64_ENCODED|Is thrown if the actual document is not properly base64-encoded within the message field of the JSON message.|\n  |120|EXPECTED_QUERY_PARAMETER_MISSING|Indicates that a required query parameter is missing in a request. Often this indicates that the appKey parameter is missing|\n  |123|QUERY_PARAMETER_UNKNOWN|The value of a provided query parameter is unknown to the service.|\n  |200|ARGUMENT_NULL|Indicates that a required argument is null|\n  |368|DOCUMENT_NOT_VALID|May be thrown by the service if the received document syntax is not valid|\n",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/failure-400"
+        }
+       }
+      }
+     },
+     "200-Ack": {
+      "description": "**OK.** The Acknowledgment of a sent invoice to the government of the desired country.",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/acknowledgment"
+        }
+       }
+      }
+     }
+    },
+    "securitySchemes": {
+     "basicAuth": {
+      "type": "http",
+      "scheme": "basic"
+     },
+     "X-APP-KEY": {
+      "in": "header",
+      "name": "X-APP-KEY",
+      "type": "apiKey",
+      "description": "The ecosio app key is passed as HTTP header."
+     }
+    }
+   },
+   "security": [
+    {
+     "basicAuth": [],
+     "X-APP-KEY": []
+    }
+   ]
+  }
+ },
+ {
+  "page": "https://connect.ecosio.com/reference/getstatusofdeliveredmessage.md",
+  "definition": {
+   "openapi": "3.0.0",
+   "info": {
+    "title": "ecosio.api",
+    "description": "This documentation describes the features of the ecosio messaging API (aka ecosio.api). ecosio.api is used to send structured electronic documents from an ERP system or any other IT system to ecosio and to fetch electronic messages from ecosio.",
+    "contact": {
+     "name": "ecosio GmbH",
+     "url": "https://ecosio.com/en",
+     "email": "support@ecosio.com"
+    },
+    "version": "1.1.1"
+   },
+   "servers": [
+    {
+     "url": "https://api.test.ecosio-hub.com:{port}",
+     "description": "TEST instance of ecosio.api (port 443 for CA SSL; 8443 for self signed SSL)",
+     "variables": {
+      "port": {
+       "enum": [
+        "443",
+        "8443"
+       ],
+       "default": "443",
+       "description": "443 for CA SSL; 8443 for self signed SSL"
+      }
+     }
+    }
+   ],
+   "paths": {
+    "/api/v1/delivery/{messageId}": {
+     "get": {
+      "tags": [
+       "Deliver messages to the Hub"
+      ],
+      "summary": "Get the status of a delivered message from the ecosio Integration Hub",
+      "operationId": "getStatusOfDeliveredMessage",
+      "parameters": [
+       {
+        "$ref": "#/components/parameters/includeAck"
+       },
+       {
+        "$ref": "#/components/parameters/includeLog"
+       },
+       {
+        "in": "path",
+        "name": "messageId",
+        "schema": {
+         "type": "string"
+        },
+        "required": true,
+        "description": "The UUID of the message, whose status shall be retrieved",
+        "example": "70d4ec9d-33f9-47c1-94fc-91938dad7612"
+       }
+      ],
+      "responses": {
+       "200": {
+        "$ref": "#/components/responses/200-getMessageIDStatusResponses"
+       },
+       "400": {
+        "$ref": "#/components/responses/400-Delivery"
+       },
+       "401": {
+        "$ref": "#/components/responses/401"
+       },
+       "403": {
+        "$ref": "#/components/responses/403"
+       },
+       "404": {
+        "$ref": "#/components/responses/404"
+       },
+       "429": {
+        "$ref": "#/components/responses/429"
+       }
+      }
+     }
+    }
+   },
+   "components": {
+    "schemas": {
+     "failure-400": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/failure-object-without-reference"
+       },
+       {
+        "type": "object",
+        "properties": {
+         "failure": {
+          "properties": {
+           "errorCode": {
+            "example": "110"
+           },
+           "reason": {
+            "example": "INVALID_JSON_MESSAGE"
+           },
+           "details": {
+            "example": "Error converting received message into a JSON object!"
+           }
+          }
+         }
+        }
+       }
+      ]
+     },
+     "failure-401": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/failure-object-without-reference"
+       },
+       {
+        "type": "object",
+        "properties": {
+         "failure": {
+          "properties": {
+           "errorCode": {
+            "example": "102"
+           },
+           "reason": {
+            "example": "CREDENTIALS_INVALID"
+           },
+           "details": {
+            "example": "The provided credentials are invalid!"
+           }
+          }
+         }
+        }
+       }
+      ]
+     },
+     "failure-403": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/failure-object"
+       },
+       {
+        "type": "object",
+        "properties": {
+         "failure": {
+          "properties": {
+           "errorCode": {
+            "example": "104"
+           },
+           "reason": {
+            "example": "USER_NOT_PERMITTED"
+           },
+           "details": {
+            "example": "Invalid user credentials found"
+           },
+           "reference": {
+            "example": "70d4ec9d-33f9-47c1-94fc-91938dad7612"
+           }
+          }
+         }
+        }
+       }
+      ]
+     },
+     "failure-404": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/failure-object"
+       },
+       {
+        "type": "object",
+        "properties": {
+         "failure": {
+          "properties": {
+           "errorCode": {
+            "example": "160"
+           },
+           "reason": {
+            "example": "MESSAGE_RETRIEVAL_FAILED_MESSAGE_ID_UNKNOWN"
+           },
+           "details": {
+            "example": "Unknown messageId"
+           },
+           "reference": {
+            "example": "0441e9b0-993f-11eb-943c-91d1a9b71250c"
+           }
+          }
+         }
+        }
+       }
+      ]
+     },
+     "failure-429": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/failure-object-without-reference"
+       },
+       {
+        "type": "object",
+        "properties": {
+         "failure": {
+          "properties": {
+           "errorCode": {
+            "example": "130"
+           },
+           "reason": {
+            "example": "TOO_MANY_REQUESTS_RECEIVED"
+           },
+           "details": {
+            "example": "Too many requests have been received in a short amount of time. Please respect the terms of services and increase the interval of polling requests."
+           }
+          }
+         }
+        }
+       }
+      ]
+     },
+     "failure-object-without-reference": {
+      "type": "object",
+      "properties": {
+       "failure": {
+        "$ref": "#/components/schemas/propertyFailureWithoutReference"
+       }
+      }
+     },
+     "failure-object": {
+      "type": "object",
+      "properties": {
+       "failure": {
+        "$ref": "#/components/schemas/propertyFailure"
+       }
+      }
+     },
+     "propertyFailure": {
+      "description": "In case the message has reached an error state, the error details are denoted in this element. Whether the failure element is shown or not, depends on the configured state mode. For an overview of the different states and the state modes please refer to https://connect.ecosio.com/docs/state-mode#/",
+      "type": "object",
+      "nullable": true,
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/propertyFailureWithoutReference"
+       },
+       {
+        "properties": {
+         "reference": {
+          "type": "string",
+          "description": "The message ID, for which the error occurred.",
+          "example": "92fd6790-ad7d-11eb-9825-19ebc28755dd"
+         }
+        }
+       }
+      ]
+     },
+     "propertyFailureWithoutReference": {
+      "description": "In case the message has reached an error state, the error details are denoted in this element. Whether the failure element is shown or not, depends on the configured state mode. For an overview of the different states and the state modes please refer to https://connect.ecosio.com/docs/state-mode#/",
+      "type": "object",
+      "nullable": true,
+      "properties": {
+       "errorCode": {
+        "type": "string",
+        "description": "A code, identifying the error.",
+        "example": "261"
+       },
+       "reason": {
+        "type": "string",
+        "description": "The reason for the error",
+        "example": "RECEIVER_INVALID"
+       },
+       "details": {
+        "type": "string",
+        "description": "Further details about the error",
+        "example": "No receiver could be identified using either on message level (identifier: xyz) or on protocol level (xyz)"
+       }
+      }
+     },
+     "log": {
+      "type": "object",
+      "properties": {
+       "timestamp": {
+        "type": "string",
+        "format": "date-time",
+        "example": "2024-06-26T18:41:46Z"
+       },
+       "state": {
+        "type": "string",
+        "example": "SENT"
+       },
+       "message": {
+        "type": "string",
+        "example": "Successful processing confirmed by https://api.anaf.ro/prod/FCTEL."
+       }
+      }
+     },
+     "200-getmessageID": {
+      "description": "",
+      "type": "object",
+      "properties": {
+       "messageId": {
+        "type": "string",
+        "description": "The UUID of the message on the ecosio Integration Hub",
+        "example": "70d4ec9d-33f9-46c1-94fc-93548dad7612"
+       },
+       "senderUuid": {
+        "type": "string",
+        "description": "The UUID of the sender of the message",
+        "example": "45c2dae5-4235-45b0-98c2-c2342b10919f"
+       },
+       "senderName": {
+        "type": "string",
+        "description": "The name of the sender of the message",
+        "example": "ecosio API Test Sender"
+       },
+       "receiverUuid": {
+        "type": "string",
+        "description": "The UUID of the receiver of the message",
+        "example": "4ac1e432-f900-424f-92ab-edd501812342"
+       },
+       "receiverName": {
+        "type": "string",
+        "description": "The name of the receiver of the message",
+        "example": "ecosio API Test Receiver"
+       },
+       "receivedAt": {
+        "type": "string",
+        "format": "date-time",
+        "description": "The timestamp, when the message has been received on the ecosio Integration Hub",
+        "example": "2023-09-22T14:25:03Z"
+       },
+       "state": {
+        "type": "string",
+        "description": "The state of the message. For a complete list of states please see https://connect.ecosio.com/docs/state-mode#/",
+        "example": "PROCESSED"
+       },
+       "messageSize": {
+        "type": "integer",
+        "description": "The size of the message in Bytes",
+        "example": "1212341"
+       },
+       "documentTypeId": {
+        "type": "string",
+        "description": "The ecosio document type id, which has been identified for the message",
+        "example": "XML_4p1_ebInterface"
+       },
+       "mimeType": {
+        "type": "string",
+        "description": "The type of the message, which has been identified.",
+        "example": "XML"
+       },
+       "charset": {
+        "type": "string",
+        "description": "The charset of the message",
+        "example": "UTF-8"
+       },
+       "fileName": {
+        "type": "string",
+        "description": "The filename of the message",
+        "example": "70d4ec9d-33f9-46c1-94fc-93548dad7612.xml"
+       },
+       "lastChanged": {
+        "type": "string",
+        "format": "date-time",
+        "description": "The timestamp, when the message was last changed on the ecosio Integration Hub",
+        "example": "2023-09-22T14:26:00Z"
+       },
+       "reference": {
+        "type": "string",
+        "format": "string",
+        "description": "A reference id, which has been fetched from the message on the ecosio Integration Hub. In case of EDIFACT the reference id is for instance the UNB message interchange id. For other message types such as XML messages, the reference id can be custom set.",
+        "nullable": true,
+        "example": "4711"
+       },
+       "failure": {
+        "$ref": "#/components/schemas/propertyFailure"
+       },
+       "acknowledgment": {
+        "type": "string",
+        "format": "byte",
+        "description": "The base64-encoded acknowledgment",
+        "example": "VGhpcyBpcyBhIHRlc3QNDVDMDI0RkQzLUNDMzZFNzNGQkMtQjIiLCJwcm9jZXNzaW5nQ29kZSI6MjAwLCJwcm9jZXNzaW5nRGVzY3JpcHRpb24iOiJaYWtvxYRjemVuaWUgZXRhcHUgYXJjaGl3aXphY2ppIGRhbnljaCBmYWt0dXJ5IiwiZWxlbWVudFJlZmVyZW5jZU51bWJlciI6IjIwMjMwODA4LUVFLURDQkQyNjZFMjQtRjA4NjFDNjFFNy02OSIsImludm9pY2VTdGF0dXMiOnsiaW52b2ljZU51bWJlciI6IkVGMTEwNzQ5Iiwia3NlZlJlZmVyZW5jZU51bWJlciI6Ijc3NzMwNjAzMjEtMjAyMzA4MDgtM0Q4QjRFN0RDRDJELTc5IiwiYWNxdWlzaXRpb25UaW1lc3RhbXAiOiIyMDIzLTA4LTA4VDA3OjEwOjE2LjIwM="
+       },
+       "externalReferences": {
+        "type": "object",
+        "additionalProperties": {
+         "type": "string"
+        },
+        "description": "Reference of an external party f.e. government",
+        "nullable": true,
+        "example": {
+         "RO_ID_INCARCARE": "4371452761"
+        }
+       },
+       "log": {
+        "type": "array",
+        "description": "The log information of a message",
+        "nullable": true,
+        "items": {
+         "$ref": "#/components/schemas/log"
+        }
+       }
+      }
+     }
+    },
+    "responses": {
+     "401": {
+      "description": "**UNAUTHORIZED**\n\nIn case the authentication credentials are not valid\n\n  | Code| Name | Description |\n  |-----|-----|-------------|\n  | 102 | CREDENTIALS_INVALID | The provided credentials are invalid |\n",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/failure-401"
+        }
+       }
+      }
+     },
+     "403": {
+      "description": "**FORBIDDEN.**\n\nIn case the user could not be authenticated\n\n  | Code| Name| Description |\n  |-----|-----|-------------|\n  |101| USER_KEY_INVALID| The user provided a wrong user key (deprecated) |\n  |104| USER_NOT_PERMITTED| The user authenticated successfully but has no rights to fulfill the requested task |\n",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/failure-403"
+        }
+       }
+      }
+     },
+     "404": {
+      "description": "**NOT FOUND.**\n\nIn case the message could not be found\n",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/failure-404"
+        }
+       }
+      }
+     },
+     "429": {
+      "description": "**TOO MANY REQUESTS.**\n\n| Code| Name| Description |\n|-----|-----|-------------|\n| 130 | TOO_MANY_REQUESTS_RECEIVED|In order to prevent being spammed by poll requests and status queries the service makes use of a request cache. If the number of requests received in a certain amount of time exceed a certain threshold this error will be returned. Every 5 minutes the cache will be cleared automatically|\n",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/failure-429"
+        }
+       }
+      }
+     },
+     "400-Delivery": {
+      "description": "**BAD REQUEST**\n\n  | Code| Name| Description |\n  |-----|-----|-------------|\n  |100| APPLICATION_KEY_INVALID|Thrown if either no or an invalid application key was provided|\n  |110| INVALID_JSON_MESSAGE|Is thrown in case the request is invalid JSON\n  |111|JSON_DOCUMENT_NOT_BASE64_ENCODED|Is thrown if the actual document is not properly base64-encoded within the message field of the JSON message.|\n  |120|EXPECTED_QUERY_PARAMETER_MISSING|Indicates that a required query parameter is missing in a request. Often this indicates that the appKey parameter is missing|\n  |123|QUERY_PARAMETER_UNKNOWN|The value of a provided query parameter is unknown to the service.|\n  |200|ARGUMENT_NULL|Indicates that a required argument is null|\n  |368|DOCUMENT_NOT_VALID|May be thrown by the service if the received document syntax is not valid|\n",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/failure-400"
+        }
+       }
+      }
+     },
+     "200-getMessageIDStatusResponses": {
+      "description": "**OK.** The details of the sent messages. Among the details is also the state of every sent message.",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/200-getmessageID"
+        }
+       }
+      }
+     }
+    },
+    "parameters": {
+     "includeAck": {
+      "name": "includeAck",
+      "in": "header",
+      "description": "\nDisplay the acknowledgment of a sent e-invoice to a government in Base64 and its external references.<br>\nExternal references and their availability are country-specific.\nFor a detailed list of availability per country, see\n[External references for acknowledgements](https://connect.ecosio.com/reference/external-references-for-acknowledgements).\n",
+      "required": false,
+      "schema": {
+       "type": "boolean"
+      },
+      "example": true
+     },
+     "includeLog": {
+      "name": "includeLog",
+      "in": "header",
+      "description": "Display the logs of a message to review its details and history. This can help you understand the message's journey, including when it was sent, received, and any actions taken on it.",
+      "required": false,
+      "schema": {
+       "type": "boolean"
+      },
+      "example": true
+     }
+    },
+    "securitySchemes": {
+     "basicAuth": {
+      "type": "http",
+      "scheme": "basic"
+     },
+     "X-APP-KEY": {
+      "in": "header",
+      "name": "X-APP-KEY",
+      "type": "apiKey",
+      "description": "The ecosio app key is passed as HTTP header."
+     }
+    }
+   },
+   "security": [
+    {
+     "basicAuth": [],
+     "X-APP-KEY": []
+    }
+   ]
+  }
+ },
+ {
+  "page": "https://connect.ecosio.com/reference/callback.md",
+  "definition": {
+   "openapi": "3.0.0",
+   "info": {
+    "title": "ecosio.api",
+    "description": "This documentation describes the features of the ecosio messaging API (aka ecosio.api). ecosio.api is used to send structured electronic documents from an ERP system or any other IT system to ecosio and to fetch electronic messages from ecosio.",
+    "contact": {
+     "name": "ecosio GmbH",
+     "url": "https://ecosio.com/en",
+     "email": "support@ecosio.com"
+    },
+    "version": "1.1.1"
+   },
+   "servers": [
+    {
+     "url": "https://api.test.ecosio-hub.com:{port}",
+     "description": "TEST instance of ecosio.api (port 443 for CA SSL; 8443 for self signed SSL)",
+     "variables": {
+      "port": {
+       "enum": [
+        "443",
+        "8443"
+       ],
+       "default": "443",
+       "description": "443 for CA SSL; 8443 for self signed SSL"
+      }
+     }
+    }
+   ],
+   "paths": {
+    "/api/v1/callback/{messageId}": {
+     "post": {
+      "tags": [
+       "Fetch messages from the Hub"
+      ],
+      "summary": "Acknowledge the successful or unsuccessful processing of a fetched message",
+      "operationId": "callback",
+      "parameters": [
+       {
+        "in": "path",
+        "name": "messageId",
+        "schema": {
+         "type": "string"
+        },
+        "required": true,
+        "description": "The UUID of the message, which shall be acknowledged",
+        "example": "70d4ec9d-33f9-47c1-94fc-91938dad7612"
+       }
+      ],
+      "requestBody": {
+       "$ref": "#/components/requestBodies/callbackRequest"
+      },
+      "responses": {
+       "204": {
+        "description": "Callback was successfully processed"
+       },
+       "400": {
+        "$ref": "#/components/responses/400"
+       },
+       "403": {
+        "$ref": "#/components/responses/403"
+       }
+      }
+     }
+    }
+   },
+   "components": {
+    "schemas": {
+     "failure-400-get": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/failure-object-without-reference"
+       },
+       {
+        "type": "object",
+        "properties": {
+         "failure": {
+          "properties": {
+           "errorCode": {
+            "example": "200"
+           },
+           "reason": {
+            "example": "ARGUMENT_NULL"
+           },
+           "details": {
+            "example": "No id found"
+           }
+          }
+         }
+        }
+       }
+      ]
+     },
+     "failure-403": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/failure-object"
+       },
+       {
+        "type": "object",
+        "properties": {
+         "failure": {
+          "properties": {
+           "errorCode": {
+            "example": "104"
+           },
+           "reason": {
+            "example": "USER_NOT_PERMITTED"
+           },
+           "details": {
+            "example": "Invalid user credentials found"
+           },
+           "reference": {
+            "example": "70d4ec9d-33f9-47c1-94fc-91938dad7612"
+           }
+          }
+         }
+        }
+       }
+      ]
+     },
+     "failure-object-without-reference": {
+      "type": "object",
+      "properties": {
+       "failure": {
+        "$ref": "#/components/schemas/propertyFailureWithoutReference"
+       }
+      }
+     },
+     "failure-object": {
+      "type": "object",
+      "properties": {
+       "failure": {
+        "$ref": "#/components/schemas/propertyFailure"
+       }
+      }
+     },
+     "propertyFailure": {
+      "description": "In case the message has reached an error state, the error details are denoted in this element. Whether the failure element is shown or not, depends on the configured state mode. For an overview of the different states and the state modes please refer to https://connect.ecosio.com/docs/state-mode#/",
+      "type": "object",
+      "nullable": true,
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/propertyFailureWithoutReference"
+       },
+       {
+        "properties": {
+         "reference": {
+          "type": "string",
+          "description": "The message ID, for which the error occurred.",
+          "example": "92fd6790-ad7d-11eb-9825-19ebc28755dd"
+         }
+        }
+       }
+      ]
+     },
+     "propertyFailureWithoutReference": {
+      "description": "In case the message has reached an error state, the error details are denoted in this element. Whether the failure element is shown or not, depends on the configured state mode. For an overview of the different states and the state modes please refer to https://connect.ecosio.com/docs/state-mode#/",
+      "type": "object",
+      "nullable": true,
+      "properties": {
+       "errorCode": {
+        "type": "string",
+        "description": "A code, identifying the error.",
+        "example": "261"
+       },
+       "reason": {
+        "type": "string",
+        "description": "The reason for the error",
+        "example": "RECEIVER_INVALID"
+       },
+       "details": {
+        "type": "string",
+        "description": "Further details about the error",
+        "example": "No receiver could be identified using either on message level (identifier: xyz) or on protocol level (xyz)"
+       }
+      }
+     },
+     "index": {
+      "description": "Used to pass key/value pairs. Usually, these pairs contain information about the objects, which have been created in the IT system, e.g., purchase order numbers, invoice numbers or internal numbers such as SAP IDoc numbers. Value can either be strings or arrays.",
+      "type": "object",
+      "additionalProperties": true,
+      "example": "{'key1': 'value1', 'key2': 'value2', 'key3': ['value3a', 'value3b']}"
+     },
+     "callback-negative": {
+      "allOf": [
+       {
+        "description": "Returned in case there was a problem while processing the message in the IT system",
+        "type": "object",
+        "properties": {
+         "result": {
+          "type": "boolean",
+          "description": "Indicates, if the callback was successful (true) or not (false). Always false in case of a negative callback.",
+          "example": false
+         },
+         "text": {
+          "type": "string",
+          "description": "And optional field for free text, where additional information about the processing of the message can be transmitted",
+          "example": "Message could not be processed"
+         }
+        }
+       },
+       {
+        "$ref": "#/components/schemas/failure-object"
+       },
+       {
+        "type": "object",
+        "properties": {
+         "index": {
+          "$ref": "#/components/schemas/index"
+         }
+        }
+       },
+       {
+        "type": "object",
+        "properties": {
+         "failure": {
+          "properties": {
+           "errorCode": {
+            "example": "300"
+           },
+           "reason": {
+            "example": "INTERNAL_SERVER_ERROR"
+           },
+           "details": {
+            "example": "An unexpected error occurred while processing the request."
+           },
+           "reference": {
+            "example": "0441e9b0-993f-11eb-943c-91d1a9b71250c"
+           }
+          }
+         }
+        }
+       }
+      ]
+     },
+     "callback-positive": {
+      "description": "Returned, in case the processing of the message in the IT system was OK.",
+      "type": "object",
+      "properties": {
+       "result": {
+        "type": "boolean",
+        "description": "Indicates, if the callback was successful (true) or not (false). Always true in case of a positive callback.",
+        "example": true
+       },
+       "text": {
+        "type": "string",
+        "description": "And optional field for free text, where additional information about the processing of the message can be transmitted",
+        "example": "Sales order created"
+       },
+       "index": {
+        "$ref": "#/components/schemas/index"
+       }
+      }
+     }
+    },
+    "responses": {
+     "400": {
+      "description": "**BAD REQUEST**\n\nIn case an error occurred during the processing of the request.\n",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/failure-400-get"
+        }
+       }
+      }
+     },
+     "403": {
+      "description": "**FORBIDDEN.**\n\nIn case the user could not be authenticated\n\n  | Code| Name| Description |\n  |-----|-----|-------------|\n  |101| USER_KEY_INVALID| The user provided a wrong user key (deprecated) |\n  |104| USER_NOT_PERMITTED| The user authenticated successfully but has no rights to fulfill the requested task |\n",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/failure-403"
+        }
+       }
+      }
+     }
+    },
+    "requestBodies": {
+     "callbackRequest": {
+      "description": "The status of the processing of the fetched message in the target IT system, e.g., an ERP system.",
+      "content": {
+       "application/json": {
+        "schema": {
+         "oneOf": [
+          {
+           "$ref": "#/components/schemas/callback-positive"
+          },
+          {
+           "$ref": "#/components/schemas/callback-negative"
+          }
+         ]
+        }
+       }
+      }
+     }
+    },
+    "securitySchemes": {
+     "basicAuth": {
+      "type": "http",
+      "scheme": "basic"
+     },
+     "X-APP-KEY": {
+      "in": "header",
+      "name": "X-APP-KEY",
+      "type": "apiKey",
+      "description": "The ecosio app key is passed as HTTP header."
+     }
+    }
+   },
+   "security": [
+    {
+     "basicAuth": [],
+     "X-APP-KEY": []
+    }
+   ]
+  }
+ },
+ {
+  "page": "https://connect.ecosio.com/reference/getmessagelist.md",
+  "definition": {
+   "openapi": "3.0.0",
+   "info": {
+    "title": "ecosio.api",
+    "description": "This documentation describes the features of the ecosio messaging API (aka ecosio.api). ecosio.api is used to send structured electronic documents from an ERP system or any other IT system to ecosio and to fetch electronic messages from ecosio.",
+    "contact": {
+     "name": "ecosio GmbH",
+     "url": "https://ecosio.com/en",
+     "email": "support@ecosio.com"
+    },
+    "version": "1.1.1"
+   },
+   "servers": [
+    {
+     "url": "https://api.test.ecosio-hub.com:{port}",
+     "description": "TEST instance of ecosio.api (port 443 for CA SSL; 8443 for self signed SSL)",
+     "variables": {
+      "port": {
+       "enum": [
+        "443",
+        "8443"
+       ],
+       "default": "443",
+       "description": "443 for CA SSL; 8443 for self signed SSL"
+      }
+     }
+    }
+   ],
+   "paths": {
+    "/api/v1/fetch": {
+     "get": {
+      "tags": [
+       "Fetch messages from the Hub"
+      ],
+      "summary": "Fetch a list of newly received messages from the ecosio Integration Hub",
+      "operationId": "getMessageList",
+      "parameters": [
+       {
+        "in": "query",
+        "name": "limit",
+        "schema": {
+         "type": "integer",
+         "minimum": 1,
+         "maximum": 30
+        },
+        "required": false,
+        "description": "The number of messages which shall be contained in the response. By default 30 messages will be returned. Setting this value above 30 will have no effect.",
+        "example": 30
+       },
+       {
+        "in": "query",
+        "name": "offset",
+        "schema": {
+         "type": "integer",
+         "multipleOf": 30
+        },
+        "required": false,
+        "description": "Specifies the starting position to return messages from. By default The last message sent will be returned first (Last-In First-Out)",
+        "example": 0
+       },
+       {
+        "in": "query",
+        "name": "state",
+        "schema": {
+         "type": "string"
+        },
+        "required": false,
+        "description": "Specifies that only messages in a certain state should be listed. Current options are DELIVERED and FETCHED. DELIVERED is used to list only messages that are available in the inbox but were not yet downloaded while FETCHED lists only those messages that were at least downloaded once by the receiving company. If this parameter is not provided in the URL, it will by default return both delivered and fetched documents in the returned list.",
+        "example": "FETCHED"
+       }
+      ],
+      "responses": {
+       "200": {
+        "$ref": "#/components/responses/getMessageListResponse"
+       },
+       "400": {
+        "$ref": "#/components/responses/400"
+       },
+       "401": {
+        "$ref": "#/components/responses/401"
+       },
+       "403": {
+        "$ref": "#/components/responses/403"
+       },
+       "429": {
+        "$ref": "#/components/responses/429"
+       }
+      }
+     }
+    }
+   },
+   "components": {
+    "schemas": {
+     "failure-400-get": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/failure-object-without-reference"
+       },
+       {
+        "type": "object",
+        "properties": {
+         "failure": {
+          "properties": {
+           "errorCode": {
+            "example": "200"
+           },
+           "reason": {
+            "example": "ARGUMENT_NULL"
+           },
+           "details": {
+            "example": "No id found"
+           }
+          }
+         }
+        }
+       }
+      ]
+     },
+     "failure-401": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/failure-object-without-reference"
+       },
+       {
+        "type": "object",
+        "properties": {
+         "failure": {
+          "properties": {
+           "errorCode": {
+            "example": "102"
+           },
+           "reason": {
+            "example": "CREDENTIALS_INVALID"
+           },
+           "details": {
+            "example": "The provided credentials are invalid!"
+           }
+          }
+         }
+        }
+       }
+      ]
+     },
+     "failure-403": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/failure-object"
+       },
+       {
+        "type": "object",
+        "properties": {
+         "failure": {
+          "properties": {
+           "errorCode": {
+            "example": "104"
+           },
+           "reason": {
+            "example": "USER_NOT_PERMITTED"
+           },
+           "details": {
+            "example": "Invalid user credentials found"
+           },
+           "reference": {
+            "example": "70d4ec9d-33f9-47c1-94fc-91938dad7612"
+           }
+          }
+         }
+        }
+       }
+      ]
+     },
+     "failure-429": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/failure-object-without-reference"
+       },
+       {
+        "type": "object",
+        "properties": {
+         "failure": {
+          "properties": {
+           "errorCode": {
+            "example": "130"
+           },
+           "reason": {
+            "example": "TOO_MANY_REQUESTS_RECEIVED"
+           },
+           "details": {
+            "example": "Too many requests have been received in a short amount of time. Please respect the terms of services and increase the interval of polling requests."
+           }
+          }
+         }
+        }
+       }
+      ]
+     },
+     "failure-object-without-reference": {
+      "type": "object",
+      "properties": {
+       "failure": {
+        "$ref": "#/components/schemas/propertyFailureWithoutReference"
+       }
+      }
+     },
+     "failure-object": {
+      "type": "object",
+      "properties": {
+       "failure": {
+        "$ref": "#/components/schemas/propertyFailure"
+       }
+      }
+     },
+     "propertyFailure": {
+      "description": "In case the message has reached an error state, the error details are denoted in this element. Whether the failure element is shown or not, depends on the configured state mode. For an overview of the different states and the state modes please refer to https://connect.ecosio.com/docs/state-mode#/",
+      "type": "object",
+      "nullable": true,
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/propertyFailureWithoutReference"
+       },
+       {
+        "properties": {
+         "reference": {
+          "type": "string",
+          "description": "The message ID, for which the error occurred.",
+          "example": "92fd6790-ad7d-11eb-9825-19ebc28755dd"
+         }
+        }
+       }
+      ]
+     },
+     "propertyFailureWithoutReference": {
+      "description": "In case the message has reached an error state, the error details are denoted in this element. Whether the failure element is shown or not, depends on the configured state mode. For an overview of the different states and the state modes please refer to https://connect.ecosio.com/docs/state-mode#/",
+      "type": "object",
+      "nullable": true,
+      "properties": {
+       "errorCode": {
+        "type": "string",
+        "description": "A code, identifying the error.",
+        "example": "261"
+       },
+       "reason": {
+        "type": "string",
+        "description": "The reason for the error",
+        "example": "RECEIVER_INVALID"
+       },
+       "details": {
+        "type": "string",
+        "description": "Further details about the error",
+        "example": "No receiver could be identified using either on message level (identifier: xyz) or on protocol level (xyz)"
+       }
+      }
+     },
+     "message": {
+      "description": "",
+      "type": "object",
+      "properties": {
+       "messageId": {
+        "type": "string",
+        "description": "The UUID of the message on the ecosio Integration Hub",
+        "example": "70d4ec9d-33f9-46c1-94fc-93548dad7612"
+       },
+       "senderUuid": {
+        "type": "string",
+        "description": "The UUID of the sender of the message",
+        "example": "45c2dae5-4235-45b0-98c2-c2342b10919f"
+       },
+       "senderName": {
+        "type": "string",
+        "description": "The name of the sender of the message",
+        "example": "ecosio API Test Sender"
+       },
+       "receiverUuid": {
+        "type": "string",
+        "description": "The UUID of the receiver of the message",
+        "example": "4ac1e432-f900-424f-92ab-edd501812342"
+       },
+       "receiverName": {
+        "type": "string",
+        "description": "The name of the receiver of the message",
+        "example": "ecosio API Test Receiver"
+       },
+       "receivedAt": {
+        "type": "string",
+        "format": "date-time",
+        "description": "The timestamp, when the message has been received on the ecosio Integration Hub",
+        "example": "2023-09-22T14:25:03Z"
+       },
+       "state": {
+        "type": "string",
+        "description": "The state of the message. For a complete list of states please see https://connect.ecosio.com/docs/state-mode#/",
+        "example": "PROCESSED"
+       },
+       "messageSize": {
+        "type": "integer",
+        "description": "The size of the message in Bytes",
+        "example": 1212341
+       },
+       "documentTypeId": {
+        "type": "string",
+        "description": "The ecosio document type id, which has been identified for the message",
+        "example": "XML_4p1_ebInterface"
+       },
+       "mimeType": {
+        "type": "string",
+        "description": "The type of the message, which has been identified.",
+        "example": "XML"
+       },
+       "charset": {
+        "type": "string",
+        "description": "The charset of the message",
+        "example": "UTF-8"
+       },
+       "fileName": {
+        "type": "string",
+        "description": "The filename of the message",
+        "example": "70d4ec9d-33f9-46c1-94fc-93548dad7612.xml"
+       },
+       "lastChanged": {
+        "type": "string",
+        "format": "date-time",
+        "description": "The timestamp, when the message was last changed on the ecosio Integration Hub",
+        "example": "2023-09-22T14:26:00Z"
+       },
+       "reference": {
+        "type": "string",
+        "format": "string",
+        "description": "A reference id, which has been fetched from the message on the ecosio Integration Hub. In case of EDIFACT the reference id is for instance the UNB message interchange id. For other message types such as XML messages, the reference id can be custom set.",
+        "nullable": true,
+        "example": "4711"
+       }
+      }
+     }
+    },
+    "responses": {
+     "400": {
+      "description": "**BAD REQUEST**\n\nIn case an error occurred during the processing of the request.\n",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/failure-400-get"
+        }
+       }
+      }
+     },
+     "401": {
+      "description": "**UNAUTHORIZED**\n\nIn case the authentication credentials are not valid\n\n  | Code| Name | Description |\n  |-----|-----|-------------|\n  | 102 | CREDENTIALS_INVALID | The provided credentials are invalid |\n",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/failure-401"
+        }
+       }
+      }
+     },
+     "403": {
+      "description": "**FORBIDDEN.**\n\nIn case the user could not be authenticated\n\n  | Code| Name| Description |\n  |-----|-----|-------------|\n  |101| USER_KEY_INVALID| The user provided a wrong user key (deprecated) |\n  |104| USER_NOT_PERMITTED| The user authenticated successfully but has no rights to fulfill the requested task |\n",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/failure-403"
+        }
+       }
+      }
+     },
+     "429": {
+      "description": "**TOO MANY REQUESTS.**\n\n| Code| Name| Description |\n|-----|-----|-------------|\n| 130 | TOO_MANY_REQUESTS_RECEIVED|In order to prevent being spammed by poll requests and status queries the service makes use of a request cache. If the number of requests received in a certain amount of time exceed a certain threshold this error will be returned. Every 5 minutes the cache will be cleared automatically|\n",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/failure-429"
+        }
+       }
+      }
+     },
+     "getMessageListResponse": {
+      "description": "**OK.** A list of messages, which have been received for the given user on the ecosio Integration Hub and which have not been fetched yet. Only the meta information of the messages is provided.",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "messages": {
+           "type": "array",
+           "items": {
+            "oneOf": [
+             {
+              "$ref": "#/components/schemas/message"
+             }
+            ]
+           }
+          },
+          "availableMessages": {
+           "type": "string",
+           "description": "The number of remaining messages on the hub. Together with the limit and offset query parameters, this value can be used to implement a fetching logic on the API client's side",
+           "example": "12"
+          }
+         }
+        }
+       }
+      }
+     }
+    },
+    "securitySchemes": {
+     "basicAuth": {
+      "type": "http",
+      "scheme": "basic"
+     },
+     "X-APP-KEY": {
+      "in": "header",
+      "name": "X-APP-KEY",
+      "type": "apiKey",
+      "description": "The ecosio app key is passed as HTTP header."
+     }
+    }
+   },
+   "security": [
+    {
+     "basicAuth": [],
+     "X-APP-KEY": []
+    }
+   ]
+  }
+ },
+ {
+  "page": "https://connect.ecosio.com/reference/getreceivedmessage.md",
+  "definition": {
+   "openapi": "3.0.0",
+   "info": {
+    "title": "ecosio.api",
+    "description": "This documentation describes the features of the ecosio messaging API (aka ecosio.api). ecosio.api is used to send structured electronic documents from an ERP system or any other IT system to ecosio and to fetch electronic messages from ecosio.",
+    "contact": {
+     "name": "ecosio GmbH",
+     "url": "https://ecosio.com/en",
+     "email": "support@ecosio.com"
+    },
+    "version": "1.1.1"
+   },
+   "servers": [
+    {
+     "url": "https://api.test.ecosio-hub.com:{port}",
+     "description": "TEST instance of ecosio.api (port 443 for CA SSL; 8443 for self signed SSL)",
+     "variables": {
+      "port": {
+       "enum": [
+        "443",
+        "8443"
+       ],
+       "default": "443",
+       "description": "443 for CA SSL; 8443 for self signed SSL"
+      }
+     }
+    }
+   ],
+   "paths": {
+    "/api/v1/msg/{messageId}": {
+     "get": {
+      "tags": [
+       "Fetch messages from the Hub"
+      ],
+      "summary": "Get a received message from the ecosio Integration Hub",
+      "operationId": "getReceivedMessage",
+      "parameters": [
+       {
+        "in": "path",
+        "name": "messageId",
+        "schema": {
+         "type": "string"
+        },
+        "required": true,
+        "description": "The UUID of the message, which shall be retrieved",
+        "example": "70d4ec9d-33f9-47c1-94fc-91938dad7612"
+       }
+      ],
+      "responses": {
+       "200": {
+        "$ref": "#/components/responses/getMessageResponse"
+       },
+       "400": {
+        "$ref": "#/components/responses/400"
+       },
+       "403": {
+        "$ref": "#/components/responses/403"
+       },
+       "404": {
+        "$ref": "#/components/responses/404"
+       }
+      }
+     }
+    }
+   },
+   "components": {
+    "schemas": {
+     "failure-400-get": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/failure-object-without-reference"
+       },
+       {
+        "type": "object",
+        "properties": {
+         "failure": {
+          "properties": {
+           "errorCode": {
+            "example": "200"
+           },
+           "reason": {
+            "example": "ARGUMENT_NULL"
+           },
+           "details": {
+            "example": "No id found"
+           }
+          }
+         }
+        }
+       }
+      ]
+     },
+     "failure-403": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/failure-object"
+       },
+       {
+        "type": "object",
+        "properties": {
+         "failure": {
+          "properties": {
+           "errorCode": {
+            "example": "104"
+           },
+           "reason": {
+            "example": "USER_NOT_PERMITTED"
+           },
+           "details": {
+            "example": "Invalid user credentials found"
+           },
+           "reference": {
+            "example": "70d4ec9d-33f9-47c1-94fc-91938dad7612"
+           }
+          }
+         }
+        }
+       }
+      ]
+     },
+     "failure-404": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/failure-object"
+       },
+       {
+        "type": "object",
+        "properties": {
+         "failure": {
+          "properties": {
+           "errorCode": {
+            "example": "160"
+           },
+           "reason": {
+            "example": "MESSAGE_RETRIEVAL_FAILED_MESSAGE_ID_UNKNOWN"
+           },
+           "details": {
+            "example": "Unknown messageId"
+           },
+           "reference": {
+            "example": "0441e9b0-993f-11eb-943c-91d1a9b71250c"
+           }
+          }
+         }
+        }
+       }
+      ]
+     },
+     "failure-object-without-reference": {
+      "type": "object",
+      "properties": {
+       "failure": {
+        "$ref": "#/components/schemas/propertyFailureWithoutReference"
+       }
+      }
+     },
+     "failure-object": {
+      "type": "object",
+      "properties": {
+       "failure": {
+        "$ref": "#/components/schemas/propertyFailure"
+       }
+      }
+     },
+     "propertyFailure": {
+      "description": "In case the message has reached an error state, the error details are denoted in this element. Whether the failure element is shown or not, depends on the configured state mode. For an overview of the different states and the state modes please refer to https://connect.ecosio.com/docs/state-mode#/",
+      "type": "object",
+      "nullable": true,
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/propertyFailureWithoutReference"
+       },
+       {
+        "properties": {
+         "reference": {
+          "type": "string",
+          "description": "The message ID, for which the error occurred.",
+          "example": "92fd6790-ad7d-11eb-9825-19ebc28755dd"
+         }
+        }
+       }
+      ]
+     },
+     "propertyFailureWithoutReference": {
+      "description": "In case the message has reached an error state, the error details are denoted in this element. Whether the failure element is shown or not, depends on the configured state mode. For an overview of the different states and the state modes please refer to https://connect.ecosio.com/docs/state-mode#/",
+      "type": "object",
+      "nullable": true,
+      "properties": {
+       "errorCode": {
+        "type": "string",
+        "description": "A code, identifying the error.",
+        "example": "261"
+       },
+       "reason": {
+        "type": "string",
+        "description": "The reason for the error",
+        "example": "RECEIVER_INVALID"
+       },
+       "details": {
+        "type": "string",
+        "description": "Further details about the error",
+        "example": "No receiver could be identified using either on message level (identifier: xyz) or on protocol level (xyz)"
+       }
+      }
+     },
+     "message": {
+      "description": "",
+      "type": "object",
+      "properties": {
+       "messageId": {
+        "type": "string",
+        "description": "The UUID of the message on the ecosio Integration Hub",
+        "example": "70d4ec9d-33f9-46c1-94fc-93548dad7612"
+       },
+       "senderUuid": {
+        "type": "string",
+        "description": "The UUID of the sender of the message",
+        "example": "45c2dae5-4235-45b0-98c2-c2342b10919f"
+       },
+       "senderName": {
+        "type": "string",
+        "description": "The name of the sender of the message",
+        "example": "ecosio API Test Sender"
+       },
+       "receiverUuid": {
+        "type": "string",
+        "description": "The UUID of the receiver of the message",
+        "example": "4ac1e432-f900-424f-92ab-edd501812342"
+       },
+       "receiverName": {
+        "type": "string",
+        "description": "The name of the receiver of the message",
+        "example": "ecosio API Test Receiver"
+       },
+       "receivedAt": {
+        "type": "string",
+        "format": "date-time",
+        "description": "The timestamp, when the message has been received on the ecosio Integration Hub",
+        "example": "2023-09-22T14:25:03Z"
+       },
+       "state": {
+        "type": "string",
+        "description": "The state of the message. For a complete list of states please see https://connect.ecosio.com/docs/state-mode#/",
+        "example": "PROCESSED"
+       },
+       "messageSize": {
+        "type": "integer",
+        "description": "The size of the message in Bytes",
+        "example": 1212341
+       },
+       "documentTypeId": {
+        "type": "string",
+        "description": "The ecosio document type id, which has been identified for the message",
+        "example": "XML_4p1_ebInterface"
+       },
+       "mimeType": {
+        "type": "string",
+        "description": "The type of the message, which has been identified.",
+        "example": "XML"
+       },
+       "charset": {
+        "type": "string",
+        "description": "The charset of the message",
+        "example": "UTF-8"
+       },
+       "fileName": {
+        "type": "string",
+        "description": "The filename of the message",
+        "example": "70d4ec9d-33f9-46c1-94fc-93548dad7612.xml"
+       },
+       "lastChanged": {
+        "type": "string",
+        "format": "date-time",
+        "description": "The timestamp, when the message was last changed on the ecosio Integration Hub",
+        "example": "2023-09-22T14:26:00Z"
+       },
+       "reference": {
+        "type": "string",
+        "format": "string",
+        "description": "A reference id, which has been fetched from the message on the ecosio Integration Hub. In case of EDIFACT the reference id is for instance the UNB message interchange id. For other message types such as XML messages, the reference id can be custom set.",
+        "nullable": true,
+        "example": "4711"
+       }
+      }
+     }
+    },
+    "responses": {
+     "400": {
+      "description": "**BAD REQUEST**\n\nIn case an error occurred during the processing of the request.\n",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/failure-400-get"
+        }
+       }
+      }
+     },
+     "403": {
+      "description": "**FORBIDDEN.**\n\nIn case the user could not be authenticated\n\n  | Code| Name| Description |\n  |-----|-----|-------------|\n  |101| USER_KEY_INVALID| The user provided a wrong user key (deprecated) |\n  |104| USER_NOT_PERMITTED| The user authenticated successfully but has no rights to fulfill the requested task |\n",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/failure-403"
+        }
+       }
+      }
+     },
+     "404": {
+      "description": "**NOT FOUND.**\n\nIn case the message could not be found\n",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/failure-404"
+        }
+       }
+      }
+     },
+     "getMessageResponse": {
+      "description": "**OK.** The details of a received message. Among the details is also the message itself.",
+      "content": {
+       "application/json": {
+        "schema": {
+         "allOf": [
+          {
+           "$ref": "#/components/schemas/message"
+          },
+          {
+           "type": "object",
+           "properties": {
+            "message": {
+             "type": "string",
+             "description": "The base64-encoded message",
+             "example": "VGhpcyBpcyBhIHRlc3Q="
+            }
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    },
+    "securitySchemes": {
+     "basicAuth": {
+      "type": "http",
+      "scheme": "basic"
+     },
+     "X-APP-KEY": {
+      "in": "header",
+      "name": "X-APP-KEY",
+      "type": "apiKey",
+      "description": "The ecosio app key is passed as HTTP header."
+     }
+    }
+   },
+   "security": [
+    {
+     "basicAuth": [],
+     "X-APP-KEY": []
+    }
+   ]
+  }
+ },
+ {
+  "page": "https://connect.ecosio.com/reference/get_api-v1-documents-messageid.md",
+  "definition": {
+   "openapi": "3.0.0",
+   "info": {
+    "title": "ecosio.api",
+    "description": "This documentation describes the features of the ecosio messaging API (aka ecosio.api). ecosio.api is used to send structured electronic documents from an ERP system or any other IT system to ecosio and to fetch electronic messages from ecosio.",
+    "contact": {
+     "name": "ecosio GmbH",
+     "url": "https://ecosio.com/en",
+     "email": "support@ecosio.com"
+    },
+    "version": "1.1.1"
+   },
+   "servers": [
+    {
+     "url": "https://api.test.ecosio-hub.com:{port}",
+     "description": "TEST instance of ecosio.api (port 443 for CA SSL; 8443 for self signed SSL)",
+     "variables": {
+      "port": {
+       "enum": [
+        "443",
+        "8443"
+       ],
+       "default": "443",
+       "description": "443 for CA SSL; 8443 for self signed SSL"
+      }
+     }
+    }
+   ],
+   "paths": {
+    "/api/v1/documents/{messageId}": {
+     "get": {
+      "tags": [
+       "Request the documents for an e-invoice"
+      ],
+      "summary": "Download a ZIP file containing all necessary documents for an e-invoice or message sent to or received from a tax authority",
+      "description": "This ZIP file contains the original invoice, detailing the transactions, and an acknowledgment confirming receipt of the invoice. Contents may vary by country.\n\nIn the **Outbound Flow** for sending invoices **to tax authorities**, the final file represents the invoice mapped to meet the receiver's requirements. The original file is your source file sent to ecosio.\n\n| Country | Invoice PDF | Original | Final | Extra Files |\n|-----|-----|-----|-----|-----|\n| Belgium | {id}_generated.pdf (if available) | {id}_original.* | {id}_final.xml | {id}_ack.xml |\n| Denmark | {id}_generated.pdf (if available) | {id}_original.* | {id}_final.xml | {id}_ack.xml |\n| Germany | {id}_generated.pdf (if available) | {id}_original.* | {id}_final.* <br> _xml_ or _pdf_ (ZUGFeRD) | {id}_ack.json or {id}_ack.xml |\n| Italy | {id}_generated.pdf (if available) | {id}_original.* | {id}_final.xml | {id}_ack.xml |\n| Malaysia | {id}_generated.pdf (if available) | {id}_original.* | {id}_final.xml | {id}_ack.json |\n| Romania | {id}_generated.pdf (if available) | {id}_original.* | {id}_final.xml | {id}_ack.xml <br> {id}_final.pdf <br> {id}_final_signature.xml |\n| Spain | {id}_generated.pdf (if available) | {id}_original.* | {id}_final.xml | {id}_ack.xml |\n| Other | {id}_generated.pdf (if available) | {id}_original.* | {id}_final.* | {id}_ack.txt (if available) |\n\n<br>\nIn the **Inbound Flow** for receiving invoices **from tax authorities**, the original file is the invoice sent to ecosio's system, and the final file is the invoice from your counterpart.\n\n| Country | Invoice PDF | Original | Final | Extra Files |\n|-----|-----|-----|-----|-----|\n| Belgium | {id}_generated.pdf (if available) | {id}_original.xml | {id}_final.* | N/A |\n| Denmark | {id}_generated.pdf (if available) | {id}_original.xml | {id}_final.* | N/A |\n| Germany | {id}_generated.pdf (if available) | {id}_original.* <br> _xml_ or _pdf_ (ZUGFeRD) | {id}_final.* | N/A |\n| Italy | {id}_generated.pdf (if available) | {id}_original.xml | {id}_final.* | N/A |\n| Malaysia | {id}_generated.pdf (if available) | {id}_original.xml | {id}_final.* | N/A |\n| Romania | {id}_generated.pdf (if available) | {id}_original.xml |{id} _final.* | {id}_original.pdf <br> {id}_original_signature.xml |\n| Other | {id}_generated.pdf (if available) | {id}_original.* | {id}_final.* | {id}_ack.txt (if available) |\nThe ZIP file can only be successfully downloaded when the message is in a final state or was already in DELIVERED_API, DELIVERED_SFTP or DELIVERED_WEB.\n",
+      "parameters": [
+       {
+        "in": "path",
+        "name": "messageId",
+        "schema": {
+         "type": "string"
+        },
+        "required": true,
+        "description": "The UUID of the message, whose documents shall be retrieved",
+        "example": "70d4ec9d-33f9-47c1-94fc-91938dad7612"
+       }
+      ],
+      "responses": {
+       "200": {
+        "$ref": "#/components/responses/200-Documents"
+       },
+       "202": {
+        "description": "**ACCEPTED.**\n\nThe message is not yet in a final state. Please try again later.\n"
+       },
+       "400": {
+        "$ref": "#/components/responses/400"
+       },
+       "401": {
+        "$ref": "#/components/responses/401"
+       },
+       "403": {
+        "$ref": "#/components/responses/403"
+       },
+       "404": {
+        "$ref": "#/components/responses/404"
+       },
+       "409": {
+        "$ref": "#/components/responses/409"
+       },
+       "429": {
+        "$ref": "#/components/responses/429"
+       },
+       "500": {
+        "$ref": "#/components/responses/500"
+       }
+      }
+     }
+    }
+   },
+   "components": {
+    "schemas": {
+     "failure-400-get": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/failure-object-without-reference"
+       },
+       {
+        "type": "object",
+        "properties": {
+         "failure": {
+          "properties": {
+           "errorCode": {
+            "example": "200"
+           },
+           "reason": {
+            "example": "ARGUMENT_NULL"
+           },
+           "details": {
+            "example": "No id found"
+           }
+          }
+         }
+        }
+       }
+      ]
+     },
+     "failure-401": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/failure-object-without-reference"
+       },
+       {
+        "type": "object",
+        "properties": {
+         "failure": {
+          "properties": {
+           "errorCode": {
+            "example": "102"
+           },
+           "reason": {
+            "example": "CREDENTIALS_INVALID"
+           },
+           "details": {
+            "example": "The provided credentials are invalid!"
+           }
+          }
+         }
+        }
+       }
+      ]
+     },
+     "failure-403": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/failure-object"
+       },
+       {
+        "type": "object",
+        "properties": {
+         "failure": {
+          "properties": {
+           "errorCode": {
+            "example": "104"
+           },
+           "reason": {
+            "example": "USER_NOT_PERMITTED"
+           },
+           "details": {
+            "example": "Invalid user credentials found"
+           },
+           "reference": {
+            "example": "70d4ec9d-33f9-47c1-94fc-91938dad7612"
+           }
+          }
+         }
+        }
+       }
+      ]
+     },
+     "failure-404": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/failure-object"
+       },
+       {
+        "type": "object",
+        "properties": {
+         "failure": {
+          "properties": {
+           "errorCode": {
+            "example": "160"
+           },
+           "reason": {
+            "example": "MESSAGE_RETRIEVAL_FAILED_MESSAGE_ID_UNKNOWN"
+           },
+           "details": {
+            "example": "Unknown messageId"
+           },
+           "reference": {
+            "example": "0441e9b0-993f-11eb-943c-91d1a9b71250c"
+           }
+          }
+         }
+        }
+       }
+      ]
+     },
+     "failure-409": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/failure-object-without-reference"
+       },
+       {
+        "type": "object",
+        "properties": {
+         "failure": {
+          "properties": {
+           "errorCode": {
+            "example": "364"
+           },
+           "reason": {
+            "example": "MESSAGE_NOT_IN_APPROPRIATE_STATE"
+           },
+           "details": {
+            "example": "Not all documents are available yet"
+           }
+          }
+         }
+        }
+       }
+      ]
+     },
+     "failure-429": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/failure-object-without-reference"
+       },
+       {
+        "type": "object",
+        "properties": {
+         "failure": {
+          "properties": {
+           "errorCode": {
+            "example": "130"
+           },
+           "reason": {
+            "example": "TOO_MANY_REQUESTS_RECEIVED"
+           },
+           "details": {
+            "example": "Too many requests have been received in a short amount of time. Please respect the terms of services and increase the interval of polling requests."
+           }
+          }
+         }
+        }
+       }
+      ]
+     },
+     "failure-500": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/failure-object"
+       },
+       {
+        "type": "object",
+        "properties": {
+         "failure": {
+          "properties": {
+           "errorCode": {
+            "example": "300"
+           },
+           "reason": {
+            "example": "INTERNAL_SERVER_ERROR"
+           },
+           "details": {
+            "example": "An unexpected error occurred while processing the request."
+           },
+           "reference": {
+            "example": "0441e9b0-993f-11eb-943c-91d1a9b71250c"
+           }
+          }
+         }
+        }
+       }
+      ]
+     },
+     "failure-object-without-reference": {
+      "type": "object",
+      "properties": {
+       "failure": {
+        "$ref": "#/components/schemas/propertyFailureWithoutReference"
+       }
+      }
+     },
+     "failure-object": {
+      "type": "object",
+      "properties": {
+       "failure": {
+        "$ref": "#/components/schemas/propertyFailure"
+       }
+      }
+     },
+     "propertyFailure": {
+      "description": "In case the message has reached an error state, the error details are denoted in this element. Whether the failure element is shown or not, depends on the configured state mode. For an overview of the different states and the state modes please refer to https://connect.ecosio.com/docs/state-mode#/",
+      "type": "object",
+      "nullable": true,
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/propertyFailureWithoutReference"
+       },
+       {
+        "properties": {
+         "reference": {
+          "type": "string",
+          "description": "The message ID, for which the error occurred.",
+          "example": "92fd6790-ad7d-11eb-9825-19ebc28755dd"
+         }
+        }
+       }
+      ]
+     },
+     "propertyFailureWithoutReference": {
+      "description": "In case the message has reached an error state, the error details are denoted in this element. Whether the failure element is shown or not, depends on the configured state mode. For an overview of the different states and the state modes please refer to https://connect.ecosio.com/docs/state-mode#/",
+      "type": "object",
+      "nullable": true,
+      "properties": {
+       "errorCode": {
+        "type": "string",
+        "description": "A code, identifying the error.",
+        "example": "261"
+       },
+       "reason": {
+        "type": "string",
+        "description": "The reason for the error",
+        "example": "RECEIVER_INVALID"
+       },
+       "details": {
+        "type": "string",
+        "description": "Further details about the error",
+        "example": "No receiver could be identified using either on message level (identifier: xyz) or on protocol level (xyz)"
+       }
+      }
+     }
+    },
+    "responses": {
+     "400": {
+      "description": "**BAD REQUEST**\n\nIn case an error occurred during the processing of the request.\n",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/failure-400-get"
+        }
+       }
+      }
+     },
+     "401": {
+      "description": "**UNAUTHORIZED**\n\nIn case the authentication credentials are not valid\n\n  | Code| Name | Description |\n  |-----|-----|-------------|\n  | 102 | CREDENTIALS_INVALID | The provided credentials are invalid |\n",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/failure-401"
+        }
+       }
+      }
+     },
+     "403": {
+      "description": "**FORBIDDEN.**\n\nIn case the user could not be authenticated\n\n  | Code| Name| Description |\n  |-----|-----|-------------|\n  |101| USER_KEY_INVALID| The user provided a wrong user key (deprecated) |\n  |104| USER_NOT_PERMITTED| The user authenticated successfully but has no rights to fulfill the requested task |\n",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/failure-403"
+        }
+       }
+      }
+     },
+     "404": {
+      "description": "**NOT FOUND.**\n\nIn case the message could not be found\n",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/failure-404"
+        }
+       }
+      }
+     },
+     "409": {
+      "description": "**CONFLICT.**\n\n| Code| Name| Description |\n|-----|-----|-------------|\n| 409 | MESSAGE_NOT_IN_APPROPRIATE_STATE | The message is not in a state where the documents can be processed. Please retry the request later after the documents have been collected. |\n",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/failure-409"
+        }
+       }
+      }
+     },
+     "429": {
+      "description": "**TOO MANY REQUESTS.**\n\n| Code| Name| Description |\n|-----|-----|-------------|\n| 130 | TOO_MANY_REQUESTS_RECEIVED|In order to prevent being spammed by poll requests and status queries the service makes use of a request cache. If the number of requests received in a certain amount of time exceed a certain threshold this error will be returned. Every 5 minutes the cache will be cleared automatically|\n",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/failure-429"
+        }
+       }
+      }
+     },
+     "500": {
+      "description": "**INTERNAL SERVER ERROR.**\n\n| Code| Name| Description |\n|-----|-----|-------------|\n| 300 |INTERNAL_SERVER_ERROR | An unexpected error occurred while processing the request. Please contact support@ecosio.com to gain updates on the cause of the error (deprecated)|\n",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/failure-500"
+        }
+       }
+      }
+     },
+     "200-Documents": {
+      "description": "**OK.** The Zip file for this e-invoice with all relevant documents.",
+      "content": {
+       "application/zip": {
+        "schema": {
+         "type": "string",
+         "format": "binary"
+        },
+        "example": [
+         "a13cfd22-27b4-11ef-835a-45785384f543_ack.xml",
+         "a13cfd22-27b4-11ef-835a-45785384f543_final.pdf",
+         "a13cfd22-27b4-11ef-835a-45785384f543_final_signature.xml",
+         "a13cfd22-27b4-11ef-835a-45785384f543_final.xml",
+         "a13cfd22-27b4-11ef-835a-45785384f543_original.xml"
+        ]
+       }
+      }
+     }
+    },
+    "securitySchemes": {
+     "basicAuth": {
+      "type": "http",
+      "scheme": "basic"
+     },
+     "X-APP-KEY": {
+      "in": "header",
+      "name": "X-APP-KEY",
+      "type": "apiKey",
+      "description": "The ecosio app key is passed as HTTP header."
+     }
+    }
+   },
+   "security": [
+    {
+     "basicAuth": [],
+     "X-APP-KEY": []
+    }
+   ]
+  }
+ }
+]

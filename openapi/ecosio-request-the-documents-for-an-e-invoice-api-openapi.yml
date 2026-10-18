@@ -1,0 +1,364 @@
+openapi: 3.2.0
+info:
+  title: ecosio.api Request the documents for an e-invoice API
+  description: This documentation describes the features of the ecosio messaging API (aka ecosio.api). ecosio.api is used to send structured electronic documents from an ERP system or any other IT system to ecosio and to fetch electronic messages from ecosio.
+  contact:
+    name: ecosio GmbH
+    url: https://ecosio.com/en
+    email: support@ecosio.com
+  version: 1.1.1
+servers:
+- url: https://api.test.ecosio-hub.com:{port}
+  description: TEST instance of ecosio.api (port 443 for CA SSL; 8443 for self signed SSL)
+  variables:
+    port:
+      enum:
+      - '443'
+      - '8443'
+      default: '443'
+      description: 443 for CA SSL; 8443 for self signed SSL
+security:
+- basicAuth: []
+  X-APP-KEY: []
+tags:
+- name: Request the documents for an e-invoice
+paths:
+  /api/v1/documents/{messageId}:
+    get:
+      tags:
+      - Request the documents for an e-invoice
+      summary: Download a ZIP file containing all necessary documents for an e-invoice or…
+      description: 'This ZIP file contains the original invoice, detailing the transactions, and an acknowledgment confirming receipt of the invoice. Contents may vary by country.
+
+
+        In the **Outbound Flow** for sending invoices **to tax authorities**, the final file represents the invoice mapped to meet the receiver''s requirements. The original file is your source file sent to ecosio.
+
+
+        | Country | Invoice PDF | Original | Final | Extra Files |
+
+        |-----|-----|-----|-----|-----|
+
+        | Belgium | {id}_generated.pdf (if available) | {id}_original.* | {id}_final.xml | {id}_ack.xml |
+
+        | Denmark | {id}_generated.pdf (if available) | {id}_original.* | {id}_final.xml | {id}_ack.xml |
+
+        | Germany | {id}_generated.pdf (if available) | {id}_original.* | {id}_final.*
+
+        _xml_ or _pdf_ (ZUGFeRD) | {id}_ack.json or {id}_ack.xml |
+
+        | Italy | {id}_generated.pdf (if available) | {id}_original.* | {id}_final.xml | {id}_ack.xml |
+
+        | Malaysia | {id}_generated.pdf (if available) | {id}_original.* | {id}_final.xml | {id}_ack.json |
+
+        | Romania | {id}_generated.pdf (if available) | {id}_original.* | {id}_final.xml | {id}_ack.xml
+
+        {id}_final.pdf
+
+        {id}_final_signature.xml |
+
+        | Spain | {id}_generated.pdf (if available) | {id}_original.* | {id}_final.xml | {id}_ack.xml |
+
+        | Other | {id}_generated.pdf (if available) | {id}_original.* | {id}_final.* | {id}_ack.txt (if available) |
+
+
+        In the **Inbound Flow** for receiving invoices **from tax authorities**, the original file is the invoice sent to ecosio''s system, and the final file is the invoice from your counterpart.
+
+
+        | Country | Invoice PDF | Original | Final | Extra Files |
+
+        |-----|-----|-----|-----|-----|
+
+        | Belgium | {id}_generated.pdf (if available) | {id}_original.xml | {id}_final.* | N/A |
+
+        | Denmark | {id}_generated.pdf (if available) | {id}_original.xml | {id}_final.* | N/A |
+
+        | Germany | {id}_generated.pdf (if available) | {id}_original.*
+
+        _xml_ or _pdf_ (ZUGFeRD) | {id}_final.* | N/A |
+
+        | Italy | {id}_generated.pdf (if available) | {id}_original.xml | {id}_final.* | N/A |
+
+        | Malaysia | {id}_generated.pdf (if available) | {id}_original.xml | {id}_final.* | N/A |
+
+        | Romania | {id}_generated.pdf (if available) | {id}_original.xml |{id} _final.* | {id}_original.pdf
+
+        {id}_original_signature.xml |
+
+        | Other | {id}_generated.pdf (if available) | {id}_original.* | {id}_final.* | {id}_ack.txt (if available) |
+
+        The ZIP file can only be successfully downloaded when the message is in a final state or was already in DELIVERED_API, DELIVERED_SFTP or DELIVERED_WEB.'
+      parameters:
+      - in: path
+        name: messageId
+        schema:
+          type: string
+        required: true
+        description: The UUID of the message, whose documents shall be retrieved
+        example: 70d4ec9d-33f9-47c1-94fc-91938dad7612
+      responses:
+        '200':
+          $ref: '#/components/responses/200-Documents'
+        '202':
+          description: '**ACCEPTED.**
+
+
+            The message is not yet in a final state. Please try again later.
+
+            '
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+      operationId: getApiV1DocumentsByMessageId
+      x-operation-id-source: derived
+components:
+  responses:
+    '500':
+      description: '**INTERNAL SERVER ERROR.**
+
+
+        | Code| Name| Description |
+
+        |-----|-----|-------------|
+
+        | 300 |INTERNAL_SERVER_ERROR | An unexpected error occurred while processing the request. Please contact support@ecosio.com to gain updates on the cause of the error (deprecated)|
+
+        '
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/failure-500'
+    '401':
+      description: "**UNAUTHORIZED**\n\nIn case the authentication credentials are not valid\n\n  | Code| Name | Description |\n  |-----|-----|-------------|\n  | 102 | CREDENTIALS_INVALID | The provided credentials are invalid |\n"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/failure-401'
+    '403':
+      description: "**FORBIDDEN.**\n\nIn case the user could not be authenticated\n\n  | Code| Name| Description |\n  |-----|-----|-------------|\n  |101| USER_KEY_INVALID| The user provided a wrong user key (deprecated) |\n  |104| USER_NOT_PERMITTED| The user authenticated successfully but has no rights to fulfill the requested task |\n"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/failure-403'
+    '429':
+      description: '**TOO MANY REQUESTS.**
+
+
+        | Code| Name| Description |
+
+        |-----|-----|-------------|
+
+        | 130 | TOO_MANY_REQUESTS_RECEIVED|In order to prevent being spammed by poll requests and status queries the service makes use of a request cache. If the number of requests received in a certain amount of time exceed a certain threshold this error will be returned. Every 5 minutes the cache will be cleared automatically|
+
+        '
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/failure-429'
+    '404':
+      description: '**NOT FOUND.**
+
+
+        In case the message could not be found
+
+        '
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/failure-404'
+    '409':
+      description: '**CONFLICT.**
+
+
+        | Code| Name| Description |
+
+        |-----|-----|-------------|
+
+        | 409 | MESSAGE_NOT_IN_APPROPRIATE_STATE | The message is not in a state where the documents can be processed. Please retry the request later after the documents have been collected. |
+
+        '
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/failure-409'
+    '400':
+      description: '**BAD REQUEST**
+
+
+        In case an error occurred during the processing of the request.
+
+        '
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/failure-400-get'
+    200-Documents:
+      description: '**OK.** The Zip file for this e-invoice with all relevant documents.'
+      content:
+        application/zip:
+          schema:
+            type: string
+            format: binary
+          example:
+          - a13cfd22-27b4-11ef-835a-45785384f543_ack.xml
+          - a13cfd22-27b4-11ef-835a-45785384f543_final.pdf
+          - a13cfd22-27b4-11ef-835a-45785384f543_final_signature.xml
+          - a13cfd22-27b4-11ef-835a-45785384f543_final.xml
+          - a13cfd22-27b4-11ef-835a-45785384f543_original.xml
+  schemas:
+    failure-403:
+      allOf:
+      - $ref: '#/components/schemas/failure-object'
+      - type: object
+        properties:
+          failure:
+            properties:
+              errorCode:
+                example: '104'
+              reason:
+                example: USER_NOT_PERMITTED
+              details:
+                example: Invalid user credentials found
+              reference:
+                example: 70d4ec9d-33f9-47c1-94fc-91938dad7612
+    failure-429:
+      allOf:
+      - $ref: '#/components/schemas/failure-object-without-reference'
+      - type: object
+        properties:
+          failure:
+            properties:
+              errorCode:
+                example: '130'
+              reason:
+                example: TOO_MANY_REQUESTS_RECEIVED
+              details:
+                example: Too many requests have been received in a short amount of time. Please respect the terms of services and increase the interval of polling requests.
+    failure-404:
+      allOf:
+      - $ref: '#/components/schemas/failure-object'
+      - type: object
+        properties:
+          failure:
+            properties:
+              errorCode:
+                example: '160'
+              reason:
+                example: MESSAGE_RETRIEVAL_FAILED_MESSAGE_ID_UNKNOWN
+              details:
+                example: Unknown messageId
+              reference:
+                example: 0441e9b0-993f-11eb-943c-91d1a9b71250c
+    failure-object:
+      type: object
+      properties:
+        failure:
+          $ref: '#/components/schemas/propertyFailure'
+    failure-object-without-reference:
+      type: object
+      properties:
+        failure:
+          $ref: '#/components/schemas/propertyFailureWithoutReference'
+    propertyFailure:
+      description: In case the message has reached an error state, the error details are denoted in this element. Whether the failure element is shown or not, depends on the configured state mode. For an overview of the different states and the state modes please refer to https://connect.ecosio.com/docs/state-mode#/
+      type:
+      - object
+      - 'null'
+      allOf:
+      - $ref: '#/components/schemas/propertyFailureWithoutReference'
+      - properties:
+          reference:
+            type: string
+            description: The message ID, for which the error occurred.
+            example: 92fd6790-ad7d-11eb-9825-19ebc28755dd
+    failure-500:
+      allOf:
+      - $ref: '#/components/schemas/failure-object'
+      - type: object
+        properties:
+          failure:
+            properties:
+              errorCode:
+                example: '300'
+              reason:
+                example: INTERNAL_SERVER_ERROR
+              details:
+                example: An unexpected error occurred while processing the request.
+              reference:
+                example: 0441e9b0-993f-11eb-943c-91d1a9b71250c
+    failure-400-get:
+      allOf:
+      - $ref: '#/components/schemas/failure-object-without-reference'
+      - type: object
+        properties:
+          failure:
+            properties:
+              errorCode:
+                example: '200'
+              reason:
+                example: ARGUMENT_NULL
+              details:
+                example: No id found
+    failure-409:
+      allOf:
+      - $ref: '#/components/schemas/failure-object-without-reference'
+      - type: object
+        properties:
+          failure:
+            properties:
+              errorCode:
+                example: '364'
+              reason:
+                example: MESSAGE_NOT_IN_APPROPRIATE_STATE
+              details:
+                example: Not all documents are available yet
+    failure-401:
+      allOf:
+      - $ref: '#/components/schemas/failure-object-without-reference'
+      - type: object
+        properties:
+          failure:
+            properties:
+              errorCode:
+                example: '102'
+              reason:
+                example: CREDENTIALS_INVALID
+              details:
+                example: The provided credentials are invalid!
+    propertyFailureWithoutReference:
+      description: In case the message has reached an error state, the error details are denoted in this element. Whether the failure element is shown or not, depends on the configured state mode. For an overview of the different states and the state modes please refer to https://connect.ecosio.com/docs/state-mode#/
+      type:
+      - object
+      - 'null'
+      properties:
+        errorCode:
+          type: string
+          description: A code, identifying the error.
+          example: '261'
+        reason:
+          type: string
+          description: The reason for the error
+          example: RECEIVER_INVALID
+        details:
+          type: string
+          description: Further details about the error
+          example: 'No receiver could be identified using either on message level (identifier: xyz) or on protocol level (xyz)'
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    X-APP-KEY:
+      in: header
+      name: X-APP-KEY
+      type: apiKey
+      description: The ecosio app key is passed as HTTP header.

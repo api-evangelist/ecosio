@@ -1,0 +1,84 @@
+generated: '2026-10-18'
+method: searched
+source: https://ecosio.com/en/data-protection/
+signals:
+  data_subject_request:
+    url: https://ecosio.com/en/data-protection/
+    section: 'WHAT RIGHTS DO I HAVE WITH REGARD TO THE PROCESSING OF MY DATA?'
+    channel: privacy@ecosio.com
+    rights_named: [access, rectification, restriction, erasure, notification of recipients, data portability, objection, automated decision-making, complaint to a supervisory authority]
+    evidence:
+    - source: https://ecosio.com/en/data-protection/
+      http_status: 200
+      fetched: '2026-10-18'
+      quote: "If you wish to assert one of these rights against us, simply use the contact options listed under “Responsible body and contact information”."
+    - source: https://ecosio.com/en/data-protection/
+      http_status: 200
+      fetched: '2026-10-18'
+      quote: "We have appointed a Data Protection Officer who can be contacted at privacy@ecosio.com."
+    - source: https://ecosio.com/en/data-protection/
+      http_status: 200
+      fetched: '2026-10-18'
+      quote: "You have the right to receive the personal data concerning you that you have provided to us in a structured, common and machine-readable format."
+    note: >-
+      GDPR data subject rights are enumerated (access through right to complain) with a named DPO mailbox as
+      the channel. No response SLA is stated. Data portability here is the GDPR Art. 20 individual right, not a
+      customer exit/switching commitment, so exit_assistance is not recorded.
+  ai_transparency:
+    url: https://ecosio.com/en/data-protection/
+    section: 'AI-Assisted Website Chat (Piper)'
+    evidence:
+    - source: https://ecosio.com/en/data-protection/
+      http_status: 200
+      fetched: '2026-10-18'
+      quote: "Responses generated through Piper are produced using artificial intelligence and may be reviewed by ecosio personnel."
+    - source: https://ecosio.com/en/data-protection/
+      http_status: 200
+      fetched: '2026-10-18'
+      quote: "Users are informed where they interact with an AI-assisted communication channel."
+    note: >-
+      Disclosure that the website chat agent (Piper, provided by Qualified) is AI, that users are told when they
+      interact with it, and that it is not used for solely automated decisions with legal effect. Scope is the
+      marketing website chat (and an Aircall voice assistant), not the EDI platform.
+  data_retention:
+    url: https://ecosio.com/en/data-protection/
+    evidence:
+    - source: https://ecosio.com/en/data-protection/
+      http_status: 200
+      fetched: '2026-10-18'
+      quote: "We delete or block your personal data as soon as the purpose for storing it no longer applies. We adhere to the statutory retention periods for the duration of the storage of personal data."
+    - source: https://ecosio.com/en/data-protection/
+      http_status: 200
+      fetched: '2026-10-18'
+      quote: "In accordance with the principles of data minimization and storage limitation, raw transactional data is retained within the active Monitor environment for a standard period of three (3) months, during which authorized users may export and download archives."
+    - source: https://ecosio.com/en/security-trust-center/
+      http_status: 200
+      fetched: '2026-10-18'
+      quote: "Data protection requirements are addressed through defined handling, retention, and deletion concepts. Contractual documentation (e.g., DPAs) can be provided for customer engagements."
+    note: >-
+      Purpose-limited retention in general, plus a concrete product figure: ecosio Monitor keeps raw
+      transactional data three months before secure removal unless long-term archiving is engaged.
+  subprocessors:
+    url: https://ecosio.com/en/security-trust-center/
+    section: 'DATA SUBPROCESSORS'
+    listed: [AWS (Data Storage / Data Hosting, US), ecosio affiliate (DE), ecosio affiliate (UK), Google Cloud Platform (Data Storage / Data Hosting, IE), DataDog (Infrastructure and Network monitoring, US)]
+    evidence:
+    - source: https://ecosio.com/en/security-trust-center/
+      http_status: 200
+      fetched: '2026-10-18'
+      quote: "DATA SUBPROCESSORS AWS Data Storage / Data Hosting. US ecosio Affiliate service Subsidiary company. DE ecosio Affiliate service Subsidiary company. UK Google Cloud Platform Data Storage / Data Hosting. IE DataDog Infrastructure and Network monitoring. US"
+    note: >-
+      A public subprocessor list with purpose and country per entry on the trust center (quote is the list as
+      rendered, line breaks joined by spaces). Third-country transfers are stated in the privacy policy to rely on
+      Art. 44 ff GDPR / Standard Contractual Clauses.
+  incident_notification:
+    url: https://ecosio.com/en/security-trust-center/
+    section: 'Incident response'
+    evidence:
+    - source: https://ecosio.com/en/security-trust-center/
+      http_status: 200
+      fetched: '2026-10-18'
+      quote: "Incidents are assessed against contractual and regulatory obligations, and customers are informed via defined channels when notification is required. Service availability and major incidents are communicated via the public status page."
+    note: >-
+      A documented incident lifecycle with customer notification where contractually or legally required; no
+      notification deadline (e.g. hours) is stated.

@@ -1,0 +1,12 @@
+generated: '2026-10-18'
+method: searched
+source: https://ecosio.com/en/get-in-touch/
+name: ecosio pricing
+audience: business-product
+pricing_basis: negotiated
+published: false
+delivery:
+  delivery: managed
+plan_count: 0
+note: Pricing is enterprise/partner-focused with "contact us" model. Documentation states "The ecosio API is currently only available for our partners and enterprise customers by request." No public pricing tiers found. Source page returns 403 to crawler but renders in browser.
+plans: []

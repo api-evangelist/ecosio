@@ -1,0 +1,58 @@
+generated: '2026-10-18'
+method: probed
+source: pre-flight dossier (docs platform, portal detections) + CNAME chains and response headers of the hosts apis.yml names
+registry: all/0-working/vendors.yml
+areas_vocabulary:
+- documentation
+- developer-portal
+- api-gateway
+- cdn
+- hosting
+- sdk-generation
+- api-collections
+- status-page
+- support
+- community
+- identity
+- mcp-hosting
+vendors:
+- vendor: cloudflare
+  name: Cloudflare
+  area: cdn
+  host: ecosio.com
+  evidence: header:cf-ray
+  signal: header
+  confidence: high
+  kin_score:
+  - https_enforced
+  - hsts
+- vendor: readme
+  name: ReadMe
+  area: documentation
+  host: connect.ecosio.com
+  evidence: cname:readmessl.com
+  signal: docs-platform
+  confidence: high
+  kin_score:
+  - openapi_published
+  - changelog_present
+  - llms_txt
+  - api_explorer
+reliance:
+  areas_vendor_served:
+  - cdn
+  - documentation
+  vendor_count: 2
+  areas_observed: 12
+  share_of_observable_areas: 0.167
+  note: areas where a third party was DETECTED serving this provider; an area absent here was either self-run or not observed, and this script
+    cannot tell those apart
+checked:
+- 'docs-platform: readme'
+- ecosio.com (Website)
+- connect.ecosio.com (Documentation)
+- connect.ecosio.com (APIReference)
+- connect.ecosio.com (GettingStarted)
+- ecosio-status.com (StatusPage)
+- api.test.ecosio-hub.com (baseURL)
+- e-invoicing-message.vertexcloud.com (baseURL)

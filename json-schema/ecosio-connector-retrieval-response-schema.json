@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/ecosio/main/json-schema/ecosio-connector-retrieval-response-schema.json",
+  "title": "ConnectorRetrievalResponse",
+  "description": "Base representation of a connector.",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/ecosio-management-api-openapi.yml#/components/schemas/ConnectorRetrievalResponse",
+  "type": "object",
+  "properties": {
+    "managedConnectorUuid": {
+      "type": "string",
+      "format": "uuid",
+      "description": "External ID of the retrieved connector."
+    },
+    "connectorUuid": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Internal ID of the retrieved connector."
+    },
+    "type": {
+      "$ref": "#/$defs/ConnectorType",
+      "description": "Type of the connector.",
+      "enum": [
+        "MESSAGING_API",
+        "HTTPS"
+      ]
+    },
+    "approvalUuid": {
+      "type": "string",
+      "format": "uuid",
+      "description": "ID of this connector request."
+    },
+    "approvalStatus": {
+      "$ref": "#/$defs/ApprovalStatus",
+      "description": "The current status of the latest approval request."
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "companyUuids": {
+      "type": "array",
+      "description": "List of managed company IDs associated with this connector. For single-tenant connectors, this is a single ID.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "direction": {
+      "$ref": "#/$defs/ConnectorDirection",
+      "description": "Direction of the connector."
+    },
+    "multiTenant": {
+      "type": "boolean",
+      "description": "If true, indicates the connector is multi-tenant."
+    }
+  },
+  "required": [
+    "approvalUuid",
+    "createdAt",
+    "type",
+    "updatedAt"
+  ],
+  "$defs": {
+    "ApprovalStatus": {
+      "type": "string",
+      "enum": [
+        "PENDING",
+        "APPROVED",
+        "ERROR",
+        "REJECTED",
+        "FAILED",
+        "APPLIED"
+      ]
+    },
+    "ConnectorDirection": {
+      "type": "string",
+      "enum": [
+        "BOTH",
+        "DELIVERY",
+        "FETCH",
+        "FORWARDER"
+      ]
+    },
+    "ConnectorType": {
+      "type": "string",
+      "enum": [
+        "MESSAGING_API",
+        "HTTPS"
+      ]
+    }
+  }
+}

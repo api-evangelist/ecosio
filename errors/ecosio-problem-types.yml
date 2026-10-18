@@ -1,0 +1,43 @@
+generated: '2026-10-18'
+method: derived
+source: openapi/ecosio-api-openapi.yml
+format: application/json
+envelope:
+  property: failure
+  nested_properties:
+    errorCode: errorCode
+    reason: reason
+    details: details
+    reference: reference
+problems:
+- status: 400
+  title: Bad Request
+  type: INVALID_JSON_MESSAGE
+  description: Error converting received message into a JSON object!
+  errorCode: '110'
+- status: 401
+  title: Unauthorized
+  type: CREDENTIALS_INVALID
+  description: The provided credentials are invalid!
+  errorCode: '102'
+- status: 403
+  title: Forbidden
+  type: USER_NOT_PERMITTED
+  description: Invalid user credentials found
+  errorCode: '104'
+- status: 404
+  title: Not Found
+  type: MESSAGE_RETRIEVAL_FAILED_MESSAGE_ID_UNKNOWN
+  description: Unknown messageId
+  errorCode: '160'
+- status: 429
+  title: Too Many Requests
+  type: RATE_LIMIT_EXCEEDED
+  description: Rate limit exceeded (documented as HTTP 429 Too Many Requests response)
+  note: Rate limits enforced per API connector over rolling five-minute window
+- status: 500
+  title: Internal Server Error
+  type: INTERNAL_SERVER_ERROR
+  description: An unexpected error occurred while processing the request.
+  errorCode: '300'
+note: Error responses follow a consistent failure envelope structure with errorCode, reason, details, and optional reference fields. Rate limiting (429) is documented but not detailed in OpenAPI spec.

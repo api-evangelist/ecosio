@@ -1,0 +1,30 @@
+generated: '2026-10-18'
+method: searched
+generator: extract-docs-artifacts.py (deepseek)
+source: https://connect.ecosio.com/reference/management-api-authentication
+sources:
+- https://connect.ecosio.com/reference/management-api-authentication
+- https://connect.ecosio.com/reference/securitycredentials
+- https://connect.ecosio.com/reference/securitycredentials
+- https://connect.ecosio.com/reference/regeneratecredentials
+description: Authentication methods for ecosio APIs including OAuth 2.0 client credentials and basic authentication
+schemes:
+- type: oauth2
+  name: OAuth 2.0
+  evidence: You can authenticate to the Management API using the OAuth 2.0 client credentials grant.
+  flows:
+  - client_credentials
+  token_url: https://auth.ecosio-hub.com/oauth2/token
+  scopes:
+  - management-api
+  header: Authorization
+  location: header
+  how_to_obtain: Retrieve the client ID and client secret for your Management API connector from the Monitor.
+- type: http-basic
+  name: Basic
+  evidence: You can authenticate to the Management API using basic authentication.
+  header: Authorization
+  location: header
+  how_to_obtain: You obtain these values in the Monitor.
+docs: https://connect.ecosio.com/reference/management-api-authentication
+note: The basic authentication method is marked as deprecated. The OAuth 2.0 scheme also requires an additional X-APP-KEY header.

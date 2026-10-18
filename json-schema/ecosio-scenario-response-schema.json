@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/ecosio/main/json-schema/ecosio-scenario-response-schema.json",
+  "title": "ScenarioResponse",
+  "description": "Base ScenarioResponse.",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/ecosio-management-api-openapi.yml#/components/schemas/ScenarioResponse",
+  "type": "object",
+  "properties": {
+    "uuid": {
+      "type": "string",
+      "format": "uuid",
+      "description": "The ID of the applied scenario."
+    },
+    "name": {
+      "$ref": "#/$defs/ScenarioName"
+    },
+    "companyUuid": {
+      "type": "string",
+      "format": "uuid",
+      "description": "The unique identifier of the company"
+    },
+    "approvalUuid": {
+      "type": "string",
+      "format": "uuid",
+      "description": "ID of this scenario request."
+    },
+    "approvalStatus": {
+      "$ref": "#/$defs/ApprovalStatus",
+      "description": "The current status of the latest approval request."
+    },
+    "rejectionReason": {
+      "type": "string"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "approvalUuid",
+    "createdAt",
+    "name",
+    "updatedAt"
+  ],
+  "$defs": {
+    "ApprovalStatus": {
+      "type": "string",
+      "enum": [
+        "PENDING",
+        "APPROVED",
+        "ERROR",
+        "REJECTED",
+        "FAILED",
+        "APPLIED"
+      ]
+    },
+    "ScenarioName": {
+      "type": "string",
+      "enum": [
+        "BELGIUM_EINVOICE",
+        "DENMARK_EINVOICE",
+        "ESTONIA_EINVOICE",
+        "FINLAND_EINVOICE",
+        "FRANCE_EINVOICE",
+        "GERMANY_EINVOICE",
+        "HUNGARY_EINVOICE",
+        "ITALY_EINVOICE",
+        "NETHERLANDS_EINVOICE",
+        "NORWAY_EINVOICE",
+        "POLAND_EINVOICE",
+        "ROMANIA_EINVOICE",
+        "SWEDEN_EINVOICE",
+        "UNITED_KINGDOM_EINVOICE"
+      ]
+    }
+  }
+}
